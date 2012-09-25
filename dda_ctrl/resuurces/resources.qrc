@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/">
+        <file>document-edit.png</file>
+        <file>edit-copy.png</file>
+        <file>edit-delete.png</file>
+        <file>edit-select.png</file>
+    </qresource>
+</RCC>

@@ -6,7 +6,7 @@
 namespace Ui {
 class ProfileSelectDialog;
 }
-
+/*----------------------------------------------------------------------------*/
 class ProfileSelectDialog : public QDialog
 {
   Q_OBJECT
@@ -19,6 +19,13 @@ public:
 
 private:
   Ui::ProfileSelectDialog *ui;
+protected slots:
+  void onProfileChanged(int);
+  void onEditBtnClicked();
+  void onNewBtnClicked();
+  void onDebBtnClicked();
+
 };
+/*----------------------------------------------------------------------------*/
 
 #endif // PROFILESELECTDIALOG_H

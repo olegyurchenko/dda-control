@@ -22,6 +22,7 @@ DDAConfig *config = NULL;
 DDAConfig :: DDAConfig(QObject *parent)
   : QObject(parent)
 {
+  m_profileIndex = -1;
   QDir dir = QDir::home();
   if(!dir.exists(".dda"))
     dir.mkpath(".dda");
@@ -66,7 +67,10 @@ bool DDAConfig :: load()
       m_profileList.append(profile);
     }
   }
-  save();
+  parceSettings(&el, &m_settings);
+  //save();
+  if(m_profileList.size())
+    m_profileIndex = 0;
   return true;
 }
 /*----------------------------------------------------------------------------*/
@@ -90,6 +94,7 @@ bool DDAConfig :: save()
     root.appendChild(tag);
   }
 
+  saveSettings(&m_settings, &doc, &root);
 
   QString xml = doc.toString();
   QFile confFile(m_path);
@@ -108,19 +113,20 @@ bool DDAConfig :: save()
   return true;
 }
 /*----------------------------------------------------------------------------*/
-void DDAConfig :: defaultProfle(DDAProfile *dst)
+void DDAConfig :: defaultProfle(DDAProfile *dst) const
 {
-  dst->name = QString("Profile_%1").arg(m_profileList.size() + 1);
-  dst->databaseFileName = "";
+  dst->name = m_profileList.isEmpty() ? tr("Default profile") : tr("Profile_%1").arg(m_profileList.size() + 1);
   dst->serial = 1;
   dst->baud = 9600;
-
+}
+/*----------------------------------------------------------------------------*/
+void DDAConfig :: defaultSettings(DDASettings *dst) const
+{
   QDir dir = QDir::home();
   if(!dir.exists(".dda"))
     dir.mkpath(".dda");
   dir.setPath(dir.filePath(".dda"));
   dst->databaseFileName = dir.filePath("main.db");
-
 }
 /*----------------------------------------------------------------------------*/
 void DDAConfig :: parceProfile(QDomNode *node, DDAProfile *dst)
@@ -134,9 +140,6 @@ void DDAConfig :: parceProfile(QDomNode *node, DDAProfile *dst)
     {
       if(e.tagName() == "name")
         dst->name = e.text();
-      else
-      if(e.tagName() == "databaseFileName")
-        dst->databaseFileName = e.text();
       else
       if(e.tagName() == "serial")
         dst->serial = e.text().toInt();
@@ -155,16 +158,35 @@ void DDAConfig :: saveProfile(const DDAProfile *src, QDomDocument *doc, QDomNode
   e.appendChild(doc->createTextNode(src->name));
   dst->appendChild(e);
 
-  e = doc->createElement("databaseFileName");
-  e.appendChild(doc->createTextNode(src->databaseFileName));
-  dst->appendChild(e);
-
   e = doc->createElement("serial");
   e.appendChild(doc->createTextNode(QString::number(src->serial)));
   dst->appendChild(e);
 
   e = doc->createElement("baud");
   e.appendChild(doc->createTextNode(QString::number(src->baud)));
+  dst->appendChild(e);
+}
+/*----------------------------------------------------------------------------*/
+void DDAConfig :: parceSettings(QDomNode *node, DDASettings *dst)
+{
+  defaultSettings(dst);
+  QDomNode n = node->firstChild();
+  while(!n.isNull())
+  {
+    QDomElement e = n.toElement(); // try to convert the node to an element.
+    if(!e.isNull())
+    {
+      if(e.tagName() == "databaseFileName")
+        dst->databaseFileName = e.text();
+    }
+    n = n.nextSibling();
+  }
+}
+/*----------------------------------------------------------------------------*/
+void DDAConfig :: saveSettings(const DDASettings *src, QDomDocument *doc, QDomNode *dst)
+{
+  QDomElement e = doc->createElement("databaseFileName");
+  e.appendChild(doc->createTextNode(src->databaseFileName));
   dst->appendChild(e);
 }
 /*----------------------------------------------------------------------------*/
@@ -179,13 +201,59 @@ QStringList DDAConfig :: profileList()
 /*----------------------------------------------------------------------------*/
 void DDAConfig :: setProfileIndex(int index)
 {
+  if(index >= 0 && index < m_profileList.size())
+  {
+    if(m_profileIndex != index)
+    {
+      m_profileIndex = index;
+      emit profileChanged();
+    }
+  }
 }
 /*----------------------------------------------------------------------------*/
-void DDAConfig :: addDefualtProfile()
+const DDAProfile& DDAConfig :: profile() const
 {
+  static DDAProfile p;
+
+  if(m_profileIndex >= 0 && m_profileIndex < m_profileList.size())
+    return m_profileList.at(m_profileIndex);
+
+  defaultProfle(&p);
+  return p;
 }
 /*----------------------------------------------------------------------------*/
-bool DDAConfig :: setProfile(const DDAProfile *profile)
+bool DDAConfig :: setProfile(const DDAProfile &profile)
 {
+  if(m_profileIndex >= 0 && m_profileIndex < m_profileList.size())
+  {
+    m_profileList[m_profileIndex] = profile;
+    if(save())
+    {
+      emit profileChanged();
+      return true;
+    }
+    return false;
+  }
+  m_message = tr("Invalid profile index");
+  return false;
+}
+/*----------------------------------------------------------------------------*/
+bool DDAConfig :: addProfile(const DDAProfile &profile)
+{
+  m_profileList.append(profile);
+  setProfileIndex(m_profileList.size() - 1);
+  return save();
+}
+/*----------------------------------------------------------------------------*/
+bool DDAConfig :: rmProfile(int index)
+{
+  if(index >= 0 && index < m_profileList.size())
+  {
+    m_profileList.erase(m_profileList.begin() + index);
+    m_profileIndex = -1;
+    return save();
+  }
+  m_message = tr("Invalid profile index");
+  return false;
 }
 /*----------------------------------------------------------------------------*/

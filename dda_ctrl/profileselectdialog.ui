@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>ProfileSelectDialog</class>
  <widget class="QDialog" name="ProfileSelectDialog">
@@ -5,14 +6,224 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>331</width>
+    <height>313</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Select profile</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="resuurces/resources.qrc">
+    <normaloff>:/edit-select.png</normaloff>:/edit-select.png</iconset>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_2">
+   <item>
+    <widget class="QFrame" name="frame_2">
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <item>
+       <widget class="QListWidget" name="listWidget"/>
+      </item>
+      <item>
+       <widget class="QWidget" name="widget" native="true">
+        <layout class="QVBoxLayout" name="verticalLayout">
+         <item>
+          <widget class="QPushButton" name="editBtn">
+           <property name="text">
+            <string>Edit</string>
+           </property>
+           <property name="icon">
+            <iconset resource="resuurces/resources.qrc">
+             <normaloff>:/document-edit.png</normaloff>:/document-edit.png</iconset>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="newBtn">
+           <property name="text">
+            <string>Create</string>
+           </property>
+           <property name="icon">
+            <iconset resource="resuurces/resources.qrc">
+             <normaloff>:/edit-copy.png</normaloff>:/edit-copy.png</iconset>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="delBtn">
+           <property name="text">
+            <string>Delete</string>
+           </property>
+           <property name="icon">
+            <iconset resource="resuurces/resources.qrc">
+             <normaloff>:/edit-delete.png</normaloff>:/edit-delete.png</iconset>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <spacer name="verticalSpacer">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>150</height>
+            </size>
+           </property>
+          </spacer>
+         </item>
+        </layout>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QFrame" name="frame">
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Raised</enum>
+     </property>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>142</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QDialogButtonBox" name="buttonBox">
+        <property name="standardButtons">
+         <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
  </widget>
- <resources/>
- <connections/>
+ <resources>
+  <include location="resuurces/resources.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>listWidget</sender>
+   <signal>currentRowChanged(int)</signal>
+   <receiver>ProfileSelectDialog</receiver>
+   <slot>onProfileChanged(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>117</x>
+     <y>138</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>108</x>
+     <y>350</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>editBtn</sender>
+   <signal>clicked()</signal>
+   <receiver>ProfileSelectDialog</receiver>
+   <slot>onEditBtnClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>283</x>
+     <y>26</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>366</x>
+     <y>36</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>newBtn</sender>
+   <signal>clicked()</signal>
+   <receiver>ProfileSelectDialog</receiver>
+   <slot>onNewBtnClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>296</x>
+     <y>58</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>427</x>
+     <y>60</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>delBtn</sender>
+   <signal>clicked()</signal>
+   <receiver>ProfileSelectDialog</receiver>
+   <slot>onDebBtnClicked()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>300</x>
+     <y>90</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>400</x>
+     <y>88</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>ProfileSelectDialog</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>189</x>
+     <y>289</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>213</x>
+     <y>363</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>ProfileSelectDialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>283</x>
+     <y>294</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>285</x>
+     <y>375</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>onProfileChanged(int)</slot>
+  <slot>onEditBtnClicked()</slot>
+  <slot>onNewBtnClicked()</slot>
+  <slot>onDebBtnClicked()</slot>
+ </slots>
 </ui>
