@@ -69,7 +69,7 @@ bool DDAConfig :: load()
   }
   parceSettings(&el, &m_settings);
   //save();
-  if(m_profileList.size())
+  if(m_profileIndex == -1 && m_profileList.size())
     m_profileIndex = 0;
   return true;
 }
@@ -178,6 +178,8 @@ void DDAConfig :: parceSettings(QDomNode *node, DDASettings *dst)
     {
       if(e.tagName() == "databaseFileName")
         dst->databaseFileName = e.text();
+      if(e.tagName() == "profileIndex")
+        m_profileIndex = e.text().toInt();
     }
     n = n.nextSibling();
   }
@@ -187,6 +189,10 @@ void DDAConfig :: saveSettings(const DDASettings *src, QDomDocument *doc, QDomNo
 {
   QDomElement e = doc->createElement("databaseFileName");
   e.appendChild(doc->createTextNode(src->databaseFileName));
+  dst->appendChild(e);
+
+  e = doc->createElement("profileIndex");
+  e.appendChild(doc->createTextNode(QString::number(m_profileIndex)));
   dst->appendChild(e);
 }
 /*----------------------------------------------------------------------------*/
@@ -206,6 +212,7 @@ void DDAConfig :: setProfileIndex(int index)
     if(m_profileIndex != index)
     {
       m_profileIndex = index;
+      save();
       emit profileChanged();
     }
   }

@@ -4,5 +4,11 @@
         <file>edit-copy.png</file>
         <file>edit-delete.png</file>
         <file>edit-select.png</file>
+        <file>user-identity.png</file>
+    </qresource>
+    <qresource prefix="/sql">
+        <file>create_database.sql</file>
+        <file>gost.txt</file>
+        <file>mesh.txt</file>
     </qresource>
 </RCC>
