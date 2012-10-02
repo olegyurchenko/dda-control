@@ -6,6 +6,7 @@
 #include <profileselectdialog.h>
 #include <QMessageBox>
 #include <controller.h>
+#include <get_opt.h>
 /*----------------------------------------------------------------------------*/
 int main(int argc, char *argv[])
 {
@@ -46,7 +47,10 @@ int main(int argc, char *argv[])
     config->setProfileIndex(0);
   }
 
-  controller = new DDAController(&a);
+  if(getOptSwitch("demo", 'd') || getOptSwitch("demo-mode", 'D'))
+    controller = new DemoController(&a);
+  else
+    controller = new DDAController(&a);
 
   MeasureWindow w;
   w.show();

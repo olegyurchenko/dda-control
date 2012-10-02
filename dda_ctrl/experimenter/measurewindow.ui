@@ -20,7 +20,7 @@
       <property name="currentIndex">
        <number>0</number>
       </property>
-      <widget class="QWidget" name="startPage" native="true">
+      <widget class="QWidget" name="startPage">
        <layout class="QVBoxLayout" name="verticalLayout_6">
         <item>
          <widget class="QFrame" name="profileFrame">
@@ -66,7 +66,7 @@
            <item>
             <widget class="QToolButton" name="toolButton">
              <property name="toolTip">
-              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Manage profiles&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Edit profile&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
              </property>
              <property name="text">
               <string>...</string>
@@ -136,6 +136,9 @@
                     <property name="text">
                      <string/>
                     </property>
+                    <property name="alignment">
+                     <set>Qt::AlignCenter</set>
+                    </property>
                    </widget>
                   </item>
                  </layout>
@@ -161,7 +164,10 @@
                      <enum>QFrame::Box</enum>
                     </property>
                     <property name="text">
-                     <string/>
+                     <string>jffline</string>
+                    </property>
+                    <property name="alignment">
+                     <set>Qt::AlignCenter</set>
                     </property>
                    </widget>
                   </item>
@@ -203,7 +209,7 @@
         </item>
        </layout>
       </widget>
-      <widget class="QWidget" name="measurePage" native="true">
+      <widget class="QWidget" name="measurePage">
        <layout class="QHBoxLayout" name="horizontalLayout_9">
         <item>
          <layout class="QVBoxLayout" name="verticalLayout_10">
@@ -245,6 +251,9 @@
                     <property name="text">
                      <string/>
                     </property>
+                    <property name="alignment">
+                     <set>Qt::AlignCenter</set>
+                    </property>
                    </widget>
                   </item>
                   <item>
@@ -283,7 +292,10 @@
                      <enum>QFrame::Box</enum>
                     </property>
                     <property name="text">
-                     <string/>
+                     <string>offline</string>
+                    </property>
+                    <property name="alignment">
+                     <set>Qt::AlignCenter</set>
                     </property>
                    </widget>
                   </item>
@@ -312,7 +324,7 @@
                    </widget>
                   </item>
                   <item>
-                   <widget class="QLabel" name="currentValueLabel_2">
+                   <widget class="QLabel" name="currentValueLabel">
                     <property name="minimumSize">
                      <size>
                       <width>90</width>
@@ -324,6 +336,9 @@
                     </property>
                     <property name="text">
                      <string/>
+                    </property>
+                    <property name="alignment">
+                     <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
                     </property>
                    </widget>
                   </item>
@@ -644,7 +659,7 @@
      </widget>
     </item>
    </layout>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>0</x>
@@ -680,16 +695,15 @@
     <addaction name="separator"/>
     <addaction name="actionOptions"/>
    </widget>
-   <widget class="QMenu" name="menuUser">
+   <widget class="QMenu" name="menuSession">
     <property name="title">
-     <string>User</string>
+     <string>Session</string>
     </property>
-    <addaction name="actionEditUserData"/>
-    <addaction name="actionManageUsers"/>
+    <addaction name="actionStartSession"/>
    </widget>
    <addaction name="menuFile"/>
+   <addaction name="menuSession"/>
    <addaction name="menuProfile"/>
-   <addaction name="menuUser"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -698,8 +712,9 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="actionManageProfiles"/>
+   <addaction name="actionEditCurrentProfile"/>
    <addaction name="separator"/>
+   <addaction name="actionStartSession"/>
   </widget>
   <action name="actionManageProfiles">
    <property name="icon">
@@ -740,6 +755,18 @@
   <action name="actionManageUsers">
    <property name="text">
     <string>Manage users</string>
+   </property>
+  </action>
+  <action name="actionStartSession">
+   <property name="enabled">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../resuurces/resources.qrc">
+     <normaloff>:/arrow-right.png</normaloff>:/arrow-right.png</iconset>
+   </property>
+   <property name="text">
+    <string>Start measure session</string>
    </property>
   </action>
  </widget>
@@ -804,10 +831,59 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionStartSession</sender>
+   <signal>triggered()</signal>
+   <receiver>MeasureWindow</receiver>
+   <slot>onStartSession()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>321</x>
+     <y>317</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>toolButton</sender>
+   <signal>clicked()</signal>
+   <receiver>MeasureWindow</receiver>
+   <slot>onEditProfile()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>200</x>
+     <y>78</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>377</x>
+     <y>-4</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>profileCombo</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>MeasureWindow</receiver>
+   <slot>onProfileChanged(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>118</x>
+     <y>78</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>146</x>
+     <y>-8</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>onProfileChanged(int)</slot>
   <slot>onManageProfile()</slot>
   <slot>onEditProfile()</slot>
+  <slot>onStartSession()</slot>
  </slots>
 </ui>

@@ -24,7 +24,8 @@ SOURCES += main.cpp\
     ../axisplotter.cpp \
     ../sessiondialog.cpp \
     ../controller.cpp \
-    ../pc_serial.c
+    ../pc_serial.c \
+    ../get_opt.cpp
 
 HEADERS  += measurewindow.h \
     ../configuration.h \
@@ -39,7 +40,8 @@ HEADERS  += measurewindow.h \
     ../axisplotter.h \
     ../sessiondialog.h \
     ../controller.h \
-    ../pc_serial.h
+    ../pc_serial.h \
+    ../get_opt.h
 
 FORMS    += measurewindow.ui \
     ../profileselectdialog.ui \

@@ -67,9 +67,9 @@ public:
   DDAStatus status() const {return m_status;}
   static QString statusString(int s);
 
-  void setMode(int meshIndex, int samples, DDAMode mode = Auto);
-  void start();
-  void manualMode();
+  virtual void setMode(int meshIndex, int samples, DDAMode mode = Auto);
+  virtual void start();
+  virtual void manualMode();
 
 signals:
   void statusChanged(int s);
@@ -83,6 +83,28 @@ signals:
   void nextCasseteRequest();
   void endOfMeasuring();
 
+};
+/*----------------------------------------------------------------------------*/
+class DemoController : public DDAController
+{
+protected:
+  virtual void run();
+  void doSimulation();
+  int m_count;
+  QTime m_time;
+  double m_strength;
+  int m_number;
+  int m_nextCell;
+  enum
+  {
+    NoCmd,
+    StartCmd
+  } m_cmd;
+public:
+  DemoController(QObject *parent = 0);
+  virtual void setMode(int meshIndex, int samples, DDAMode mode = Auto);
+  virtual void start();
+  virtual void manualMode();
 };
 /*----------------------------------------------------------------------------*/
 extern DDAController *controller;

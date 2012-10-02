@@ -332,4 +332,121 @@ void DDAController :: manualMode()
   unlock();
 }
 /*----------------------------------------------------------------------------*/
+// DevoController
+/*----------------------------------------------------------------------------*/
+DemoController :: DemoController(QObject *parent)
+  : DDAController(parent)
+{
+  m_count = 5;
+  m_time.start();
+  m_cmd = NoCmd;
+}
+/*----------------------------------------------------------------------------*/
+void DemoController :: run()
+{
+  while(!m_terminated)
+  {
+    QCoreApplication::processEvents();
+    if(m_time.elapsed() >= 1000)
+    {
+      m_time.restart();
+      m_count --;
+      if(m_count <= 0)
+      {
+        m_count = 1;
+        doSimulation();
+      }
+    }
+    msleep(10);
+  }
+}
+/*----------------------------------------------------------------------------*/
+void DemoController :: setMode(int, int, DDAMode)
+{
+}
+/*----------------------------------------------------------------------------*/
+void DemoController :: start()
+{
+  m_cmd = StartCmd;
+}
+/*----------------------------------------------------------------------------*/
+void DemoController :: manualMode()
+{
+}
+/*----------------------------------------------------------------------------*/
+void DemoController :: doSimulation()
+{
+  switch(m_status)
+  {
+  case Offline:
+    setStatus(Idle);
+    break;
+  case Idle:
+    if(m_cmd == StartCmd)
+    {
+      m_cmd = NoCmd;
+      emit cmdSendOk();
+      setStatus(Calibrating);
+      m_count = 5;
+      m_strength = 0;
+      m_number = 1;
+      m_nextCell = 1;
+    }
+    else
+    {
+      emit serialReceived("00013");
+    }
+    break;
+  case Calibrating:
+    setStatus(Measuring);
+    break;
+  case Measuring:
+    m_strength += 12.3;
+    emit currentStretch(m_strength);
+    if(m_strength > 50)
+    {
+      if(qrand() % 2) //end of measure
+      {
+        if(qrand() % 2)
+        {
+          setStatus(NoParticle);
+          emit noParticle();
+          m_strength = 0;
+        }
+        else
+        {
+          emit measure(m_strength, m_number, m_nextCell);
+          emit giftSize(m_strength * 1.23);
+          m_strength = 0;
+        }
+        m_number ++;
+        m_nextCell ++;
+        if(m_number == 10)
+        {
+          m_count = 5;
+          setStatus(NextCasseteWaiting);
+          emit nextCasseteRequest();
+        }
+
+        if(m_number == 20)
+        {
+          m_count = 5;
+          setStatus(EndOfMeasuring);
+          emit endOfMeasuring();
+        }
+      }
+    }
+    break;
+  case NoParticle:
+    setStatus(Measuring);
+    break;
+  case NextCasseteWaiting:
+    setStatus(Measuring);
+    break;
+  case EndOfMeasuring:
+    setStatus(Idle);
+    break;
+  }
+}
+/*----------------------------------------------------------------------------*/
 

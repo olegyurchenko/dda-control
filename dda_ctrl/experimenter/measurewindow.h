@@ -35,6 +35,7 @@ protected slots:
   void onGiftSize(double size);
   void onNextCasseteRequest();
   void onEndOfMeasuring();
+  void onStartSession();
 };
 /*----------------------------------------------------------------------------*/
 

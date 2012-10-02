@@ -22,6 +22,9 @@ struct DDAProfile
   QString name;
   int serial;
   int baud;
+  int meshIndex;
+  int gostIndex;
+  int giftCount;
 };
 /*----------------------------------------------------------------------------*/
 struct DDASettings

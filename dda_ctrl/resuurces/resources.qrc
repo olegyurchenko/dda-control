@@ -5,6 +5,16 @@
         <file>edit-delete.png</file>
         <file>edit-select.png</file>
         <file>user-identity.png</file>
+        <file>arrow-right.png</file>
+        <file>document-encrypt.png</file>
+        <file>edit-find-user.png</file>
+        <file>format-indent-more.png</file>
+        <file>games-difficult.png</file>
+        <file>games-endturn.png</file>
+        <file>list-add-user.png</file>
+        <file>list-add.png</file>
+        <file>list-remove-user.png</file>
+        <file>list-remove.png</file>
     </qresource>
     <qresource prefix="/sql">
         <file>create_database.sql</file>

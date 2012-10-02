@@ -140,7 +140,9 @@ DDADatabase :: DDADatabase(QObject *parent)
 
   }
 
-  if(!q.exec("select id from users where id = 0"))
+  q.prepare("select id from users where id = ?");
+  q.addBindValue(UnknownUserId);
+  if(!q.exec())
   {
     error(q);
     return;
@@ -148,15 +150,37 @@ DDADatabase :: DDADatabase(QObject *parent)
 
   if(!q.first())
   {
-    q.prepare("insert into users(id, active, name) values(0, 0, ?)");
+    q.prepare("insert into users(id, active, name) values(?, 1, ?)");
+    q.addBindValue(UnknownUserId);
+    q.addBindValue(tr("Undefined user"));
+    if(!q.exec())
+    {
+      error(q);
+      return;
+    }
+  }
+
+  q.prepare("select id from users where id = ?");
+  q.addBindValue(SuperUserId);
+  if(q.exec())
+  {
+    error(q);
+    return;
+  }
+
+  if(!q.first())
+  {
+    q.prepare("insert into users(id, active, name) values(?, 0, ?)");
+    q.addBindValue(SuperUserId);
     q.addBindValue("root");
     if(!q.exec())
     {
       error(q);
       return;
     }
-    setPassword(0, "");
+    setPassword(SuperUserId, "");
   }
+
 
   m_isError = false;
 }
@@ -331,4 +355,275 @@ void DDADatabase :: setPassword(int id, QString passw)
     error(q);
 }
 /*----------------------------------------------------------------------------*/
+int DDADatabase :: deviceId(const QString& serial)
+{
+  QSqlQuery q(QSqlDatabase::database(CONNECTION_NAME));
+  q.prepare("select id from devices where serial = ?");
+  q.addBindValue(serial);
+  if(!q.exec())
+  {
+    error(q);
+    return -1;
+  }
+  if(q.first())
+    return q.value(0).toInt();
+  if(!q.exec("select max(id) from devices"))
+  {
+    error(q);
+    return -1;
+  }
+  int id = 0;
+  if(q.first())
+    id = q.value(0).toInt();
+  ++id;
+  q.prepare("insert into devices(id, serial) values(?, ?)");
+  q.addBindValue(id);
+  q.addBindValue(serial);
+  if(!q.exec())
+  {
+    error(q);
+    return -1;
+  }
+  return id;
+}
+/*----------------------------------------------------------------------------*/
+int DDADatabase :: sessionAdd(const DDASession& session)
+{
+  QSqlQuery q(QSqlDatabase::database(CONNECTION_NAME));
+  if(!q.exec("select max(id) from sessions"))
+  {
+    error(q);
+    return -1;
+  }
+  int id = 0;
+  if(q.first())
+    id = q.value(0).toInt();
+  ++id;
+  q.prepare(
+        "insert into sessions(id, user,device,start,end, lot,mesh,gost,mark)\n"
+        "values(?,?,?,?,?,?,?,?,?)"
+            );
+  q.addBindValue(id);
+  q.addBindValue(session.userId);
+  q.addBindValue(session.deviceId);
+  q.addBindValue(session.start);
+  q.addBindValue(session.end);
+  q.addBindValue(session.lot);
+  q.addBindValue(session.meshIndex);
+  q.addBindValue(session.gostIndex);
+  q.addBindValue(session.mark);
+  if(!q.exec())
+  {
+    error(q);
+    return -1;
+  }
+  return id;
+}
+/*----------------------------------------------------------------------------*/
+DDASession DDADatabase :: getSession(const QSqlQuery &q)
+{
+  DDASession session;
+  session.id = q.value(0).toInt();
+  session.userId = q.value(1).toInt();
+  session.deviceId = q.value(2).toInt();
+  session.start = q.value(3).toDateTime();
+  session.end = q.value(4).toDateTime();
+  session.lot = q.value(5).toString();
+  session.meshIndex = q.value(6).toInt();
+  session.gostIndex = q.value(7).toInt();
+  session.mark = q.value(8).toString();
 
+  return session;
+}
+/*----------------------------------------------------------------------------*/
+DDASession DDADatabase :: lastSession()
+{
+  DDASession session;
+  QSqlQuery q(QSqlDatabase::database(CONNECTION_NAME));
+  q.prepare(
+        "select id, user,device,start,end, lot,mesh,gost,mark\n"
+        "from sessions\n"
+        "where id = (select max(id) from sessions)"
+            );
+
+  if(!q.exec())
+  {
+    error(q);
+    return session;
+  }
+
+  if(!q.first())
+    return session;
+
+  return getSession(q);
+}
+/*----------------------------------------------------------------------------*/
+void DDADatabase :: modifySession(const DDASession& session)
+{
+  if(session.id == InvalidId)
+    return;
+  QSqlQuery q(QSqlDatabase::database(CONNECTION_NAME));
+  q.prepare(
+        "update sessions set user = ?, device = ?, start = ?, end = ?,\n"
+        "lot = ?, mesh = ?, gost = ?, mark = ?\n"
+        "where id = ?"
+            );
+  q.addBindValue(session.userId);
+  q.addBindValue(session.deviceId);
+  q.addBindValue(session.start);
+  q.addBindValue(session.end);
+  q.addBindValue(session.lot);
+  q.addBindValue(session.meshIndex);
+  q.addBindValue(session.gostIndex);
+  q.addBindValue(session.mark);
+  q.addBindValue(session.id);
+  if(!q.exec())
+  {
+    error(q);
+    return;
+  }
+}
+/*----------------------------------------------------------------------------*/
+int DDADatabase :: addMeasure(const DDAMeasure& measure)
+{
+  QSqlQuery q(QSqlDatabase::database(CONNECTION_NAME));
+  if(!q.exec("select max(id) from measures"))
+  {
+    error(q);
+    return -1;
+  }
+
+  int id = 0;
+  if(q.first())
+    id = q.value(0).toInt();
+  ++id;
+  q.prepare("insert into measures(id, session, size, strenght, elapsed) values(?, ?, ?, ?, ?)");
+  q.addBindValue(id);
+  q.addBindValue(measure.sessionId);
+  q.addBindValue(measure.size);
+  q.addBindValue(measure.strenght);
+  q.addBindValue(measure.elapsed);
+  if(!q.exec())
+  {
+    error(q);
+    return -1;
+  }
+  return id;
+}
+/*----------------------------------------------------------------------------*/
+DDAMeasure DDADatabase :: getMeasure(const QSqlQuery &q)
+{
+  DDAMeasure measure;
+
+  measure.id = q.value(0).toInt();
+  measure.sessionId = q.value(1).toInt();
+  measure.size = q.value(2).toDouble();
+  measure.strenght = q.value(3).toDouble();
+  measure.elapsed = q.value(4).toInt();
+  return measure;
+}
+/*----------------------------------------------------------------------------*/
+DDAMeasure DDADatabase :: lastMeasure()
+{
+  DDAMeasure measure;
+  QSqlQuery q(QSqlDatabase::database(CONNECTION_NAME));
+  q.prepare("select id, session, size, strenght, elapsed from measures\n"
+            "where id = (select max(id) from measures)");
+
+  if(!q.exec())
+  {
+    error(q);
+    return measure;
+  }
+
+  if(!q.first())
+    return measure;
+
+  return getMeasure(q);
+}
+/*----------------------------------------------------------------------------*/
+DDAMeasureSession DDADatabase :: measureSession(int id)
+{
+  DDAMeasureSession session;
+  QSqlQuery q(QSqlDatabase::database(CONNECTION_NAME));
+  q.prepare(
+        "select id, user,device,start,end, lot,mesh,gost,mark\n"
+        "from sessions\n"
+        "where id = ?"
+            );
+  q.addBindValue(id);
+  if(!q.exec())
+  {
+    error(q);
+    return session;
+  }
+
+  if(!q.first())
+    return session;
+  session.session = getSession(q);
+  q.prepare("select id, session, size, strenght, elapsed from measures\n"
+            "where session = ?");
+  q.addBindValue(id);
+  if(!q.exec())
+  {
+    error(q);
+    return session;
+  }
+
+  if(!q.first())
+    return session;
+
+  do
+  {
+    DDAMeasure m = getMeasure(q);
+    session.measureList.append(m);
+  } while(q.next());
+
+  return session;
+}
+/*----------------------------------------------------------------------------*/
+void DDADatabase :: setSerial(const QString& serial)
+{
+  if(m_serial != serial)
+  {
+    m_serial = serial;
+    m_measureSession.session.deviceId = deviceId(serial);
+  }
+}
+/*----------------------------------------------------------------------------*/
+void DDADatabase :: currentStretch(double)
+{
+}
+/*----------------------------------------------------------------------------*/
+void DDADatabase :: measure(double strength, int, int)
+{
+  if(m_measureSession.measureList.isEmpty())
+    m_measureSession.measureList.append(DDAMeasure());
+
+  DDAMeasure *last = &m_measureSession.measureList.last();
+  if(last->mask & DDAMeasure::strenghtFlag)
+    m_measureSession.measureList.append(DDAMeasure());
+
+  last = &m_measureSession.measureList.last();
+  last->mask |= DDAMeasure::strenghtFlag;
+  last->strenght = strength;
+  if(last->mask & DDAMeasure::sizeFlag)
+    last->id = addMeasure(*last);
+}
+/*----------------------------------------------------------------------------*/
+void DDADatabase :: giftSize(double size)
+{
+  if(m_measureSession.measureList.isEmpty())
+    m_measureSession.measureList.append(DDAMeasure());
+
+  DDAMeasure *last = &m_measureSession.measureList.last();
+  if(last->mask & DDAMeasure::sizeFlag)
+    m_measureSession.measureList.append(DDAMeasure());
+
+  last = &m_measureSession.measureList.last();
+  last->mask |= DDAMeasure::sizeFlag;
+  last->size = size;
+  if(last->mask & DDAMeasure::strenghtFlag)
+    last->id = addMeasure(*last);
+}
+/*----------------------------------------------------------------------------*/

@@ -53,7 +53,8 @@ start DATETIME,
 end DATETIME,
 lot VARCHAR(24),
 mesh INTEGER,
-gost INTEGER
+gost INTEGER,
+mark VARCHER(24)
 );
 
 create table 

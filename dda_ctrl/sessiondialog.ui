@@ -147,7 +147,17 @@
       </widget>
      </item>
      <item row="0" column="1">
-      <widget class="QSpinBox" name="giftCountSpin"/>
+      <widget class="QSpinBox" name="giftCountSpin">
+       <property name="prefix">
+        <string/>
+       </property>
+       <property name="minimum">
+        <number>1</number>
+       </property>
+       <property name="maximum">
+        <number>999999</number>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>
@@ -194,5 +204,91 @@
  <resources>
   <include location="resuurces/resources.qrc"/>
  </resources>
- <connections/>
+ <connections>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>SessionDialog</receiver>
+   <slot>accept()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>129</x>
+     <y>298</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>221</x>
+     <y>229</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>rejected()</signal>
+   <receiver>SessionDialog</receiver>
+   <slot>reject()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>194</x>
+     <y>297</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>283</x>
+     <y>250</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>userCombo</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>SessionDialog</receiver>
+   <slot>onUserListIndexChanged(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>209</x>
+     <y>32</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>237</x>
+     <y>70</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>userToolButton</sender>
+   <signal>clicked()</signal>
+   <receiver>SessionDialog</receiver>
+   <slot>onManageUsers()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>295</x>
+     <y>32</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>280</x>
+     <y>81</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonBox</sender>
+   <signal>accepted()</signal>
+   <receiver>SessionDialog</receiver>
+   <slot>onAccepted()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>95</x>
+     <y>294</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>201</x>
+     <y>197</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>onUserListIndexChanged(int)</slot>
+  <slot>onManageUsers()</slot>
+  <slot>onAccepted()</slot>
+ </slots>
 </ui>

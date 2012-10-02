@@ -6,6 +6,7 @@
 #include <database.h>
 #include <controller.h>
 #include <QMessageBox>
+#include <sessiondialog.h>
 /*----------------------------------------------------------------------------*/
 MeasureWindow::MeasureWindow(QWidget *parent) :
   QMainWindow(parent),
@@ -84,6 +85,33 @@ void MeasureWindow::onDatabaseError()
 /*----------------------------------------------------------------------------*/
 void MeasureWindow::onStatusChanged(int s)
 {
+  QString str = DDAController::statusString(s);
+  ui->statusLabel->setText(str);
+  ui->statusLabel_2->setText(str);
+  switch(s)
+  {
+  case DDAController::Offline:
+    ui->actionStartSession->setEnabled(false);
+    break;
+  case DDAController::Idle:
+    ui->actionStartSession->setEnabled(true);
+    break;
+  case DDAController::Calibrating:
+    ui->actionStartSession->setEnabled(false);
+    break;
+  case DDAController::Measuring:
+    ui->actionStartSession->setEnabled(false);
+    break;
+  case DDAController::NoParticle:
+    ui->actionStartSession->setEnabled(false);
+    break;
+  case DDAController::NextCasseteWaiting:
+    ui->actionStartSession->setEnabled(false);
+    break;
+  case DDAController::EndOfMeasuring:
+    ui->actionStartSession->setEnabled(false);
+    break;
+  }
 }
 /*----------------------------------------------------------------------------*/
 void MeasureWindow::onCmdSendOk()
@@ -94,8 +122,11 @@ void MeasureWindow::onCmdSendError()
 {
 }
 /*----------------------------------------------------------------------------*/
-void MeasureWindow::onSerialReceived(const QString&)
+void MeasureWindow::onSerialReceived(const QString& str)
 {
+  ui->serialLabel->setText(str);
+  ui->serialLabel_2->setText(str);
+  ui->actionStartSession->setEnabled(true);
 }
 /*----------------------------------------------------------------------------*/
 void MeasureWindow::onCurrentStretch(double)
@@ -120,5 +151,14 @@ void MeasureWindow::onNextCasseteRequest()
 /*----------------------------------------------------------------------------*/
 void MeasureWindow::onEndOfMeasuring()
 {
+}
+/*----------------------------------------------------------------------------*/
+void MeasureWindow::onStartSession()
+{
+  SessionDialog dialog;
+  if(dialog.exec() == QDialog::Accepted)
+  {
+    ui->stackedWidget->setCurrentIndex(1);
+  }
 }
 /*----------------------------------------------------------------------------*/
