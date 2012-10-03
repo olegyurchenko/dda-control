@@ -31,11 +31,12 @@ protected slots:
   void onSerialReceived(const QString&);
   void onCurrentStretch(double);
   void onNoParticle();
-  void onMeasure(double strength, int number, int nextCell);
-  void onGiftSize(double size);
+  void onMeasure(double strength, double size, int number);
   void onNextCasseteRequest();
   void onEndOfMeasuring();
   void onStartSession();
+  void onSessionChanged();
+  void onMeasureListChanged();
 };
 /*----------------------------------------------------------------------------*/
 

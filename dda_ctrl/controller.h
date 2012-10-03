@@ -50,6 +50,10 @@ protected:
   ByteVector m_rxData;
   QTime m_lastCharTime;
 
+  double m_size;
+  double m_strength;
+  QString m_deviceSerial;
+
   QMutex m_mutex;
   void lock() {m_mutex.lock();}
   void unlock() {m_mutex.unlock();}
@@ -59,6 +63,10 @@ protected:
   bool txPacket(int serial);
   bool waitAck(int serial);
   void handleData(const ByteVector& data);
+
+  void setSize(double s) {m_size = s;}
+  void setStrength(double s) {m_strength = s;}
+  void setDeviceSerial(const QString& s){m_deviceSerial = s;}
 public:
   DDAController(QObject *parent = NULL);
   ~DDAController();
@@ -71,6 +79,10 @@ public:
   virtual void start();
   virtual void manualMode();
 
+  double size() {return m_size;}
+  double strength() {return m_strength;}
+  QString deviceSerial() {return m_deviceSerial;}
+
 signals:
   void statusChanged(int s);
   void cmdSendOk();
@@ -78,8 +90,7 @@ signals:
   void serialReceived(const QString&);
   void currentStretch(double);
   void noParticle();
-  void measure(double strength, int number, int nextCell);
-  void giftSize(double size);
+  void measure(double strength, double size, int number);
   void nextCasseteRequest();
   void endOfMeasuring();
 

@@ -19,7 +19,8 @@
 #include <QList>
 #include <QStringList>
 #include <QDateTime>
-
+#include <session.h>
+#include <QMap>
 /*----------------------------------------------------------------------------*/
 struct DDAUser
 {
@@ -27,63 +28,10 @@ struct DDAUser
   QString name;
 };
 typedef QList<DDAUser> DDAUserList;
+typedef QMap<int, QString> UserMap;
 /*----------------------------------------------------------------------------*/
 const int UnknownUserId = -1;
 const int SuperUserId = 0;
-const int InvalidId = -1;
-/*----------------------------------------------------------------------------*/
-struct DDASession
-{
-  int id;
-  int userId;
-  int deviceId;
-  QDateTime start;
-  QDateTime end;
-  QString lot;
-  int meshIndex;
-  int gostIndex;
-  QString mark;
-  DDASession() {
-    id = InvalidId;
-    userId = InvalidId;
-    deviceId = InvalidId;
-    start = QDateTime::currentDateTime();
-    end = QDateTime::currentDateTime();
-    meshIndex = 0;
-    gostIndex = 0;
-  }
-};
-/*----------------------------------------------------------------------------*/
-struct DDAMeasure
-{
-  enum MeasureFlags
-  {
-    sizeFlag = 1,
-    strenghtFlag = 2
-  };
-
-  int id;
-  int sessionId;
-  double size;
-  double strenght;
-  int elapsed;
-  unsigned mask;
-  DDAMeasure() {
-    id = InvalidId;
-    sessionId = InvalidId;
-    size = 0;
-    strenght = 0;
-    elapsed = 0;
-    mask = 0;
-  }
-};
-typedef QList<DDAMeasure> DDAMeasureList;
-/*----------------------------------------------------------------------------*/
-struct DDAMeasureSession
-{
-  DDASession session;
-  DDAMeasureList measureList;
-};
 /*----------------------------------------------------------------------------*/
 class QSqlQuery;
 class DDADatabase : public QObject
@@ -94,12 +42,14 @@ protected:
   bool m_isError;
   QString m_message;
   QString m_serial;
-  DDAMeasureSession m_measureSession;
+  int m_session;
+  UserMap m_userMap;
 
   bool error(const QSqlQuery &q);
   DDASession getSession(const QSqlQuery &q);
   DDAMeasure getMeasure(const QSqlQuery &q);
-
+  int deviceId(const QString& serial);
+  QString deviceSerial(int id);
 public:
   DDADatabase(QObject *parent = 0);
   ~DDADatabase();
@@ -112,27 +62,27 @@ public:
   void userDel(int id);
   bool checkPassword(int id, QString passw);
   void setPassword(int id, QString passw);
-  int deviceId(const QString& serial);
   int sessionAdd(const DDASession& session);
   DDASession lastSession();
   void modifySession(const DDASession& session);
   int addMeasure(const DDAMeasure& measure);
   DDAMeasure lastMeasure();
-  DDAMeasureSession measureSession(int id);
+  bool measureSession(int id, DDAMeasureSession *dst);
+  QString userName(int id);
 
-  DDAMeasureSession& session() {return m_measureSession;}
-  void setSession(const DDAMeasureSession& s) {m_measureSession = s;}
+  int currentSessionId(){return m_session;}
 
 public slots:
   void setSerial(const QString&);
-  void measure(double strength, int number, int nextCell);
-  void giftSize(double size);
-  void currentStretch(double);
+  void measure(double strength, double size, int number);
+  void onEndOfMeasuring();
+protected slots:
+  void onUserChanged() {m_userMap.clear();}
 
 
 signals:
   void dbError(const QString &error);
-  void sessionChanged(int id);
+  void userChanged(int id);
 };
 
 extern DDADatabase *database;

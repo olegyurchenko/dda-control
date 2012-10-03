@@ -25,7 +25,8 @@ SOURCES += main.cpp\
     ../sessiondialog.cpp \
     ../controller.cpp \
     ../pc_serial.c \
-    ../get_opt.cpp
+    ../get_opt.cpp \
+    ../session.cpp
 
 HEADERS  += measurewindow.h \
     ../configuration.h \
@@ -41,7 +42,8 @@ HEADERS  += measurewindow.h \
     ../sessiondialog.h \
     ../controller.h \
     ../pc_serial.h \
-    ../get_opt.h
+    ../get_opt.h \
+    ../session.h
 
 FORMS    += measurewindow.ui \
     ../profileselectdialog.ui \

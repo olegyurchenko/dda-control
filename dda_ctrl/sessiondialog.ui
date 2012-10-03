@@ -171,7 +171,11 @@
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="markEdit"/>
+      <widget class="QLineEdit" name="markEdit">
+       <property name="enabled">
+        <bool>false</bool>
+       </property>
+      </widget>
      </item>
      <item>
       <spacer name="horizontalSpacer">

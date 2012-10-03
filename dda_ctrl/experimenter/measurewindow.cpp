@@ -25,13 +25,14 @@ MeasureWindow::MeasureWindow(QWidget *parent) :
   connect(controller, SIGNAL(cmdSendOk()), this, SLOT(onCmdSendOk()));
   connect(controller, SIGNAL(currentStretch(double)), this, SLOT(onCurrentStretch(double)));
   connect(controller, SIGNAL(endOfMeasuring()), this, SLOT(onEndOfMeasuring()));
-  connect(controller, SIGNAL(giftSize(double)), this, SLOT(onGiftSize(double)));
-  connect(controller, SIGNAL(measure(double,int,int)), this, SLOT(onMeasure(double,int,int)));
+  connect(controller, SIGNAL(measure(double,double,int)), this, SLOT(onMeasure(double,double,int)));
   connect(controller, SIGNAL(nextCasseteRequest()), this, SLOT(onNextCasseteRequest()));
   connect(controller, SIGNAL(noParticle()), this, SLOT(onNoParticle()));
   connect(controller, SIGNAL(serialReceived(QString)), this, SLOT(onSerialReceived(QString)));
   connect(controller, SIGNAL(statusChanged(int)), this, SLOT(onStatusChanged(int)));
 
+  connect(session, SIGNAL(sessionChanged()), this, SLOT(onSessionChanged()));
+  connect(session, SIGNAL(measureListChanged()), this, SLOT(onMeasureListChanged()));
 }
 /*----------------------------------------------------------------------------*/
 MeasureWindow::~MeasureWindow()
@@ -129,20 +130,18 @@ void MeasureWindow::onSerialReceived(const QString& str)
   ui->actionStartSession->setEnabled(true);
 }
 /*----------------------------------------------------------------------------*/
-void MeasureWindow::onCurrentStretch(double)
+void MeasureWindow::onCurrentStretch(double d)
 {
+  ui->currentValueLabel->setText(QString::number(d, 'f', 1));
 }
 /*----------------------------------------------------------------------------*/
 void MeasureWindow::onNoParticle()
 {
 }
 /*----------------------------------------------------------------------------*/
-void MeasureWindow::onMeasure(double strength, int number, int nextCell)
+void MeasureWindow::onMeasure(double strength, double size, int number)
 {
-}
-/*----------------------------------------------------------------------------*/
-void MeasureWindow::onGiftSize(double size)
-{
+  ui->currentValueLabel->setText(QString::number(strength, 'f', 1));
 }
 /*----------------------------------------------------------------------------*/
 void MeasureWindow::onNextCasseteRequest()
@@ -159,6 +158,22 @@ void MeasureWindow::onStartSession()
   if(dialog.exec() == QDialog::Accepted)
   {
     ui->stackedWidget->setCurrentIndex(1);
+    controller->setMode(session->session().meshIndex, session->session().giftCount);
+    controller->start();
   }
+}
+/*----------------------------------------------------------------------------*/
+void MeasureWindow::onSessionChanged()
+{
+  DDASession s = session->session();
+  ui->userLabel->setText(database->userName(s.userId));
+  ui->lotLabel->setText(s.lot);
+  ui->meshLabel->setText(database->meshList()[s.meshIndex]);
+  ui->gostLabel->setText(database->gostList()[s.gostIndex]);
+  ui->giftCountLabel->setText(QString::number(s.giftCount));
+}
+/*----------------------------------------------------------------------------*/
+void MeasureWindow::onMeasureListChanged()
+{
 }
 /*----------------------------------------------------------------------------*/

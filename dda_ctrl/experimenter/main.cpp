@@ -6,6 +6,7 @@
 #include <profileselectdialog.h>
 #include <QMessageBox>
 #include <controller.h>
+#include <session.h>
 #include <get_opt.h>
 /*----------------------------------------------------------------------------*/
 int main(int argc, char *argv[])
@@ -47,10 +48,20 @@ int main(int argc, char *argv[])
     config->setProfileIndex(0);
   }
 
+  session = new DDAMeasureSession(&a);
+
   if(getOptSwitch("demo", 'd') || getOptSwitch("demo-mode", 'D'))
     controller = new DemoController(&a);
   else
     controller = new DDAController(&a);
+
+  QObject::connect(controller, SIGNAL(measure(double,double,int)), session, SLOT(addMeasure(double,double,int)));
+  QObject::connect(controller, SIGNAL(serialReceived(QString)), session, SLOT(setSerial(QString)));
+  QObject::connect(controller, SIGNAL(endOfMeasuring()), session, SLOT(onEndOfMeasuring()));
+
+  QObject::connect(controller, SIGNAL(measure(double,double,int)), database, SLOT(measure(double,double,int)));
+  QObject::connect(controller, SIGNAL(serialReceived(QString)), database, SLOT(setSerial(QString)));
+  QObject::connect(controller, SIGNAL(endOfMeasuring()), database, SLOT(onEndOfMeasuring()));
 
   MeasureWindow w;
   w.show();

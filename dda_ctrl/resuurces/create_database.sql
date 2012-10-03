@@ -14,8 +14,8 @@ users
 id INTEGER PRIMARY KEY,
 active INTEGER,
 name VARCHAR(48),
-pswd VARCHAR(32),
-salt VARCHAR(32)
+pswd VARCHAR(64),
+used INTEGER
 );
 
 create table

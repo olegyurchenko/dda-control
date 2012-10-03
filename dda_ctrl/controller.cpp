@@ -251,6 +251,7 @@ void DDAController :: handleData(const ByteVector& data)
   switch(data[1]) //Header
   {
   case 'N':
+    setDeviceSerial(s);
     emit serialReceived(s);
     setStatus(Idle);
     break;
@@ -262,8 +263,10 @@ void DDAController :: handleData(const ByteVector& data)
     else
     {
       setStatus(Measuring);
-      emit currentStretch(s.simplified().toDouble());
+      setStrength(s.simplified().toDouble());
+      emit currentStretch(strength());
     }
+    m_size = 0;
     break;
   case 'M':
     if(s[0] == '-')
@@ -276,16 +279,17 @@ void DDAController :: handleData(const ByteVector& data)
       QStringList lst = s.split(",");
       if(lst.size() >= 3)
       {
-        double strength = lst[0].simplified().toDouble();
+        setStrength(lst[0].simplified().toDouble());
         int number = lst[1].simplified().toInt();
-        int nextCell = lst[2].simplified().toInt();
+        //int nextCell = lst[2].simplified().toInt();
         setStatus(Measuring);
-        emit measure(strength, number, nextCell);
+        emit measure(strength(), DDAController::size(), number);
       }
     }
     break;
   case 'G':
-    emit giftSize(s.simplified().toDouble());
+    //emit giftSize(s.simplified().toDouble());
+    setSize(s.simplified().toDouble());
     break;
   case 'C':
     setStatus(NextCasseteWaiting);
@@ -394,7 +398,8 @@ void DemoController :: doSimulation()
     }
     else
     {
-      emit serialReceived("00013");
+      setDeviceSerial("00013");
+      emit serialReceived(deviceSerial());
     }
     break;
   case Calibrating:
@@ -402,12 +407,13 @@ void DemoController :: doSimulation()
     break;
   case Measuring:
     m_strength += 12.3;
-    emit currentStretch(m_strength);
+    setStrength(m_strength);
+    emit currentStretch(strength());
     if(m_strength > 50)
     {
       if(qrand() % 2) //end of measure
       {
-        if(qrand() % 2)
+        if(!(qrand() % 5))
         {
           setStatus(NoParticle);
           emit noParticle();
@@ -415,8 +421,9 @@ void DemoController :: doSimulation()
         }
         else
         {
-          emit measure(m_strength, m_number, m_nextCell);
-          emit giftSize(m_strength * 1.23);
+          setStrength(m_strength);
+          setSize(m_strength * 1.23);
+          emit measure(strength(), size(), m_number);
           m_strength = 0;
         }
         m_number ++;
