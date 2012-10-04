@@ -7,6 +7,7 @@ namespace Ui {
 class MeasureWindow;
 }
 
+class MeasureModel;
 /*----------------------------------------------------------------------------*/
 class MeasureWindow : public QMainWindow
 {
@@ -19,6 +20,7 @@ public:
 private:
   Ui::MeasureWindow *ui;
   bool m_created;
+  MeasureModel *measureModel;
 
 protected slots:
   void onProfileChanged(int);
@@ -37,6 +39,7 @@ protected slots:
   void onStartSession();
   void onSessionChanged();
   void onMeasureListChanged();
+  void onManageUsers();
 };
 /*----------------------------------------------------------------------------*/
 

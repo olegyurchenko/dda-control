@@ -26,7 +26,10 @@ SOURCES += main.cpp\
     ../controller.cpp \
     ../pc_serial.c \
     ../get_opt.cpp \
-    ../session.cpp
+    ../session.cpp \
+    ../measuremodel.cpp \
+    ../usermanagedialog.cpp \
+    ../newpassworddialog.cpp
 
 HEADERS  += measurewindow.h \
     ../configuration.h \
@@ -43,12 +46,17 @@ HEADERS  += measurewindow.h \
     ../controller.h \
     ../pc_serial.h \
     ../get_opt.h \
-    ../session.h
+    ../session.h \
+    ../measuremodel.h \
+    ../usermanagedialog.h \
+    ../newpassworddialog.h
 
 FORMS    += measurewindow.ui \
     ../profileselectdialog.ui \
     ../editprofiledialog.ui \
-    ../sessiondialog.ui
+    ../sessiondialog.ui \
+    ../usermanagedialog.ui \
+    ../newpassworddialog.ui
 
 INCLUDEPATH += \
  ..

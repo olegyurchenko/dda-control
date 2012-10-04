@@ -616,7 +616,7 @@
             </property>
             <layout class="QVBoxLayout" name="verticalLayout_9">
              <item>
-              <widget class="QTableView" name="tableView_2"/>
+              <widget class="QTableView" name="measureTable"/>
              </item>
             </layout>
            </widget>
@@ -688,12 +688,12 @@
    </widget>
    <widget class="QMenu" name="menuProfile">
     <property name="title">
-     <string>Profile</string>
+     <string>Settings</string>
     </property>
     <addaction name="actionManageProfiles"/>
     <addaction name="actionEditCurrentProfile"/>
     <addaction name="separator"/>
-    <addaction name="actionOptions"/>
+    <addaction name="actionManageUsers"/>
    </widget>
    <widget class="QMenu" name="menuSession">
     <property name="title">
@@ -728,9 +728,13 @@
     <string>Manage profiles</string>
    </property>
   </action>
-  <action name="actionOptions">
+  <action name="actionManageUsers">
+   <property name="icon">
+    <iconset resource="../resuurces/resources.qrc">
+     <normaloff>:/edit-find-user.png</normaloff>:/edit-find-user.png</iconset>
+   </property>
    <property name="text">
-    <string>Options</string>
+    <string>Manage users</string>
    </property>
   </action>
   <action name="actionFileExit">
@@ -745,16 +749,6 @@
    </property>
    <property name="text">
     <string>Edit current profile</string>
-   </property>
-  </action>
-  <action name="actionEditUserData">
-   <property name="text">
-    <string>Edit user data</string>
-   </property>
-  </action>
-  <action name="actionManageUsers">
-   <property name="text">
-    <string>Manage users</string>
    </property>
   </action>
   <action name="actionStartSession">
@@ -879,11 +873,28 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionManageUsers</sender>
+   <signal>triggered()</signal>
+   <receiver>MeasureWindow</receiver>
+   <slot>onManageUsers()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>321</x>
+     <y>317</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>onProfileChanged(int)</slot>
   <slot>onManageProfile()</slot>
   <slot>onEditProfile()</slot>
   <slot>onStartSession()</slot>
+  <slot>onManageUsers()</slot>
  </slots>
 </ui>

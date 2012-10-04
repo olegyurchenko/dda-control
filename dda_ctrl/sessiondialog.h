@@ -25,6 +25,7 @@ protected slots:
   void onUserListIndexChanged(int);
   void onManageUsers();
   void onAccepted();
+  void onUsersChanged();
 
 };
 /*----------------------------------------------------------------------------*/

@@ -7,6 +7,8 @@
 #include <controller.h>
 #include <QMessageBox>
 #include <sessiondialog.h>
+#include <measuremodel.h>
+#include <usermanagedialog.h>
 /*----------------------------------------------------------------------------*/
 MeasureWindow::MeasureWindow(QWidget *parent) :
   QMainWindow(parent),
@@ -33,6 +35,10 @@ MeasureWindow::MeasureWindow(QWidget *parent) :
 
   connect(session, SIGNAL(sessionChanged()), this, SLOT(onSessionChanged()));
   connect(session, SIGNAL(measureListChanged()), this, SLOT(onMeasureListChanged()));
+
+  measureModel = new MeasureModel(this);
+  ui->measureTable->setModel(measureModel);
+  connect(session, SIGNAL(measureListChanged()), measureModel, SLOT(update()));
 }
 /*----------------------------------------------------------------------------*/
 MeasureWindow::~MeasureWindow()
@@ -155,6 +161,7 @@ void MeasureWindow::onEndOfMeasuring()
 void MeasureWindow::onStartSession()
 {
   SessionDialog dialog;
+  session->clear();
   if(dialog.exec() == QDialog::Accepted)
   {
     ui->stackedWidget->setCurrentIndex(1);
@@ -175,5 +182,13 @@ void MeasureWindow::onSessionChanged()
 /*----------------------------------------------------------------------------*/
 void MeasureWindow::onMeasureListChanged()
 {
+}
+/*----------------------------------------------------------------------------*/
+void MeasureWindow::onManageUsers()
+{
+  if(!passwordCheck(this, SuperUserId))
+    return;
+  UserManageDialog dialog;
+  dialog.exec();
 }
 /*----------------------------------------------------------------------------*/

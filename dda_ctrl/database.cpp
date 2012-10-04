@@ -184,6 +184,7 @@ DDADatabase :: DDADatabase(QObject *parent)
       m_message = tr("Password check error");
       m_isError = true;
       emit dbError(m_message);
+      return;
     }
   }
 
@@ -286,28 +287,28 @@ DDAUserList DDADatabase :: userList()
 void DDADatabase :: userAdd(QString name, QString passw)
 {
   QSqlQuery q(QSqlDatabase::database(CONNECTION_NAME));
-  if(!q.prepare("insert into users(active, name, pswd, used) values(1, ?, ?, 0)"))
+  int id = 0;
+  if(!q.exec("select max(id) from users"))
+  {
+    error(q);
+    return;
+  }
+  if(q.first())
+    id = q.value(0).toInt();
+
+  ++ id;
+  if(!q.prepare("insert into users(id, active, name, used) values(?, 1, ?, 0)"))
   {
     error(q);
     return;
   }
 
-  qsrand(QDateTime::currentDateTime().toTime_t());
-  QString salt;
-  for(int i = 0; i < 16; i++)
-  {
-    salt += QString::number((unsigned)qrand() % 256, 16);
-  }
-
-  QCryptographicHash hash(QCryptographicHash::Md5);
-  hash.addData(salt.toAscii());
-  hash.addData(passw.toUtf8());
-
+  q.addBindValue(id);
   q.addBindValue(name);
-  q.addBindValue(hash.result().toHex() + salt);
   if(!q.exec())
     error(q);
-  emit userChanged(-1);
+  setPassword(id, passw);
+  emit userChanged(id);
 }
 /*----------------------------------------------------------------------------*/
 void DDADatabase :: userDel(int id)
@@ -337,7 +338,7 @@ void DDADatabase :: userDel(int id)
 bool DDADatabase :: checkPassword(int id, QString passw)
 {
   QSqlQuery q(QSqlDatabase::database(CONNECTION_NAME));
-  if(!q.prepare("select pswd where id = ?"))
+  if(!q.prepare("select pswd from users where id = ?"))
   {
     error(q);
     return false;
@@ -356,12 +357,13 @@ bool DDADatabase :: checkPassword(int id, QString passw)
   shash = q.value(0).toString();
   if(shash.isEmpty())
     return false;
-  salt = shash.right(32);
+  salt = shash.mid(32);
   shash.remove(32, shash.size() - 32);
   QCryptographicHash hash(QCryptographicHash::Md5);
   hash.addData(salt.toAscii());
   hash.addData(passw.toUtf8());
-  return shash == hash.result().toHex();
+  QString dhash = hash.result().toHex();
+  return shash == dhash;
 }
 /*----------------------------------------------------------------------------*/
 void DDADatabase :: setPassword(int id, QString passw)

@@ -84,6 +84,7 @@ public slots:
   void setGiftCount(int i);
   void setMark(const QString&);
   void onEndOfMeasuring();
+  void clear();
 signals:
   void sessionChanged();
   void measureListChanged();

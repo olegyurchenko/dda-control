@@ -137,4 +137,16 @@ void DDAMeasureSession :: onEndOfMeasuring()
   m_session.end = QDateTime::currentDateTime();
 }
 /*----------------------------------------------------------------------------*/
+void DDAMeasureSession :: clear()
+{
+  m_session.id = InvalidId;
+  m_session.start = QDateTime::currentDateTime();
+  m_session.end = QDateTime::currentDateTime();
+  m_session.lot = "";
+  m_session.mark = "";
+  m_measureList.clear();
+  emit sessionChanged();
+  emit measureListChanged();
+}
+/*----------------------------------------------------------------------------*/
 
