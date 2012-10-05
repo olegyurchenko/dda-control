@@ -8,6 +8,7 @@ class MeasureWindow;
 }
 
 class MeasureModel;
+class HistogrammPlotter;
 /*----------------------------------------------------------------------------*/
 class MeasureWindow : public QMainWindow
 {
@@ -21,6 +22,8 @@ private:
   Ui::MeasureWindow *ui;
   bool m_created;
   MeasureModel *measureModel;
+  HistogrammPlotter *histogrammPlotter;
+  int intervalCount;
 
 protected slots:
   void onProfileChanged(int);
@@ -40,6 +43,10 @@ protected slots:
   void onSessionChanged();
   void onMeasureListChanged();
   void onManageUsers();
+  void onSetAdminPassword();
+  void onEditCurrentSession();
+  void onResumeMeasuring();
+  void onSingleStepMode();
 };
 /*----------------------------------------------------------------------------*/
 

@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Select profile</string>
+   <string>Manage profiles</string>
   </property>
   <property name="windowIcon">
    <iconset resource="resuurces/resources.qrc">

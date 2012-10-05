@@ -50,6 +50,7 @@ protected:
   DDAMeasure getMeasure(const QSqlQuery &q);
   int deviceId(const QString& serial);
   QString deviceSerial(int id);
+  void updateCurrentSession();
 public:
   DDADatabase(QObject *parent = 0);
   ~DDADatabase();

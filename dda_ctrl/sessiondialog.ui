@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Session</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
@@ -48,7 +48,7 @@
          </size>
         </property>
         <property name="toolTip">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select profile&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select user name&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
        </widget>
       </item>
@@ -62,7 +62,7 @@
         </property>
         <property name="icon">
          <iconset resource="resuurces/resources.qrc">
-          <normaloff>:/document-edit.png</normaloff>:/document-edit.png</iconset>
+          <normaloff>:/edit-find-user.png</normaloff>:/edit-find-user.png</iconset>
         </property>
        </widget>
       </item>
@@ -79,7 +79,11 @@
       </widget>
      </item>
      <item>
-      <widget class="QLineEdit" name="lotEdit"/>
+      <widget class="QLineEdit" name="lotEdit">
+       <property name="toolTip">
+        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Set lot&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+       </property>
+      </widget>
      </item>
      <item>
       <spacer name="horizontalSpacer_2">
@@ -119,7 +123,11 @@
        </widget>
       </item>
       <item>
-       <widget class="QComboBox" name="meshCombo"/>
+       <widget class="QComboBox" name="meshCombo">
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select mesh&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+       </widget>
       </item>
       <item>
        <widget class="QLabel" name="label_8">
@@ -132,7 +140,11 @@
        </widget>
       </item>
       <item>
-       <widget class="QComboBox" name="gostCombo"/>
+       <widget class="QComboBox" name="gostCombo">
+        <property name="toolTip">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select gift size from russian &lt;/p&gt;&lt;p&gt;state standard&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+       </widget>
       </item>
      </layout>
     </widget>

@@ -63,3 +63,11 @@ INCLUDEPATH += \
 
 RESOURCES += \
     ../resuurces/resources.qrc
+
+win32 {
+  DEFINES += WIN32
+}
+
+!win32 {
+  DEFINES += UNIX LINUX
+}

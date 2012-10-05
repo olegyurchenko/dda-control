@@ -17,6 +17,7 @@
 #include <QThread>
 #include <QMutex>
 #include <QVector>
+#include <QList>
 #include <QTime>
 /*----------------------------------------------------------------------------*/
 class DDAController : public QThread
@@ -42,11 +43,12 @@ public:
 
 protected:
   typedef QVector<unsigned char> ByteVector;
+  typedef QList<ByteVector> BinList;
   virtual void run();
   DDAStatus m_status;
   int m_serial;
   bool m_terminated;
-  ByteVector m_txData;
+  BinList m_txData;
   ByteVector m_rxData;
   QTime m_lastCharTime;
 

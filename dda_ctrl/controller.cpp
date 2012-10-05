@@ -202,8 +202,10 @@ bool DDAController :: rxPacket(int serial)
 /*----------------------------------------------------------------------------*/
 bool DDAController :: txPacket(int serial)
 {
+  ByteVector txData;
   lock();
-  ByteVector txData = m_txData;
+  if(m_txData.size())
+    txData = m_txData[0];
   unlock();
   if(txData.isEmpty())
     return false;
@@ -230,7 +232,8 @@ bool DDAController :: waitAck(int serial)
       if(rx == ACK)
       {
         lock();
-        m_txData.clear();
+        if(m_txData.size())
+          m_txData.erase(m_txData.begin());
         unlock();
         emit cmdSendOk();
         return true;
@@ -304,35 +307,40 @@ void DDAController :: handleData(const ByteVector& data)
 /*----------------------------------------------------------------------------*/
 void DDAController :: setMode(int meshIndex, int samples, DDAMode mode)
 {
+  ByteVector txData;
+  txData.push_back(ENQ);
+  txData.push_back('I');
+  txData.push_back(7);
+  txData.push_back((unsigned char)meshIndex);
+  txData.push_back((unsigned char)(meshIndex >> 8));
+  txData.push_back((unsigned char)samples);
+  txData.push_back((unsigned char)((mode << 1) | 1));
   lock();
-  m_txData.clear();
-  m_txData.push_back(ENQ);
-  m_txData.push_back('I');
-  m_txData.push_back(7);
-  m_txData.push_back((unsigned char)meshIndex);
-  m_txData.push_back((unsigned char)(meshIndex >> 8));
-  m_txData.push_back((unsigned char)samples);
-  m_txData.push_back((unsigned char)((mode << 1) | 1));
+  m_txData.append(txData);
   unlock();
 }
 /*----------------------------------------------------------------------------*/
 void DDAController :: start()
 {
+  ByteVector txData;
+  txData.clear();
+  txData.push_back(ENQ);
+  txData.push_back('P');
+  txData.push_back(3);
   lock();
-  m_txData.clear();
-  m_txData.push_back(ENQ);
-  m_txData.push_back('P');
-  m_txData.push_back(3);
+  m_txData.append(txData);
   unlock();
 }
 /*----------------------------------------------------------------------------*/
 void DDAController :: manualMode()
 {
+  ByteVector txData;
+  txData.clear();
+  txData.push_back(ENQ);
+  txData.push_back('S');
+  txData.push_back(3);
   lock();
-  m_txData.clear();
-  m_txData.push_back(ENQ);
-  m_txData.push_back('S');
-  m_txData.push_back(3);
+  m_txData.append(txData);
   unlock();
 }
 /*----------------------------------------------------------------------------*/
@@ -406,12 +414,26 @@ void DemoController :: doSimulation()
     setStatus(Measuring);
     break;
   case Measuring:
-    m_strength += 12.3;
+    switch((qrand() % 4))
+    {
+    case 0:
+      m_strength += 12.3;
+      break;
+    case 1:
+      m_strength += 6.5;
+      break;
+    case 2:
+      m_strength += 3.1;
+      break;
+    case 3:
+      m_strength += 1.8;
+      break;
+    }
     setStrength(m_strength);
     emit currentStretch(strength());
     if(m_strength > 50)
     {
-      if(qrand() % 2) //end of measure
+      if(!(qrand() % 4)) //end of measure
       {
         if(!(qrand() % 5))
         {

@@ -9,6 +9,8 @@
 #include <sessiondialog.h>
 #include <measuremodel.h>
 #include <usermanagedialog.h>
+#include <newpassworddialog.h>
+#include <histogrammplotter.h>
 /*----------------------------------------------------------------------------*/
 MeasureWindow::MeasureWindow(QWidget *parent) :
   QMainWindow(parent),
@@ -39,6 +41,10 @@ MeasureWindow::MeasureWindow(QWidget *parent) :
   measureModel = new MeasureModel(this);
   ui->measureTable->setModel(measureModel);
   connect(session, SIGNAL(measureListChanged()), measureModel, SLOT(update()));
+
+  histogrammPlotter = new HistogrammPlotter();
+//  ui->currentPlotWidget->setPlotter(histogrammPlotter);
+  intervalCount = 6;
 }
 /*----------------------------------------------------------------------------*/
 MeasureWindow::~MeasureWindow()
@@ -99,24 +105,38 @@ void MeasureWindow::onStatusChanged(int s)
   {
   case DDAController::Offline:
     ui->actionStartSession->setEnabled(false);
+    ui->actionResumeMeasuring->setEnabled(false);
+    ui->actionSingleStepMode->setEnabled(false);
     break;
   case DDAController::Idle:
     ui->actionStartSession->setEnabled(true);
+    ui->actionResumeMeasuring->setEnabled(session->session().id != InvalidId);
+    ui->actionSingleStepMode->setEnabled(session->session().id != InvalidId);
     break;
   case DDAController::Calibrating:
     ui->actionStartSession->setEnabled(false);
+    ui->actionResumeMeasuring->setEnabled(false);
+    ui->actionSingleStepMode->setEnabled(true);
     break;
   case DDAController::Measuring:
     ui->actionStartSession->setEnabled(false);
+    ui->actionResumeMeasuring->setEnabled(false);
+    ui->actionSingleStepMode->setEnabled(true);
     break;
   case DDAController::NoParticle:
     ui->actionStartSession->setEnabled(false);
+    ui->actionResumeMeasuring->setEnabled(false);
+    ui->actionSingleStepMode->setEnabled(true);
     break;
   case DDAController::NextCasseteWaiting:
     ui->actionStartSession->setEnabled(false);
+    ui->actionResumeMeasuring->setEnabled(true);
+    ui->actionSingleStepMode->setEnabled(true);
     break;
   case DDAController::EndOfMeasuring:
     ui->actionStartSession->setEnabled(false);
+    ui->actionResumeMeasuring->setEnabled(true);
+    ui->actionSingleStepMode->setEnabled(true);
     break;
   }
 }
@@ -178,10 +198,75 @@ void MeasureWindow::onSessionChanged()
   ui->meshLabel->setText(database->meshList()[s.meshIndex]);
   ui->gostLabel->setText(database->gostList()[s.gostIndex]);
   ui->giftCountLabel->setText(QString::number(s.giftCount));
+
+  ui->actionEditCurrentSession->setEnabled(session->session().id != InvalidId);
 }
+/*----------------------------------------------------------------------------*/
+double getValue(const DDAMeasure& m)
+{
+  return m.strenght;
+}
+
 /*----------------------------------------------------------------------------*/
 void MeasureWindow::onMeasureListChanged()
 {
+  //Buid histogramm
+  int size = session->measureList().size();
+  if(size < 2)
+  {
+    ui->currentPlotWidget->setPlotter(NULL);
+    return;
+  }
+
+  double min, max, step, value;
+  QList<double> hist;
+  value = getValue(session->measureList()[0]);
+  min = max = value;
+
+  for(int i = 0; i < size; i++)
+  {
+    value = getValue(session->measureList()[i]);
+    if(min > value)
+      min = value;
+    if(max < value)
+      max = value;
+  }
+
+  if(qAbs<double>(min - max) < 0.01)
+  {
+    ui->currentPlotWidget->setPlotter(NULL);
+    return;
+  }
+
+  max += (max - min) / intervalCount;
+  min -= (max - min) / intervalCount;
+
+  ui->currentPlotWidget->setPlotter(histogrammPlotter);
+  histogrammPlotter->y.setMin(0);
+  histogrammPlotter->y.setMax(100);
+  histogrammPlotter->y.setSteps(4);
+  histogrammPlotter->y.setText("[%]");
+  histogrammPlotter->x.setMin(min);
+  histogrammPlotter->x.setMax(max);
+  histogrammPlotter->x.setSteps(intervalCount);
+  histogrammPlotter->x.setText(tr("[N]"));
+
+  step = (max - min) / intervalCount;
+
+  for(int i = 0; i < intervalCount; i++)
+    hist.append(0);
+
+  for(int i = 0; i < size; i++)
+  {
+    value = getValue(session->measureList()[i]);
+    int column = (value - min) / step;
+    if(column < intervalCount)
+    {
+      hist[column] += 100./size;
+    }
+  }
+  histogrammPlotter->data = hist;
+  ui->currentPlotWidget->update();
 }
 /*----------------------------------------------------------------------------*/
 void MeasureWindow::onManageUsers()
@@ -190,5 +275,32 @@ void MeasureWindow::onManageUsers()
     return;
   UserManageDialog dialog;
   dialog.exec();
+}
+/*----------------------------------------------------------------------------*/
+void MeasureWindow::onSetAdminPassword()
+{
+  if(!passwordCheck(this, SuperUserId))
+    return;
+  NewPasswordDialog dialog;
+  if(dialog.exec() == QDialog::Accepted)
+  {
+    database->setPassword(SuperUserId, dialog.password());
+  }
+}
+/*----------------------------------------------------------------------------*/
+void MeasureWindow::onEditCurrentSession()
+{
+  SessionDialog dialog;
+  dialog.exec();
+}
+/*----------------------------------------------------------------------------*/
+void MeasureWindow::onResumeMeasuring()
+{
+  controller->start();
+}
+/*----------------------------------------------------------------------------*/
+void MeasureWindow::onSingleStepMode()
+{
+  controller->manualMode();
 }
 /*----------------------------------------------------------------------------*/

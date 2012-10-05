@@ -32,6 +32,7 @@ DDADatabase *database = NULL;
 DDADatabase :: DDADatabase(QObject *parent)
   : QObject(parent)
 {
+  m_session = -1;
   QString dbFileName = config->settings().databaseFileName;
 
   QSqlDatabase m_database = QSqlDatabase::addDatabase("QSQLITE", CONNECTION_NAME);
@@ -663,16 +664,7 @@ void DDADatabase :: setSerial(const QString& serial)
   }
 }
 /*----------------------------------------------------------------------------*/
-void DDADatabase :: measure(double strength, double size, int)
-{
-  DDAMeasure m;
-  m.strenght = strength;
-  m.size = size;
-  m.sessionId = m_session;
-  addMeasure(m);
-}
-/*----------------------------------------------------------------------------*/
-void DDADatabase :: onEndOfMeasuring()
+void DDADatabase :: updateCurrentSession()
 {
   QSqlQuery q(QSqlDatabase::database(CONNECTION_NAME));
   q.prepare("update sessions set end = ? where id = ?");
@@ -680,5 +672,20 @@ void DDADatabase :: onEndOfMeasuring()
   q.addBindValue(m_session);
   if(!q.exec())
     error(q);
+}
+/*----------------------------------------------------------------------------*/
+void DDADatabase :: measure(double strength, double size, int)
+{
+  DDAMeasure m;
+  m.strenght = strength;
+  m.size = size;
+  m.sessionId = m_session;
+  addMeasure(m);
+  updateCurrentSession();
+}
+/*----------------------------------------------------------------------------*/
+void DDADatabase :: onEndOfMeasuring()
+{
+  updateCurrentSession();
 }
 /*----------------------------------------------------------------------------*/
