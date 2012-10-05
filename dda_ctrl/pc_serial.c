@@ -327,7 +327,7 @@ int serial_get_ctrl(int fd, int *_signals)
   if(!GetCommModemStatus(h, &status))
     return -1;
 
-  *signals = 0;
+  *_signals = 0;
   if(status & MS_CTS_ON) *_signals |= SER_CTS;
   if(status & MS_DSR_ON) *_signals |= SER_DSR;
   if(status & MS_RING_ON) *_signals |= SER_RNG;
