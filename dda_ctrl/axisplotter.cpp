@@ -107,7 +107,7 @@ void AxisPlotter :: paint(QPaintDevice *dev)
 
     if(y.showValues() && i)
     {
-      QString value = QString::number(y.min() + i * y.step(), 'f', x.decimals());
+      QString value = QString::number(y.min() + i * y.step(), 'f', y.decimals());
       int w = p.fontMetrics().boundingRect(value).width();
       int h = p.fontMetrics().boundingRect(value).height();
       p.drawText(m_rect.left() - w - m_x_border, yi + h/2, value);

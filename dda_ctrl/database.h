@@ -19,6 +19,7 @@
 #include <QList>
 #include <QStringList>
 #include <QDateTime>
+#include <QTime>
 #include <session.h>
 #include <QMap>
 /*----------------------------------------------------------------------------*/
@@ -44,6 +45,7 @@ protected:
   QString m_serial;
   int m_session;
   UserMap m_userMap;
+  QTime m_startMeasure;
 
   bool error(const QSqlQuery &q);
   DDASession getSession(const QSqlQuery &q);
@@ -56,8 +58,8 @@ public:
   ~DDADatabase();
   bool isError() const {return m_isError;}
   QString message() {return m_message;}
-  QStringList meshList();
-  QStringList gostList();
+  QStringList standardList();
+  QStringList gritList(int standard);
   DDAUserList userList();
   void userAdd(QString name, QString passw = QString());
   void userDel(int id);
@@ -77,6 +79,7 @@ public slots:
   void setSerial(const QString&);
   void measure(double strength, double size, int number);
   void onEndOfMeasuring();
+  void currentStretch(double);
 protected slots:
   void onUserChanged() {m_userMap.clear();}
 

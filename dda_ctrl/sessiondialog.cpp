@@ -16,18 +16,18 @@ SessionDialog::SessionDialog(QWidget *parent) :
   onUsersChanged();
   //ui->userCombo->setCurrentIndex(0);
 
-  ui->meshCombo->addItems(database->meshList());
-  ui->meshCombo->setCurrentIndex(config->profile().meshIndex);
+  ui->standardCombo->addItems(database->standardList());
+  ui->standardCombo->setCurrentIndex(config->profile().standardIndex);
 
-  ui->gostCombo->addItems(database->gostList());
-  ui->gostCombo->setCurrentIndex(config->profile().gostIndex);
+  ui->gritCombo->addItems(database->gritList(config->profile().standardIndex));
+  ui->gritCombo->setCurrentIndex(config->profile().gritIndex);
 
-  ui->giftCountSpin->setValue(config->profile().giftCount);
+  ui->particlesSpin->setValue(config->profile().particles);
 
   if(session->session().id != InvalidId)
   {
-    ui->meshCombo->setCurrentIndex(session->session().meshIndex);
-    ui->gostCombo->setCurrentIndex(session->session().gostIndex);
+    ui->standardCombo->setCurrentIndex(session->session().standard);
+    ui->gritCombo->setCurrentIndex(session->session().gritIndex);
     ui->lotEdit->setText(session->session().lot);
     ui->markEdit->setEnabled(true);
     ui->markEdit->setText(session->session().mark);
@@ -75,14 +75,14 @@ void SessionDialog::onManageUsers()
 void SessionDialog::onAccepted()
 {
   DDAProfile profile = config->profile();
-  profile.gostIndex = ui->gostCombo->currentIndex();
-  profile.meshIndex = ui->meshCombo->currentIndex();
-  profile.giftCount = ui->giftCountSpin->value();
+  profile.gritIndex = ui->gritCombo->currentIndex();
+  profile.standardIndex = ui->standardCombo->currentIndex();
+  profile.particles = ui->particlesSpin->value();
   config->setProfile(profile);
 
   DDASession s = session->session();
-  s.gostIndex = ui->gostCombo->currentIndex();
-  s.meshIndex = ui->meshCombo->currentIndex();
+  s.gritIndex = ui->gritCombo->currentIndex();
+  s.standard = ui->standardCombo->currentIndex();
   s.lot = ui->lotEdit->text();
   s.userId = m_userList[ui->userCombo->currentIndex()].id;
   if(s.id != InvalidId)
@@ -93,7 +93,7 @@ void SessionDialog::onAccepted()
   }
   else
   {
-    s.giftCount = ui->giftCountSpin->value();
+    s.particles = ui->particlesSpin->value();
     s.id = database->sessionAdd(s);
     session->setSession(s);
   }
@@ -115,5 +115,13 @@ void SessionDialog::onUsersChanged()
       break;
     }
   ui->userCombo->setCurrentIndex(userIndex);
+}
+/*----------------------------------------------------------------------------*/
+void SessionDialog::onStandardChanged(int index)
+{
+  int cur = ui->gritCombo->currentIndex();
+  ui->gritCombo->clear();
+  ui->gritCombo->addItems(database->gritList(index));
+  ui->gritCombo->setCurrentIndex(cur);
 }
 /*----------------------------------------------------------------------------*/

@@ -103,7 +103,7 @@
    <item>
     <widget class="QGroupBox" name="giftGroupBox">
      <property name="title">
-      <string>Gift size</string>
+      <string>Grit size</string>
      </property>
      <property name="flat">
       <bool>false</bool>
@@ -115,7 +115,7 @@
       <item>
        <widget class="QLabel" name="label_7">
         <property name="text">
-         <string>Mesh</string>
+         <string>Standard</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -123,7 +123,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QComboBox" name="meshCombo">
+       <widget class="QComboBox" name="standardCombo">
         <property name="toolTip">
          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select mesh&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
@@ -132,7 +132,7 @@
       <item>
        <widget class="QLabel" name="label_8">
         <property name="text">
-         <string>GOST</string>
+         <string>Grit</string>
         </property>
         <property name="alignment">
          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -140,7 +140,7 @@
        </widget>
       </item>
       <item>
-       <widget class="QComboBox" name="gostCombo">
+       <widget class="QComboBox" name="gritCombo">
         <property name="toolTip">
          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select gift size from russian &lt;/p&gt;&lt;p&gt;state standard&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
@@ -154,12 +154,12 @@
      <item row="0" column="0">
       <widget class="QLabel" name="label_9">
        <property name="text">
-        <string>Gift count</string>
+        <string>Particles</string>
        </property>
       </widget>
      </item>
      <item row="0" column="1">
-      <widget class="QSpinBox" name="giftCountSpin">
+      <widget class="QSpinBox" name="particlesSpin">
        <property name="prefix">
         <string/>
        </property>
@@ -301,10 +301,27 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>standardCombo</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>SessionDialog</receiver>
+   <slot>onStandardChanged(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>131</x>
+     <y>150</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>173</x>
+     <y>169</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>onUserListIndexChanged(int)</slot>
   <slot>onManageUsers()</slot>
   <slot>onAccepted()</slot>
+  <slot>onStandardChanged(int)</slot>
  </slots>
 </ui>

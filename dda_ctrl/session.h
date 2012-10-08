@@ -16,6 +16,7 @@
 #define SESSION_H_1349243193
 #include <QObject>
 #include <QDateTime>
+#include <QTime>
 /*----------------------------------------------------------------------------*/
 const int InvalidId = -1;
 /*----------------------------------------------------------------------------*/
@@ -27,18 +28,18 @@ struct DDASession
   QDateTime start;
   QDateTime end;
   QString lot;
-  int meshIndex;
-  int gostIndex;
-  int giftCount;
+  int standard;
+  int gritIndex;
+  int particles;
   QString mark;
   DDASession() {
     id = InvalidId;
     userId = InvalidId;
     start = QDateTime::currentDateTime();
     end = QDateTime::currentDateTime();
-    meshIndex = 0;
-    gostIndex = 0;
-    giftCount = 0;
+    standard = 0;
+    gritIndex = 0;
+    particles = 0;
   }
 };
 /*----------------------------------------------------------------------------*/
@@ -49,12 +50,14 @@ struct DDAMeasure
   double size;
   double strenght;
   int elapsed;
+  bool ignored;
   DDAMeasure() {
     id = InvalidId;
     sessionId = InvalidId;
     size = 0;
     strenght = 0;
     elapsed = 0;
+    ignored = false;
   }
 };
 typedef QList<DDAMeasure> DDAMeasureList;
@@ -79,9 +82,9 @@ public slots:
   void setStart(const QDateTime&);
   void setEnd(const QDateTime&);
   void setLlot(const QString&);
-  void setMeshIndex(int i);
-  void setGostIndex(int i);
-  void setGiftCount(int i);
+  void setStandard(int i);
+  void setGritIndex(int i);
+  void setParticles(int i);
   void setMark(const QString&);
   void onEndOfMeasuring();
   void clear();

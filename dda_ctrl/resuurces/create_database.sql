@@ -28,7 +28,7 @@ serial VARCHAR(24)
 
 create table
 if not exists
-mesh
+standards
 (
 id INTEGER PRIMARY KEY,
 txt VARCHAR(24)
@@ -36,9 +36,11 @@ txt VARCHAR(24)
 
 create table
 if not exists
-gost
+gritSizes
 (
 id INTEGER PRIMARY KEY,
+standard INTEGER,
+gritIndex INTEGER,
 txt VARCHAR(24)
 );
 
@@ -52,8 +54,8 @@ device INTEGER,
 start DATETIME,
 end DATETIME,
 lot VARCHAR(24),
-mesh INTEGER,
-gost INTEGER,
+standard INTEGER,
+grit INTEGER,
 mark VARCHER(24)
 );
 
@@ -65,5 +67,6 @@ id INTEGER PRIMARY KEY,
 session INTEGER,
 size REAL,
 strenght REAL,
-elapsed INTEGER
+elapsed INTEGER,
+ignored INTEGER
 );

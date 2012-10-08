@@ -2,6 +2,7 @@
 #define MEASUREWINDOW_H
 
 #include <QMainWindow>
+#include <QTime>
 
 namespace Ui {
 class MeasureWindow;
@@ -9,6 +10,7 @@ class MeasureWindow;
 
 class MeasureModel;
 class HistogrammPlotter;
+class CurvePlotter;
 /*----------------------------------------------------------------------------*/
 class MeasureWindow : public QMainWindow
 {
@@ -23,7 +25,11 @@ private:
   bool m_created;
   MeasureModel *measureModel;
   HistogrammPlotter *histogrammPlotter;
+  CurvePlotter *curvePlotter;
   int intervalCount;
+
+  bool m_newMeasure;
+  QTime m_measureTime;
 
 protected slots:
   void onProfileChanged(int);

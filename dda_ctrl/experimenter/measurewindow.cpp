@@ -11,6 +11,7 @@
 #include <usermanagedialog.h>
 #include <newpassworddialog.h>
 #include <histogrammplotter.h>
+#include <curveplotter.h>
 /*----------------------------------------------------------------------------*/
 MeasureWindow::MeasureWindow(QWidget *parent) :
   QMainWindow(parent),
@@ -21,6 +22,7 @@ MeasureWindow::MeasureWindow(QWidget *parent) :
   ui->profileCombo->addItems(config->profileList());
   ui->profileCombo->setCurrentIndex(config->profileIndex());
   m_created = true;
+  m_newMeasure = true;
   onProfileChanged(config->profileIndex());
 
   connect(database, SIGNAL(dbError(QString)), this, SLOT(onDatabaseError()));
@@ -43,7 +45,26 @@ MeasureWindow::MeasureWindow(QWidget *parent) :
   connect(session, SIGNAL(measureListChanged()), measureModel, SLOT(update()));
 
   histogrammPlotter = new HistogrammPlotter();
-//  ui->currentPlotWidget->setPlotter(histogrammPlotter);
+  //  ui->currentHPlotWidget->setPlotter(histogrammPlotter);
+  curvePlotter = new CurvePlotter();
+  curvePlotter->x.setShowValues(false);
+  curvePlotter->x.setText(tr("[s]"));
+  curvePlotter->x.setDecimals(0);
+  curvePlotter->x.setSteps(3);
+  curvePlotter->x.setMax(3000);
+
+
+  curvePlotter->y.setShowValues(true);
+  curvePlotter->y.setText(tr("[N]"));
+  curvePlotter->y.setDecimals(1);
+
+  curvePlotter->setFiled(false);
+  curvePlotter->setPointSize(4);
+
+  curvePlotter->setStyle(AxisPlotter::StrokeStyle);
+
+
+  ui->currentValuePlotWidget->setPlotter(curvePlotter);
   intervalCount = 6;
 }
 /*----------------------------------------------------------------------------*/
@@ -159,15 +180,47 @@ void MeasureWindow::onSerialReceived(const QString& str)
 void MeasureWindow::onCurrentStretch(double d)
 {
   ui->currentValueLabel->setText(QString::number(d, 'f', 1));
+  if(m_newMeasure)
+  {
+    curvePlotter->data.clear();
+    m_measureTime.start();
+    m_newMeasure = false;
+    curvePlotter->x.setMax(3000);
+  }
+  int x = m_measureTime.elapsed();
+
+  QPointF p;
+  p.setX(x);
+  p.setY(d);
+  curvePlotter->data.append(p);
+
+  double maxy = 0;
+  int size = curvePlotter->data.size();
+  for(int i = 0; i < size; i++)
+    if(maxy < curvePlotter->data[i].y())
+      maxy = curvePlotter->data[i].y();
+  curvePlotter->y.setMax(maxy * 1.3);
+
+  while(x >= curvePlotter->x.max())
+    curvePlotter->x.setMax(curvePlotter->x.max() + 1000);
+
+  curvePlotter->x.setSteps(curvePlotter->x.max()/1000);
+
+  ui->currentValuePlotWidget->update();
 }
 /*----------------------------------------------------------------------------*/
 void MeasureWindow::onNoParticle()
 {
+  m_newMeasure = true;
+  m_measureTime = QTime();
 }
 /*----------------------------------------------------------------------------*/
 void MeasureWindow::onMeasure(double strength, double size, int number)
 {
-  ui->currentValueLabel->setText(QString::number(strength, 'f', 1));
+  onCurrentStretch(strength);
+
+  m_newMeasure = true;
+  m_measureTime = QTime();
 }
 /*----------------------------------------------------------------------------*/
 void MeasureWindow::onNextCasseteRequest()
@@ -185,7 +238,7 @@ void MeasureWindow::onStartSession()
   if(dialog.exec() == QDialog::Accepted)
   {
     ui->stackedWidget->setCurrentIndex(1);
-    controller->setMode(session->session().meshIndex, session->session().giftCount);
+    controller->setMode(session->session().standard, session->session().particles);
     controller->start();
   }
 }
@@ -195,9 +248,9 @@ void MeasureWindow::onSessionChanged()
   DDASession s = session->session();
   ui->userLabel->setText(database->userName(s.userId));
   ui->lotLabel->setText(s.lot);
-  ui->meshLabel->setText(database->meshList()[s.meshIndex]);
-  ui->gostLabel->setText(database->gostList()[s.gostIndex]);
-  ui->giftCountLabel->setText(QString::number(s.giftCount));
+  ui->standardLabel->setText(database->standardList()[s.standard]);
+  ui->gritLabel->setText(database->gritList(s.standard)[s.gritIndex]);
+  ui->particlesLabel->setText(QString::number(s.particles));
 
   ui->actionEditCurrentSession->setEnabled(session->session().id != InvalidId);
 }
@@ -214,7 +267,7 @@ void MeasureWindow::onMeasureListChanged()
   int size = session->measureList().size();
   if(size < 2)
   {
-    ui->currentPlotWidget->setPlotter(NULL);
+    ui->currentHPlotWidget->setPlotter(NULL);
     return;
   }
 
@@ -234,14 +287,14 @@ void MeasureWindow::onMeasureListChanged()
 
   if(qAbs<double>(min - max) < 0.01)
   {
-    ui->currentPlotWidget->setPlotter(NULL);
+    ui->currentHPlotWidget->setPlotter(NULL);
     return;
   }
 
   max += (max - min) / intervalCount;
   min -= (max - min) / intervalCount;
 
-  ui->currentPlotWidget->setPlotter(histogrammPlotter);
+  ui->currentHPlotWidget->setPlotter(histogrammPlotter);
   histogrammPlotter->y.setMin(0);
   histogrammPlotter->y.setMax(100);
   histogrammPlotter->y.setSteps(4);
@@ -266,7 +319,7 @@ void MeasureWindow::onMeasureListChanged()
     }
   }
   histogrammPlotter->data = hist;
-  ui->currentPlotWidget->update();
+  ui->currentHPlotWidget->update();
 }
 /*----------------------------------------------------------------------------*/
 void MeasureWindow::onManageUsers()

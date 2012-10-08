@@ -119,9 +119,9 @@ void DDAConfig :: defaultProfle(DDAProfile *dst) const
   dst->name = m_profileList.isEmpty() ? tr("Default profile") : tr("Profile_%1").arg(m_profileList.size() + 1);
   dst->serial = 1;
   dst->baud = 9600;
-  dst->meshIndex = 0;
-  dst->gostIndex = 0;
-  dst->giftCount = 1; //!!!!
+  dst->standardIndex = 0;
+  dst->gritIndex = 0;
+  dst->particles = 1; //!!!!
 }
 /*----------------------------------------------------------------------------*/
 void DDAConfig :: defaultSettings(DDASettings *dst) const
@@ -151,14 +151,14 @@ void DDAConfig :: parceProfile(QDomNode *node, DDAProfile *dst)
       if(e.tagName() == "baud")
         dst->baud = e.text().toInt();
       else
-      if(e.tagName() == "meshIndex")
-        dst->meshIndex = e.text().toInt();
+      if(e.tagName() == "standardIndex")
+        dst->standardIndex = e.text().toInt();
       else
-      if(e.tagName() == "gostIndex")
-        dst->gostIndex = e.text().toInt();
+      if(e.tagName() == "gritIndex")
+        dst->gritIndex = e.text().toInt();
       else
-      if(e.tagName() == "giftCount")
-        dst->giftCount = e.text().toInt();
+      if(e.tagName() == "particles")
+        dst->particles = e.text().toInt();
     }
     n = n.nextSibling();
   }
@@ -179,16 +179,16 @@ void DDAConfig :: saveProfile(const DDAProfile *src, QDomDocument *doc, QDomNode
   e.appendChild(doc->createTextNode(QString::number(src->baud)));
   dst->appendChild(e);
 
-  e = doc->createElement("meshIndex");
-  e.appendChild(doc->createTextNode(QString::number(src->meshIndex)));
+  e = doc->createElement("standardIndex");
+  e.appendChild(doc->createTextNode(QString::number(src->standardIndex)));
   dst->appendChild(e);
 
-  e = doc->createElement("gostIndex");
-  e.appendChild(doc->createTextNode(QString::number(src->gostIndex)));
+  e = doc->createElement("gritIndex");
+  e.appendChild(doc->createTextNode(QString::number(src->gritIndex)));
   dst->appendChild(e);
 
-  e = doc->createElement("giftCount");
-  e.appendChild(doc->createTextNode(QString::number(src->giftCount)));
+  e = doc->createElement("particles");
+  e.appendChild(doc->createTextNode(QString::number(src->particles)));
   dst->appendChild(e);
 }
 /*----------------------------------------------------------------------------*/

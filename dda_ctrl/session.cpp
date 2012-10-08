@@ -96,20 +96,20 @@ void DDAMeasureSession :: setLlot(const QString& l)
   }
 }
 /*----------------------------------------------------------------------------*/
-void DDAMeasureSession :: setMeshIndex(int i)
+void DDAMeasureSession :: setStandard(int i)
 {
-  if(m_session.meshIndex != i)
+  if(m_session.standard != i)
   {
-    m_session.meshIndex = i;
+    m_session.standard = i;
     emit sessionChanged();
   }
 }
 /*----------------------------------------------------------------------------*/
-void DDAMeasureSession :: setGostIndex(int i)
+void DDAMeasureSession :: setGritIndex(int i)
 {
-  if(m_session.gostIndex != i)
+  if(m_session.gritIndex != i)
   {
-    m_session.gostIndex = i;
+    m_session.gritIndex = i;
     emit sessionChanged();
   }
 }
@@ -123,11 +123,11 @@ void DDAMeasureSession :: setMark(const QString& m)
   }
 }
 /*----------------------------------------------------------------------------*/
-void DDAMeasureSession :: setGiftCount(int i)
+void DDAMeasureSession :: setParticles(int i)
 {
-  if(m_session.giftCount != i)
+  if(m_session.particles != i)
   {
-    m_session.giftCount = i;
+    m_session.particles = i;
     emit sessionChanged();
   }
 }

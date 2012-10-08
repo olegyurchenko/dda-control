@@ -22,5 +22,7 @@
         <file>create_database.sql</file>
         <file>gost.txt</file>
         <file>mesh.txt</file>
+        <file>dstu.txt</file>
+        <file>standards.txt</file>
     </qresource>
 </RCC>

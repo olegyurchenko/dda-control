@@ -73,7 +73,40 @@ DDADatabase :: DDADatabase(QObject *parent)
     }
   }
 
-  if(!q.exec("select count(*) from mesh"))
+  if(!q.exec("select count(*) from standards"))
+  {
+    error(q);
+    return;
+  }
+
+  if(!q.first() || !q.value(0).toInt())
+  {
+    f.close();
+    f.setFileName(":/sql/standards.txt");
+    if(!f.open(QIODevice::ReadOnly))
+    {
+      m_isError = true;
+      m_message = tr("Error open %1").arg("mesh.txt");
+      return;
+    }
+    QString txt = f.readAll();
+    txt.remove('\r');
+    QStringList lst = txt.split('\n', QString::SkipEmptyParts);
+    int size = lst.size();
+    for(int i = 0; i < size; i++)
+    {
+      q.prepare("insert into standards(id, txt) values(?, ?)");
+      q.addBindValue(i);
+      q.addBindValue(lst[i]);
+      if(!q.exec())
+      {
+        error(q);
+        return;
+      }
+    }
+  }
+
+  if(!q.exec("select count(*) from gritSizes"))
   {
     error(q);
     return;
@@ -95,7 +128,7 @@ DDADatabase :: DDADatabase(QObject *parent)
     int size = lst.size();
     for(int i = 0; i < size; i++)
     {
-      q.prepare("insert into mesh(id, txt) values(?, ?)");
+      q.prepare("insert into gritSizes(standard, gritIndex, txt) values(0, ?, ?)");
       q.addBindValue(i);
       q.addBindValue(lst[i]);
       if(!q.exec())
@@ -105,16 +138,6 @@ DDADatabase :: DDADatabase(QObject *parent)
       }
     }
 
-  }
-
-  if(!q.exec("select count(*) from gost"))
-  {
-    error(q);
-    return;
-  }
-
-  if(!q.first() || !q.value(0).toInt())
-  {
     f.close();
     f.setFileName(":/sql/gost.txt");
     if(!f.open(QIODevice::ReadOnly))
@@ -123,13 +146,13 @@ DDADatabase :: DDADatabase(QObject *parent)
       m_message = tr("Error open %1").arg("gost.txt");
       return;
     }
-    QString txt = f.readAll();
+    txt = f.readAll();
     txt.remove('\r');
-    QStringList lst = txt.split('\n', QString::SkipEmptyParts);
-    int size = lst.size();
+    lst = txt.split('\n', QString::SkipEmptyParts);
+    size = lst.size();
     for(int i = 0; i < size; i++)
     {
-      q.prepare("insert into gost(id, txt) values(?, ?)");
+      q.prepare("insert into gritSizes(standard, gritIndex, txt) values(1, ?, ?)");
       q.addBindValue(i);
       q.addBindValue(lst[i]);
       if(!q.exec())
@@ -139,6 +162,29 @@ DDADatabase :: DDADatabase(QObject *parent)
       }
     }
 
+    f.close();
+    f.setFileName(":/sql/dstu.txt");
+    if(!f.open(QIODevice::ReadOnly))
+    {
+      m_isError = true;
+      m_message = tr("Error open %1").arg("dstu.txt");
+      return;
+    }
+    txt = f.readAll();
+    txt.remove('\r');
+    lst = txt.split('\n', QString::SkipEmptyParts);
+    size = lst.size();
+    for(int i = 0; i < size; i++)
+    {
+      q.prepare("insert into gritSizes(standard, gritIndex, txt) values(2, ?, ?)");
+      q.addBindValue(i);
+      q.addBindValue(lst[i]);
+      if(!q.exec())
+      {
+        error(q);
+        return;
+      }
+    }
   }
 
   q.prepare("select id from users where id = ?");
@@ -211,10 +257,10 @@ bool DDADatabase :: error(const QSqlQuery &q)
   return false;
 }
 /*----------------------------------------------------------------------------*/
-QStringList DDADatabase :: meshList()
+QStringList DDADatabase :: standardList()
 {
   QSqlQuery q(QSqlDatabase::database(CONNECTION_NAME));
-  if(!q.exec("select txt from mesh order by id"))
+  if(!q.exec("select txt from standards order by id"))
   {
     error(q);
     return QStringList();
@@ -230,14 +276,17 @@ QStringList DDADatabase :: meshList()
   return lst;
 }
 /*----------------------------------------------------------------------------*/
-QStringList DDADatabase :: gostList()
+QStringList DDADatabase :: gritList(int standard)
 {
   QSqlQuery q(QSqlDatabase::database(CONNECTION_NAME));
-  if(!q.exec("select txt from gost order by id"))
+  q.prepare("select txt from gritSizes where standard = ? order by gritIndex");
+  q.addBindValue(standard);
+  if(!q.exec())
   {
     error(q);
     return QStringList();
   }
+
   QStringList lst;
 
   bool eof = !q.first();
@@ -458,7 +507,7 @@ int DDADatabase :: sessionAdd(const DDASession& session)
     id = q.value(0).toInt();
   ++id;
   q.prepare(
-        "insert into sessions(id, user,device,start,end, lot,mesh,gost,mark)\n"
+        "insert into sessions(id, user,device,start,end, lot,standard, grit, mark)\n"
         "values(?,?,?,?,?,?,?,?,?)"
             );
   q.addBindValue(id);
@@ -467,8 +516,8 @@ int DDADatabase :: sessionAdd(const DDASession& session)
   q.addBindValue(session.start);
   q.addBindValue(session.end);
   q.addBindValue(session.lot);
-  q.addBindValue(session.meshIndex);
-  q.addBindValue(session.gostIndex);
+  q.addBindValue(session.standard);
+  q.addBindValue(session.gritIndex);
   q.addBindValue(session.mark);
   if(!q.exec())
   {
@@ -492,8 +541,8 @@ DDASession DDADatabase :: getSession(const QSqlQuery &q)
   session.start = q.value(3).toDateTime();
   session.end = q.value(4).toDateTime();
   session.lot = q.value(5).toString();
-  session.meshIndex = q.value(6).toInt();
-  session.gostIndex = q.value(7).toInt();
+  session.standard = q.value(6).toInt();
+  session.gritIndex = q.value(7).toInt();
   session.mark = q.value(8).toString();
 
   return session;
@@ -504,7 +553,7 @@ DDASession DDADatabase :: lastSession()
   DDASession session;
   QSqlQuery q(QSqlDatabase::database(CONNECTION_NAME));
   q.prepare(
-        "select id, user,device,start,end, lot,mesh,gost,mark\n"
+        "select id, user,device,start,end, lot,standard,grit,mark\n"
         "from sessions\n"
         "where id = (select max(id) from sessions)"
             );
@@ -529,7 +578,7 @@ void DDADatabase :: modifySession(const DDASession& session)
   QSqlQuery q(QSqlDatabase::database(CONNECTION_NAME));
   q.prepare(
         "update sessions set user = ?, device = ?, start = ?, end = ?,\n"
-        "lot = ?, mesh = ?, gost = ?, mark = ?\n"
+        "lot = ?, standard = ?, grit = ?, mark = ?\n"
         "where id = ?"
             );
   q.addBindValue(session.userId);
@@ -537,8 +586,8 @@ void DDADatabase :: modifySession(const DDASession& session)
   q.addBindValue(session.start);
   q.addBindValue(session.end);
   q.addBindValue(session.lot);
-  q.addBindValue(session.meshIndex);
-  q.addBindValue(session.gostIndex);
+  q.addBindValue(session.standard);
+  q.addBindValue(session.gritIndex);
   q.addBindValue(session.mark);
   q.addBindValue(session.id);
   if(!q.exec())
@@ -561,12 +610,13 @@ int DDADatabase :: addMeasure(const DDAMeasure& measure)
   if(q.first())
     id = q.value(0).toInt();
   ++id;
-  q.prepare("insert into measures(id, session, size, strenght, elapsed) values(?, ?, ?, ?, ?)");
+  q.prepare("insert into measures(id, session, size, strenght, elapsed, ignored) values(?, ?, ?, ?, ?, ?)");
   q.addBindValue(id);
   q.addBindValue(measure.sessionId);
   q.addBindValue(measure.size);
   q.addBindValue(measure.strenght);
   q.addBindValue(measure.elapsed);
+  q.addBindValue((int)measure.ignored);
   if(!q.exec())
   {
     error(q);
@@ -584,6 +634,7 @@ DDAMeasure DDADatabase :: getMeasure(const QSqlQuery &q)
   measure.size = q.value(2).toDouble();
   measure.strenght = q.value(3).toDouble();
   measure.elapsed = q.value(4).toInt();
+  measure.ignored = q.value(5).toInt();
   return measure;
 }
 /*----------------------------------------------------------------------------*/
@@ -591,7 +642,7 @@ DDAMeasure DDADatabase :: lastMeasure()
 {
   DDAMeasure measure;
   QSqlQuery q(QSqlDatabase::database(CONNECTION_NAME));
-  q.prepare("select id, session, size, strenght, elapsed from measures\n"
+  q.prepare("select id, session, size, strenght, elapsed, ignored from measures\n"
             "where id = (select max(id) from measures)");
 
   if(!q.exec())
@@ -610,7 +661,7 @@ bool DDADatabase :: measureSession(int id, DDAMeasureSession *dst)
 {
   QSqlQuery q(QSqlDatabase::database(CONNECTION_NAME));
   q.prepare(
-        "select id, user,device,start,end, lot,mesh,gost,mark\n"
+        "select id, user,device,start,end, lot, standart, grit, mark\n"
         "from sessions\n"
         "where id = ?"
             );
@@ -624,7 +675,7 @@ bool DDADatabase :: measureSession(int id, DDAMeasureSession *dst)
   if(!q.first())
     return false;
   dst->setSession(getSession(q));
-  q.prepare("select id, session, size, strenght, elapsed from measures\n"
+  q.prepare("select id, session, size, strenght, elapsed, ignored from measures\n"
             "where session = ?");
   q.addBindValue(id);
   if(!q.exec())
@@ -680,12 +731,20 @@ void DDADatabase :: measure(double strength, double size, int)
   m.strenght = strength;
   m.size = size;
   m.sessionId = m_session;
+  m.elapsed = m_startMeasure.elapsed();
   addMeasure(m);
   updateCurrentSession();
+  m_startMeasure = QTime();
 }
 /*----------------------------------------------------------------------------*/
 void DDADatabase :: onEndOfMeasuring()
 {
   updateCurrentSession();
+}
+/*----------------------------------------------------------------------------*/
+void DDADatabase :: currentStretch(double)
+{
+  if(m_startMeasure.isNull())
+    m_startMeasure.start();
 }
 /*----------------------------------------------------------------------------*/

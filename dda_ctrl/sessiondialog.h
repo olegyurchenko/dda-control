@@ -26,7 +26,7 @@ protected slots:
   void onManageUsers();
   void onAccepted();
   void onUsersChanged();
-
+  void onStandardChanged(int);
 };
 /*----------------------------------------------------------------------------*/
 #endif // SESSIONDIALOG_H
