@@ -71,3 +71,7 @@ win32 {
 !win32 {
   DEFINES += UNIX LINUX
 }
+
+win32 {
+   RC_FILE = experimenter.rc
+}
