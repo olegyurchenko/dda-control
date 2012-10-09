@@ -13,6 +13,10 @@
   <property name="windowTitle">
    <string>DDA control system</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="../resuurces/resources.qrc">
+    <normaloff>:/diamond2.png</normaloff>:/diamond2.png</iconset>
+  </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
@@ -694,6 +698,19 @@
        <attribute name="title">
         <string>Data processing</string>
        </attribute>
+       <widget class="SelSessionBox" name="selSessionBox">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>20</y>
+          <width>301</width>
+          <height>421</height>
+         </rect>
+        </property>
+        <property name="title">
+         <string>GroupBox</string>
+        </property>
+       </widget>
       </widget>
      </widget>
     </item>
@@ -861,6 +878,12 @@
    <class>PlotWidget</class>
    <extends>QWidget</extends>
    <header>plotwidget.h</header>
+   <container>1</container>
+  </customwidget>
+  <customwidget>
+   <class>SelSessionBox</class>
+   <extends>QGroupBox</extends>
+   <header>selsessionbox.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

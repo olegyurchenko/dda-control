@@ -6,12 +6,16 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>316</width>
+    <width>332</width>
     <height>324</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Session</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="resuurces/resources.qrc">
+    <normaloff>:/format-indent-more.png</normaloff>:/format-indent-more.png</iconset>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
@@ -141,6 +145,18 @@
       </item>
       <item>
        <widget class="QComboBox" name="gritCombo">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>120</width>
+          <height>0</height>
+         </size>
+        </property>
         <property name="toolTip">
          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select gift size from russian &lt;/p&gt;&lt;p&gt;state standard&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>

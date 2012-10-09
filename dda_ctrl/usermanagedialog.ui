@@ -13,6 +13,10 @@
   <property name="windowTitle">
    <string>User management</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="resuurces/resources.qrc">
+    <normaloff>:/edit-find-user.png</normaloff>:/edit-find-user.png</iconset>
+  </property>
   <layout class="QHBoxLayout" name="horizontalLayout">
    <item>
     <widget class="QListWidget" name="userList"/>
@@ -28,6 +32,12 @@
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
        <widget class="QPushButton" name="addUserBtn">
+        <property name="toolTip">
+         <string>Add user to database</string>
+        </property>
+        <property name="whatsThis">
+         <string>Add user button</string>
+        </property>
         <property name="text">
          <string>Add user</string>
         </property>
@@ -41,10 +51,19 @@
           <height>32</height>
          </size>
         </property>
+        <property name="shortcut">
+         <string>Ins</string>
+        </property>
        </widget>
       </item>
       <item>
        <widget class="QPushButton" name="delUserBtn">
+        <property name="toolTip">
+         <string>Remove user from database</string>
+        </property>
+        <property name="whatsThis">
+         <string>Delete user button</string>
+        </property>
         <property name="text">
          <string>Delete user</string>
         </property>
@@ -58,10 +77,19 @@
           <height>32</height>
          </size>
         </property>
+        <property name="shortcut">
+         <string>Del</string>
+        </property>
        </widget>
       </item>
       <item>
        <widget class="QPushButton" name="pswrdBtn">
+        <property name="toolTip">
+         <string>Set user password</string>
+        </property>
+        <property name="whatsThis">
+         <string>Set user password button</string>
+        </property>
         <property name="text">
          <string>User password</string>
         </property>
@@ -74,6 +102,9 @@
           <width>32</width>
           <height>32</height>
          </size>
+        </property>
+        <property name="shortcut">
+         <string>Ctrl+P</string>
         </property>
        </widget>
       </item>

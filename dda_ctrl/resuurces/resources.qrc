@@ -17,6 +17,12 @@
         <file>list-remove.png</file>
         <file>media-playback-pause.png</file>
         <file>media-playback-start.png</file>
+        <file>diamond1.png</file>
+        <file>diamond2.png</file>
+        <file>arrow-down-double.png</file>
+        <file>arrow-down.png</file>
+        <file>arrow-up-double.png</file>
+        <file>arrow-up.png</file>
     </qresource>
     <qresource prefix="/sql">
         <file>create_database.sql</file>

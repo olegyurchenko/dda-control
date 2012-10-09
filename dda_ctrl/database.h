@@ -23,6 +23,13 @@
 #include <session.h>
 #include <QMap>
 /*----------------------------------------------------------------------------*/
+struct DDASerial
+{
+  int id;
+  QString serial;
+};
+typedef QList<DDASerial> DDASerialList;
+/*----------------------------------------------------------------------------*/
 struct DDAUser
 {
   int id;
@@ -33,6 +40,48 @@ typedef QMap<int, QString> UserMap;
 /*----------------------------------------------------------------------------*/
 const int UnknownUserId = -1;
 const int SuperUserId = 0;
+/*----------------------------------------------------------------------------*/
+class SessionFilter
+{
+protected:
+  bool m_dateSet;
+  bool m_userSet;
+  bool m_serialSet;
+  QDate m_date;
+  int m_user;
+  int m_serial;
+  int m_limit;
+  int m_offset;
+public:
+  SessionFilter()
+  {
+    m_dateSet = false;
+    m_userSet = false;
+    m_serialSet = false;
+    m_limit = -1;
+    m_offset = -1;
+  }
+
+  bool dateSet() const {return m_dateSet;}
+  bool userSet() const {return m_userSet;}
+  bool serialSet() const {return m_serialSet;}
+
+  void dateSet(bool s) {m_dateSet = s;}
+  void userSet(bool s) {m_userSet = s;}
+  void serialSet(bool s) {m_serialSet = s;}
+
+  QDate date() const {return m_date;}
+  int user() const {return m_user;}
+  int serial() const {return m_serial;}
+  int limit() const {return m_limit;}
+  int offset() const {return m_offset;}
+
+  void setDate(const QDate& d){m_date = d; m_dateSet = true;}
+  void setUser(int u) {m_user = u; m_userSet = true;}
+  void setSerial(int s) {m_serial = s; m_serialSet = true;}
+  void setLimit(int l) {m_limit = l;}
+  void setOffset(int o) {m_offset = o;}
+};
 /*----------------------------------------------------------------------------*/
 class QSqlQuery;
 class DDADatabase : public QObject
@@ -60,7 +109,8 @@ public:
   QString message() {return m_message;}
   QStringList standardList();
   QStringList gritList(int standard);
-  DDAUserList userList();
+  DDAUserList userList(bool forFilter = false);
+  DDASerialList serialList(bool forFilter = false);
   void userAdd(QString name, QString passw = QString());
   void userDel(int id);
   bool checkPassword(int id, QString passw);
@@ -74,6 +124,7 @@ public:
   QString userName(int id);
 
   int currentSessionId(){return m_session;}
+  QSqlQuery selectSessions(const SessionFilter& filter);
 
 public slots:
   void setSerial(const QString&);

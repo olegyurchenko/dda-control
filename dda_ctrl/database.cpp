@@ -298,10 +298,10 @@ QStringList DDADatabase :: gritList(int standard)
   return lst;
 }
 /*----------------------------------------------------------------------------*/
-DDAUserList DDADatabase :: userList()
+DDAUserList DDADatabase :: userList(bool forFilter)
 {
   DDAUserList lst;
-  if(!m_userMap.empty())
+  if(!m_userMap.empty() && !forFilter)
   {
     UserMap::Iterator end = m_userMap.end();
     for(UserMap::Iterator it = m_userMap.begin(); it != end; ++it)
@@ -315,10 +315,21 @@ DDAUserList DDADatabase :: userList()
   }
 
   QSqlQuery q(QSqlDatabase::database(CONNECTION_NAME));
-  if(!q.exec("select id, name from users where active <> 0 order by id"))
+  if(forFilter)
   {
-    error(q);
-    return DDAUserList();
+    if(!q.exec("select u.id, u.name from users u, sessions s where u.id = s.user group by u.id, u.name order by u.id"))
+    {
+      error(q);
+      return DDAUserList();
+    }
+  }
+  else
+  {
+    if(!q.exec("select id, name from users where active <> 0 order by id"))
+    {
+      error(q);
+      return DDAUserList();
+    }
   }
 
   bool eof = !q.first();
@@ -328,7 +339,8 @@ DDAUserList DDADatabase :: userList()
     user.id = q.value(0).toInt();
     user.name = q.value(1).toString();
     lst.append(user);
-    m_userMap[user.id] = user.name;
+    if(!forFilter)
+      m_userMap[user.id] = user.name;
     eof = !q.next();
   }
   return lst;
@@ -490,6 +502,39 @@ QString DDADatabase :: deviceSerial(int id)
     return QString();
 
   return q.value(0).toString();
+}
+/*----------------------------------------------------------------------------*/
+DDASerialList DDADatabase :: serialList(bool forFilter)
+{
+  DDASerialList lst;
+  QSqlQuery q(QSqlDatabase::database(CONNECTION_NAME));
+  if(forFilter)
+  {
+    if(!q.exec("select d.id, d.serial from devices, sessions s where d.id = s.device group by d.id, d.serial order by d.id"))
+    {
+      error(q);
+      return DDASerialList();
+    }
+  }
+  else
+  {
+    if(!q.exec("select id, serial from devices order by id"))
+    {
+      error(q);
+      return DDASerialList();
+    }
+  }
+
+  bool eof = !q.first();
+  while(!eof)
+  {
+    DDASerial s;
+    s.id = q.value(0).toInt();
+    s.serial = q.value(1).toString();
+    lst.append(s);
+    eof = !q.next();
+  }
+  return lst;
 }
 /*----------------------------------------------------------------------------*/
 int DDADatabase :: sessionAdd(const DDASession& session)
@@ -746,5 +791,53 @@ void DDADatabase :: currentStretch(double)
 {
   if(m_startMeasure.isNull())
     m_startMeasure.start();
+}
+/*----------------------------------------------------------------------------*/
+QSqlQuery DDADatabase :: selectSessions(const SessionFilter& filter)
+{
+  QSqlQuery q(QSqlDatabase::database(CONNECTION_NAME));
+  QString sql;
+
+  sql = "select s.id, s.start, d.serial, u.name, s.lot \n"
+      "from sessions s, devices d, users u\n"
+      "where u.id = s.user\n"
+      "and d.id = s.device\n";
+
+  if(filter.dateSet())
+  {
+    sql += "and start >= ?\n";
+    sql += "and end <= ?\n";
+  }
+
+  if(filter.userSet())
+    sql += "and s.user = ?\n";
+
+  if(filter.serialSet())
+    sql += "and s.user = ?\n";
+
+  sql += "order by s.id desc\n";
+  if(filter.limit() > 0)
+  {
+    sql += QString("limit %1\n").arg(filter.limit());
+    if(filter.offset() > 0)
+      sql += QString("offset %1").arg(filter.offset());
+  }
+  q.prepare(sql);
+  if(filter.dateSet())
+  {
+    QDateTime d1(filter.date()), d2(filter.date());
+    d1.setTime(QTime(0, 0));
+    d2.setTime(QTime(23, 59, 59, 999));
+    q.addBindValue(d1);
+    q.addBindValue(d2);
+  }
+  if(filter.userSet())
+    q.addBindValue(filter.user());
+  if(filter.serialSet())
+    q.addBindValue(filter.serial());
+
+  if(!q.exec())
+    error(q);
+  return q;
 }
 /*----------------------------------------------------------------------------*/
