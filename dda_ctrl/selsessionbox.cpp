@@ -60,28 +60,61 @@ void SelSessionBox::onUsersChanged()
   }
 }
 /*----------------------------------------------------------------------------*/
-void SelSessionBox::onSessionChanged(QModelIndex)
+void SelSessionBox::onSessionChanged(QModelIndex idx)
 {
+  QSqlQuery q = sessionModel->query();
+  q.seek(idx.row());
+  int id = q.value(0).toInt();
+  database->measureSession(id, m_session);
 }
 /*----------------------------------------------------------------------------*/
-void SelSessionBox::onFilterChanged(bool)
+void SelSessionBox::onFilterChanged(bool check)
 {
+  if(!check)
+  {
+    ui->dateCheck->setChecked(false);
+    ui->userCombo->setCurrentIndex(0);
+    ui->serialCombo->setCurrentIndex(0);
+    m_filter.dateSet(false);
+    m_filter.userSet(false);
+    m_filter.serialSet(false);
+  }
+  sessionModel->setQuery(database->selectSessions(m_filter));
 }
 /*----------------------------------------------------------------------------*/
-void SelSessionBox::onDateChechChanged(bool)
+void SelSessionBox::onDateChechChanged(bool check)
 {
+  m_filter.setDate(ui->dateEdit->date());
+  sessionModel->setQuery(database->selectSessions(m_filter));
 }
 /*----------------------------------------------------------------------------*/
 void SelSessionBox::onDateChanged(QDate)
 {
+  ui->dateCheck->setChecked(true);
+  m_filter.setDate(ui->dateEdit->date());
+  sessionModel->setQuery(database->selectSessions(m_filter));
 }
 /*----------------------------------------------------------------------------*/
-void SelSessionBox::onUserChanged(int)
+void SelSessionBox::onUserChanged(int index)
 {
+  if(!index <= 0)
+    m_filter.userSet(false);
+  else
+  {
+    m_filter.setUser(m_users[index].id);
+  }
+  sessionModel->setQuery(database->selectSessions(m_filter));
 }
 /*----------------------------------------------------------------------------*/
-void SelSessionBox::onSerialChanged(int)
+void SelSessionBox::onSerialChanged(int index)
 {
+  if(!index <= 0)
+    m_filter.serialSet(false);
+  else
+  {
+    m_filter.setSerial(m_serials[index].id);
+  }
+  sessionModel->setQuery(database->selectSessions(m_filter));
 }
 /*----------------------------------------------------------------------------*/
 //SelSessionModel

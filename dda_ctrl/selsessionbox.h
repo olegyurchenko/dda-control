@@ -26,6 +26,7 @@ class SelSessionBox : public QGroupBox
 protected:
   DDAMeasureSession *m_session;
   DDAUserList m_users;
+  DDASerialList m_serials;
   SelSessionModel *sessionModel;
   SessionFilter m_filter;
 public:
