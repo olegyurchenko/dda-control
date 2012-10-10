@@ -7,17 +7,20 @@
 #include <QSqlRecord>
 #include <QPainter>
 /*----------------------------------------------------------------------------*/
+const QString timeFormat = QObject::tr("yyyy-MM-dd hh:mm", "Session model date-time format");
+const QString dateFormat = QObject::tr("yyyy-MM-dd", "Session model date format");
+/*----------------------------------------------------------------------------*/
 SelSessionBox::SelSessionBox(QWidget *parent) :
   QGroupBox(parent),
   ui(new Ui::SelSessionBox)
 {
   ui->setupUi(this);
+  m_manualMode = true;
   m_session = new DDAMeasureSession(this);
 
-  ui->dateEdit->setDate(QDate::currentDate());
 
-  connect(ui->filterCheck, SIGNAL(toggled(bool)), ui->dateCheck, SLOT(setEnabled(bool)));
-  connect(ui->filterCheck, SIGNAL(toggled(bool)), ui->dateEdit, SLOT(setEnabled(bool)));
+  connect(ui->filterCheck, SIGNAL(toggled(bool)), ui->dateLabel, SLOT(setEnabled(bool)));
+  connect(ui->filterCheck, SIGNAL(toggled(bool)), ui->dateCombo, SLOT(setEnabled(bool)));
   connect(ui->filterCheck, SIGNAL(toggled(bool)), ui->serialLabel, SLOT(setEnabled(bool)));
   connect(ui->filterCheck, SIGNAL(toggled(bool)), ui->serialCombo, SLOT(setEnabled(bool)));
   connect(ui->filterCheck, SIGNAL(toggled(bool)), ui->userLabel, SLOT(setEnabled(bool)));
@@ -26,7 +29,6 @@ SelSessionBox::SelSessionBox(QWidget *parent) :
 
   connect(database, SIGNAL(userChanged(int)), this, SLOT(onUsersChanged()));
 
-  onUsersChanged();
 
   sessionModel = new SelSessionModel(this);
   ui->sessionView->setModel(sessionModel);
@@ -36,10 +38,15 @@ SelSessionBox::SelSessionBox(QWidget *parent) :
   if(database->isError())
     QMessageBox::critical(this, tr("Database error"), database->message());
 
-  ui->sessionView->setColumnWidth(0, ui->sessionView->fontMetrics().boundingRect(tr("yyyy/MM/dd hh:mm", "Session model date format")).width());
+  ui->sessionView->setColumnWidth(0, ui->sessionView->fontMetrics().boundingRect(timeFormat).width());
   ui->sessionView->setColumnWidth(1, ui->sessionView->fontMetrics().boundingRect("000000").width());
   ui->sessionView->setColumnWidth(2, ui->sessionView->fontMetrics().boundingRect("000000000").width());
   //ui->sessionView->resizeColumnsToContents();
+
+  onSessionsChanged();
+  onUsersChanged();
+  onSerialsChanged();
+  m_manualMode = false;
 }
 /*----------------------------------------------------------------------------*/
 SelSessionBox::~SelSessionBox()
@@ -50,6 +57,8 @@ SelSessionBox::~SelSessionBox()
 /*----------------------------------------------------------------------------*/
 void SelSessionBox::onUsersChanged()
 {
+  m_manualMode = true;
+  int oldIndex = ui->userCombo->currentIndex();
   m_users = database->userList(true);
   ui->userCombo->clear();
   ui->userCombo->addItem("");
@@ -58,6 +67,40 @@ void SelSessionBox::onUsersChanged()
   {
     ui->userCombo->addItem(QIcon(":/user-identity.png"), m_users[i].name);
   }
+  ui->userCombo->setCurrentIndex(oldIndex);
+  m_manualMode = false;
+}
+/*----------------------------------------------------------------------------*/
+void SelSessionBox::onSerialsChanged()
+{
+  m_manualMode = true;
+  int oldIndex = ui->serialCombo->currentIndex();
+  m_serials = database->serialList(true);
+  ui->serialCombo->clear();
+  ui->serialCombo->addItem("");
+  int size = m_serials.size();
+  for(int i = 0; i < size; i++)
+  {
+    ui->serialCombo->addItem(QIcon(":/dda.png"), m_serials[i].serial);
+  }
+  ui->serialCombo->setCurrentIndex(oldIndex);
+  m_manualMode = false;
+}
+/*----------------------------------------------------------------------------*/
+void SelSessionBox::onSessionsChanged()
+{
+  m_manualMode = true;
+  int oldIndex = ui->dateCombo->currentIndex();
+  m_dates = database->sessionDateList();
+  ui->dateCombo->clear();
+  ui->dateCombo->addItem("");
+  int size = m_dates.size();
+  for(int i = 0; i < size; i++)
+  {
+    ui->dateCombo->addItem(QIcon(":/view-calendar-day.png"), m_dates[i].toString(dateFormat));
+  }
+  ui->dateCombo->setCurrentIndex(oldIndex);
+  m_manualMode = false;
 }
 /*----------------------------------------------------------------------------*/
 void SelSessionBox::onSessionChanged(QModelIndex idx)
@@ -70,9 +113,10 @@ void SelSessionBox::onSessionChanged(QModelIndex idx)
 /*----------------------------------------------------------------------------*/
 void SelSessionBox::onFilterChanged(bool check)
 {
+  m_manualMode = true;
   if(!check)
   {
-    ui->dateCheck->setChecked(false);
+    ui->dateCombo->setCurrentIndex(0);
     ui->userCombo->setCurrentIndex(0);
     ui->serialCombo->setCurrentIndex(0);
     m_filter.dateSet(false);
@@ -80,40 +124,51 @@ void SelSessionBox::onFilterChanged(bool check)
     m_filter.serialSet(false);
   }
   sessionModel->setQuery(database->selectSessions(m_filter));
+  m_manualMode = false;
 }
 /*----------------------------------------------------------------------------*/
-void SelSessionBox::onDateChechChanged(bool check)
+void SelSessionBox::onDateChanged(int index)
 {
-  m_filter.setDate(ui->dateEdit->date());
-  sessionModel->setQuery(database->selectSessions(m_filter));
-}
-/*----------------------------------------------------------------------------*/
-void SelSessionBox::onDateChanged(QDate)
-{
-  ui->dateCheck->setChecked(true);
-  m_filter.setDate(ui->dateEdit->date());
+  if(!ui->filterCheck->checkState() || m_manualMode)
+    return;
+  if(index <= 0)
+    m_filter.dateSet(false);
+  else
+    m_filter.setDate(m_dates[index - 1]);
   sessionModel->setQuery(database->selectSessions(m_filter));
 }
 /*----------------------------------------------------------------------------*/
 void SelSessionBox::onUserChanged(int index)
 {
-  if(!index <= 0)
+  if(!ui->filterCheck->checkState() || m_manualMode)
+    return;
+  if(index <= 0)
     m_filter.userSet(false);
   else
   {
-    m_filter.setUser(m_users[index].id);
+    m_filter.setUser(m_users[index - 1].id);
   }
   sessionModel->setQuery(database->selectSessions(m_filter));
 }
 /*----------------------------------------------------------------------------*/
 void SelSessionBox::onSerialChanged(int index)
 {
-  if(!index <= 0)
+  if(!ui->filterCheck->checkState() || m_manualMode)
+    return;
+  if(index <= 0)
     m_filter.serialSet(false);
   else
   {
-    m_filter.setSerial(m_serials[index].id);
+    m_filter.setSerial(m_serials[index - 1].id);
   }
+  sessionModel->setQuery(database->selectSessions(m_filter));
+}
+/*----------------------------------------------------------------------------*/
+void SelSessionBox::onRefresh()
+{
+  onUsersChanged();
+  onSerialsChanged();
+  onSessionsChanged();
   sessionModel->setQuery(database->selectSessions(m_filter));
 }
 /*----------------------------------------------------------------------------*/
@@ -139,7 +194,7 @@ QVariant SelSessionModel :: data(const QModelIndex &idx, int role) const
   {
   case START_COL:
     if(role == Qt::DisplayRole)
-      return rec.value(START_COL).toDateTime().toString(tr("yyyy/MM/dd hh:mm", "Session model date format"));
+      return rec.value(START_COL).toDateTime().toString(timeFormat);
     break;
   case SERIAL_COL:
   case USER_COL:

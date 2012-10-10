@@ -92,7 +92,7 @@ void AxisPlotter :: paint(QPaintDevice *dev)
   if(!x.text().isEmpty())
   {
     int w = p.fontMetrics().boundingRect(x.text()).width();
-    int h = p.fontMetrics().boundingRect(x.text()).height();
+    //int h = p.fontMetrics().boundingRect(x.text()).height();
     p.drawText(m_rect.right() - w - m_x_border, dev->height() - m_y_border, x.text());
   }
 

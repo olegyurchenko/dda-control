@@ -5,11 +5,16 @@
 #include <controller.h>
 #include <usermanagedialog.h>
 /*----------------------------------------------------------------------------*/
-SessionDialog::SessionDialog(QWidget *parent) :
+SessionDialog::SessionDialog(QWidget *parent, DDAMeasureSession *session) :
   QDialog(parent),
   ui(new Ui::SessionDialog)
 {
   ui->setupUi(this);
+
+  if(session != NULL)
+    m_session = session;
+  else
+    m_session = ::session;
 
   connect(database, SIGNAL(userChanged(int)), this, SLOT(onUsersChanged()));
 
@@ -24,13 +29,13 @@ SessionDialog::SessionDialog(QWidget *parent) :
 
   ui->particlesSpin->setValue(config->profile().particles);
 
-  if(session->session().id != InvalidId)
+  if(m_session->session().id != InvalidId)
   {
-    ui->standardCombo->setCurrentIndex(session->session().standard);
-    ui->gritCombo->setCurrentIndex(session->session().gritIndex);
-    ui->lotEdit->setText(session->session().lot);
+    ui->standardCombo->setCurrentIndex(m_session->session().standard);
+    ui->gritCombo->setCurrentIndex(m_session->session().gritIndex);
+    ui->lotEdit->setText(m_session->session().lot);
     ui->markEdit->setEnabled(true);
-    ui->markEdit->setText(session->session().mark);
+    ui->markEdit->setText(m_session->session().mark);
   }
 }
 /*----------------------------------------------------------------------------*/
@@ -44,18 +49,18 @@ void SessionDialog::onUserListIndexChanged(int index)
   if(index <= 0 || index >= m_userList.size())
     return;
 
-  if(m_userList[index].id == session->session().userId)
+  if(m_userList[index].id == m_session->session().userId)
     return;
   if(m_userList[index].id < 0 || passwordCheck(this, m_userList[index].id))
   {
-    session->setUserId(m_userList[index].id);
+    m_session->setUserId(m_userList[index].id);
   }
   else
   {
     int index = 0;
     int size = m_userList.size();
     for(int i = 0; i < size; i++)
-      if(m_userList[i].id == session->session().userId)
+      if(m_userList[i].id == m_session->session().userId)
       {
         index = i;
         break;
@@ -80,7 +85,7 @@ void SessionDialog::onAccepted()
   profile.particles = ui->particlesSpin->value();
   config->setProfile(profile);
 
-  DDASession s = session->session();
+  DDASession s = m_session->session();
   s.gritIndex = ui->gritCombo->currentIndex();
   s.standard = ui->standardCombo->currentIndex();
   s.lot = ui->lotEdit->text();
@@ -89,13 +94,13 @@ void SessionDialog::onAccepted()
   {
     s.mark = ui->markEdit->text();
     database->modifySession(s);
-    session->setSession(s);
+    m_session->setSession(s);
   }
   else
   {
     s.particles = ui->particlesSpin->value();
     s.id = database->sessionAdd(s);
-    session->setSession(s);
+    m_session->setSession(s);
   }
 }
 /*----------------------------------------------------------------------------*/
@@ -109,7 +114,7 @@ void SessionDialog::onUsersChanged()
 
   int userIndex = 0;
   for(int i = 0; i < size; i++)
-    if(session->session().userId == m_userList[i].id)
+    if(m_session->session().userId == m_userList[i].id)
     {
       userIndex = i;
       break;

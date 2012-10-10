@@ -18,14 +18,15 @@
 #include <QAbstractTableModel>
 #include <QModelIndex>
 #include <QVariant>
-
+class DDAMeasureSession;
 class MeasureModel : public QAbstractTableModel
 {
   Q_OBJECT
 protected:
   int m_rowCount;
+  DDAMeasureSession *m_session;
 public:
-  MeasureModel(QObject *parent = 0);
+  MeasureModel(QObject *parent = 0, DDAMeasureSession *session = 0);
   QVariant data(const QModelIndex &index, int role) const;
   Qt::ItemFlags flags(const QModelIndex &index) const;
   QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;

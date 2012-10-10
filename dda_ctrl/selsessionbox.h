@@ -27,8 +27,10 @@ protected:
   DDAMeasureSession *m_session;
   DDAUserList m_users;
   DDASerialList m_serials;
+  QList<QDate> m_dates;
   SelSessionModel *sessionModel;
   SessionFilter m_filter;
+  bool m_manualMode;
 public:
   explicit SelSessionBox(QWidget *parent = 0);
   ~SelSessionBox();
@@ -39,12 +41,14 @@ private:
 
 protected slots:
   void onUsersChanged();
+  void onSerialsChanged();
+  void onSessionsChanged();
   void onSessionChanged(QModelIndex);
   void onFilterChanged(bool);
-  void onDateChechChanged(bool);
-  void onDateChanged(QDate);
+  void onDateChanged(int);
   void onUserChanged(int);
   void onSerialChanged(int);
+  void onRefresh();
 };
 /*----------------------------------------------------------------------------*/
 

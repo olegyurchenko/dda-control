@@ -40,9 +40,11 @@ MeasureWindow::MeasureWindow(QWidget *parent) :
   connect(session, SIGNAL(sessionChanged()), this, SLOT(onSessionChanged()));
   connect(session, SIGNAL(measureListChanged()), this, SLOT(onMeasureListChanged()));
 
+  ui->sessionBox->setSession(session);
+
   measureModel = new MeasureModel(this);
   ui->measureTable->setModel(measureModel);
-  connect(session, SIGNAL(measureListChanged()), measureModel, SLOT(update()));
+  //connect(session, SIGNAL(measureListChanged()), measureModel, SLOT(update()));
 
   histogrammPlotter = new HistogrammPlotter();
   //  ui->currentHPlotWidget->setPlotter(histogrammPlotter);
@@ -173,7 +175,6 @@ void MeasureWindow::onCmdSendError()
 void MeasureWindow::onSerialReceived(const QString& str)
 {
   ui->serialLabel->setText(str);
-  ui->serialLabel_2->setText(str);
   ui->actionStartSession->setEnabled(true);
 }
 /*----------------------------------------------------------------------------*/
@@ -215,7 +216,7 @@ void MeasureWindow::onNoParticle()
   m_measureTime = QTime();
 }
 /*----------------------------------------------------------------------------*/
-void MeasureWindow::onMeasure(double strength, double size, int number)
+void MeasureWindow::onMeasure(double strength, double, int)
 {
   onCurrentStretch(strength);
 
@@ -245,13 +246,6 @@ void MeasureWindow::onStartSession()
 /*----------------------------------------------------------------------------*/
 void MeasureWindow::onSessionChanged()
 {
-  DDASession s = session->session();
-  ui->userLabel->setText(database->userName(s.userId));
-  ui->lotLabel->setText(s.lot);
-  ui->standardLabel->setText(database->standardList()[s.standard]);
-  ui->gritLabel->setText(database->gritList(s.standard)[s.gritIndex]);
-  ui->particlesLabel->setText(QString::number(s.particles));
-
   ui->actionEditCurrentSession->setEnabled(session->session().id != InvalidId);
 }
 /*----------------------------------------------------------------------------*/

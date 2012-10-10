@@ -30,7 +30,8 @@ SOURCES += main.cpp\
     ../measuremodel.cpp \
     ../usermanagedialog.cpp \
     ../newpassworddialog.cpp \
-    ../selsessionbox.cpp
+    ../selsessionbox.cpp \
+    ../sessionbox.cpp
 
 HEADERS  += measurewindow.h \
     ../configuration.h \
@@ -51,7 +52,8 @@ HEADERS  += measurewindow.h \
     ../measuremodel.h \
     ../usermanagedialog.h \
     ../newpassworddialog.h \
-    ../selsessionbox.h
+    ../selsessionbox.h \
+    ../sessionbox.h
 
 FORMS    += measurewindow.ui \
     ../profileselectdialog.ui \
@@ -59,7 +61,8 @@ FORMS    += measurewindow.ui \
     ../sessiondialog.ui \
     ../usermanagedialog.ui \
     ../newpassworddialog.ui \
-    ../selsessionbox.ui
+    ../selsessionbox.ui \
+    ../sessionbox.ui
 
 INCLUDEPATH += \
  ..

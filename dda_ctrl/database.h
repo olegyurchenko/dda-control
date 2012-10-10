@@ -110,6 +110,7 @@ public:
   QStringList standardList();
   QStringList gritList(int standard);
   DDAUserList userList(bool forFilter = false);
+  QList<QDate> sessionDateList();
   DDASerialList serialList(bool forFilter = false);
   void userAdd(QString name, QString passw = QString());
   void userDel(int id);

@@ -22,19 +22,23 @@ enum MeasureColumn
 };
 
 /*----------------------------------------------------------------------------*/
-MeasureModel :: MeasureModel(QObject *parent)
+MeasureModel :: MeasureModel(QObject *parent, DDAMeasureSession *session)
   : QAbstractTableModel(parent)
 {
   m_rowCount = 0;
+  m_session = ::session;
+  if(session != NULL)
+    m_session = session;
+  connect(m_session, SIGNAL(measureListChanged()), this, SLOT(update()));
 }
 /*----------------------------------------------------------------------------*/
 QVariant MeasureModel :: data(const QModelIndex &index, int role) const
 {
   int col = index.column();
   int row = index.row();
-  if(row < 0 || row >= session->measureList().size())
+  if(row < 0 || row >= m_session->measureList().size())
     return QVariant();
-  DDAMeasure measure = session->measureList()[row];
+  DDAMeasure measure = m_session->measureList()[row];
   if(role == Qt::DisplayRole)
   {
     switch(col)
@@ -56,7 +60,7 @@ QVariant MeasureModel :: data(const QModelIndex &index, int role) const
   return QVariant();
 }
 /*----------------------------------------------------------------------------*/
-Qt::ItemFlags MeasureModel :: flags(const QModelIndex &index) const
+Qt::ItemFlags MeasureModel :: flags(const QModelIndex &) const
 {
   return Qt::ItemIsSelectable | Qt::ItemIsEnabled /*| Qt::ItemIsEditable*/;
 }
@@ -97,9 +101,9 @@ int MeasureModel :: columnCount(const QModelIndex &) const
 /*----------------------------------------------------------------------------*/
 void MeasureModel :: update()
 {
-  if(m_rowCount != session->measureList().size())
+  if(m_rowCount != m_session->measureList().size())
   {
-    m_rowCount = session->measureList().size();
+    m_rowCount = m_session->measureList().size();
     reset();
   }
   emit dataChanged(index(0,0), index(m_rowCount, ColCount));

@@ -510,7 +510,7 @@ DDASerialList DDADatabase :: serialList(bool forFilter)
   QSqlQuery q(QSqlDatabase::database(CONNECTION_NAME));
   if(forFilter)
   {
-    if(!q.exec("select d.id, d.serial from devices, sessions s where d.id = s.device group by d.id, d.serial order by d.id"))
+    if(!q.exec("select d.id, d.serial from devices d, sessions s where d.id = s.device group by d.id, d.serial order by d.id"))
     {
       error(q);
       return DDASerialList();
@@ -706,7 +706,7 @@ bool DDADatabase :: measureSession(int id, DDAMeasureSession *dst)
 {
   QSqlQuery q(QSqlDatabase::database(CONNECTION_NAME));
   q.prepare(
-        "select id, user,device,start,end, lot, standart, grit, mark\n"
+        "select id, user,device,start,end, lot, standard, grit, mark\n"
         "from sessions\n"
         "where id = ?"
             );
@@ -813,7 +813,7 @@ QSqlQuery DDADatabase :: selectSessions(const SessionFilter& filter)
     sql += "and s.user = ?\n";
 
   if(filter.serialSet())
-    sql += "and s.user = ?\n";
+    sql += "and s.device = ?\n";
 
   sql += "order by s.id desc\n";
   if(filter.limit() > 0)
@@ -839,5 +839,23 @@ QSqlQuery DDADatabase :: selectSessions(const SessionFilter& filter)
   if(!q.exec())
     error(q);
   return q;
+}
+/*----------------------------------------------------------------------------*/
+QList<QDate> DDADatabase :: sessionDateList()
+{
+  QList<QDate> lst;
+  QSqlQuery q(QSqlDatabase::database(CONNECTION_NAME));
+  if(!q.exec("select distinct DATE(start) from sessions order by start desc"))
+  {
+    error(q);
+    return lst;
+  }
+  bool eof = !q.first();
+  while(!eof)
+  {
+    lst.append(q.value(0).toDate());
+    eof = !q.next();
+  }
+  return lst;
 }
 /*----------------------------------------------------------------------------*/
