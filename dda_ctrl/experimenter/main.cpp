@@ -12,6 +12,9 @@
 int main(int argc, char *argv[])
 {
   QApplication a(argc, argv);
+
+  a.addLibraryPath(a.applicationDirPath() + "/plugins");
+
   config = new DDAConfig(&a);
   if(config->fileExists() && config->isError())
   {

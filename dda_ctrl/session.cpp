@@ -16,9 +16,52 @@
 /*----------------------------------------------------------------------------*/
 DDAMeasureSession *session = NULL;
 /*----------------------------------------------------------------------------*/
+#define SESSION_CHANGED 1
+#define MEASURES_CHANGED 2
+/*----------------------------------------------------------------------------*/
 DDAMeasureSession :: DDAMeasureSession(QObject *parent)
   :QObject(parent)
 {
+  m_updateState = false;
+  m_updateMask = 0;
+}
+/*----------------------------------------------------------------------------*/
+void DDAMeasureSession :: setSessionChanged()
+{
+  if(m_updateState)
+    m_updateMask |= SESSION_CHANGED;
+  else
+    emit sessionChanged();
+}
+/*----------------------------------------------------------------------------*/
+void DDAMeasureSession :: setMeasureListChanged()
+{
+  if(m_updateState)
+    m_updateMask |= MEASURES_CHANGED;
+  else
+    emit measureListChanged();
+}
+/*----------------------------------------------------------------------------*/
+void DDAMeasureSession :: beginUpdate()
+{
+  if(!m_updateState)
+  {
+    m_updateMask = 0;
+    m_updateState = true;
+  }
+}
+/*----------------------------------------------------------------------------*/
+void DDAMeasureSession :: endUpate()
+{
+  if(m_updateState)
+  {
+    if(m_updateMask & SESSION_CHANGED)
+      emit sessionChanged();
+    if(m_updateMask & MEASURES_CHANGED)
+      emit measureListChanged();
+    m_updateMask = 0;
+    m_updateState = false;
+  }
 }
 /*----------------------------------------------------------------------------*/
 void DDAMeasureSession :: setSerial(const QString& serial)
@@ -26,7 +69,7 @@ void DDAMeasureSession :: setSerial(const QString& serial)
   if(m_session.deviceSerial != serial)
   {
     m_session.deviceSerial = serial;
-    emit sessionChanged();
+    setSessionChanged();
   }
 }
 /*----------------------------------------------------------------------------*/
@@ -36,19 +79,19 @@ void DDAMeasureSession :: addMeasure(double strength, double size, int)
   m.strenght = strength;
   m.size = size;
   m_measureList.append(m);
-  emit measureListChanged();
+  setMeasureListChanged();
 }
 /*----------------------------------------------------------------------------*/
 void DDAMeasureSession :: setSession(const DDASession& s)
 {
   m_session = s;
-  emit sessionChanged();
+  setSessionChanged();
 }
 /*----------------------------------------------------------------------------*/
 void DDAMeasureSession :: addMeasure(const DDAMeasure& m)
 {
   m_measureList.append(m);
-  emit measureListChanged();
+  setMeasureListChanged();
 }
 /*----------------------------------------------------------------------------*/
 void DDAMeasureSession :: setId(int i)
@@ -56,7 +99,7 @@ void DDAMeasureSession :: setId(int i)
   if(m_session.id != i)
   {
     m_session.id = i;
-    emit sessionChanged();
+    setSessionChanged();
   }
 }
 /*----------------------------------------------------------------------------*/
@@ -65,7 +108,7 @@ void DDAMeasureSession :: setUserId(int i)
   if(m_session.userId != i)
   {
     m_session.userId = i;
-    emit sessionChanged();
+    setSessionChanged();
   }
 }
 /*----------------------------------------------------------------------------*/
@@ -74,7 +117,7 @@ void DDAMeasureSession :: setStart(const QDateTime& d)
   if(m_session.start != d)
   {
     m_session.start = d;
-    emit sessionChanged();
+    setSessionChanged();
   }
 }
 /*----------------------------------------------------------------------------*/
@@ -83,7 +126,7 @@ void DDAMeasureSession :: setEnd(const QDateTime& d)
   if(m_session.end != d)
   {
     m_session.end = d;
-    emit sessionChanged();
+    setSessionChanged();
   }
 }
 /*----------------------------------------------------------------------------*/
@@ -92,7 +135,7 @@ void DDAMeasureSession :: setLlot(const QString& l)
   if(m_session.lot != l)
   {
     m_session.lot = l;
-    emit sessionChanged();
+    setSessionChanged();
   }
 }
 /*----------------------------------------------------------------------------*/
@@ -101,7 +144,7 @@ void DDAMeasureSession :: setStandard(int i)
   if(m_session.standard != i)
   {
     m_session.standard = i;
-    emit sessionChanged();
+    setSessionChanged();
   }
 }
 /*----------------------------------------------------------------------------*/
@@ -110,7 +153,7 @@ void DDAMeasureSession :: setGritIndex(int i)
   if(m_session.gritIndex != i)
   {
     m_session.gritIndex = i;
-    emit sessionChanged();
+    setSessionChanged();
   }
 }
 /*----------------------------------------------------------------------------*/
@@ -119,7 +162,7 @@ void DDAMeasureSession :: setMark(const QString& m)
   if(m_session.mark != m)
   {
     m_session.mark = m;
-    emit sessionChanged();
+    setSessionChanged();
   }
 }
 /*----------------------------------------------------------------------------*/
@@ -128,7 +171,7 @@ void DDAMeasureSession :: setParticles(int i)
   if(m_session.particles != i)
   {
     m_session.particles = i;
-    emit sessionChanged();
+    setSessionChanged();
   }
 }
 /*----------------------------------------------------------------------------*/
@@ -145,8 +188,8 @@ void DDAMeasureSession :: clear()
   m_session.lot = "";
   m_session.mark = "";
   m_measureList.clear();
-  emit sessionChanged();
-  emit measureListChanged();
+  setSessionChanged();
+  setMeasureListChanged();
 }
 /*----------------------------------------------------------------------------*/
 

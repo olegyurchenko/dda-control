@@ -169,22 +169,6 @@
  </resources>
  <connections>
   <connection>
-   <sender>sessionView</sender>
-   <signal>clicked(QModelIndex)</signal>
-   <receiver>SelSessionBox</receiver>
-   <slot>onSessionChanged(QModelIndex)</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>110</x>
-     <y>189</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>215</x>
-     <y>263</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
    <sender>filterCheck</sender>
    <signal>toggled(bool)</signal>
    <receiver>SelSessionBox</receiver>

@@ -582,7 +582,7 @@ DDASession DDADatabase :: getSession(const QSqlQuery &q)
   DDASession session;
   session.id = q.value(0).toInt();
   session.userId = q.value(1).toInt();
-  session.deviceSerial = deviceId(q.value(2).toString());
+  session.deviceSerial = deviceSerial(q.value(2).toInt());
   session.start = q.value(3).toDateTime();
   session.end = q.value(4).toDateTime();
   session.lot = q.value(5).toString();
@@ -719,6 +719,9 @@ bool DDADatabase :: measureSession(int id, DDAMeasureSession *dst)
 
   if(!q.first())
     return false;
+
+  dst->beginUpdate();
+  dst->clear();
   dst->setSession(getSession(q));
   q.prepare("select id, session, size, strenght, elapsed, ignored from measures\n"
             "where session = ?");
@@ -738,6 +741,7 @@ bool DDADatabase :: measureSession(int id, DDAMeasureSession *dst)
     dst->addMeasure(m);
   } while(q.next());
 
+  dst->endUpate();
   return true;
 }
 /*----------------------------------------------------------------------------*/

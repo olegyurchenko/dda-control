@@ -2,6 +2,7 @@
 #include "ui_sessionbox.h"
 #include <session.h>
 #include <database.h>
+#include <QtDebug>
 /*----------------------------------------------------------------------------*/
 SessionBox::SessionBox(QWidget *parent) :
   QGroupBox(parent),
@@ -36,6 +37,7 @@ void SessionBox::setSession(DDAMeasureSession *s)
 /*----------------------------------------------------------------------------*/
 void SessionBox::onSessionChanged()
 {
+  qDebug() << "SessionBox::onSessionChanged()";
   DDASession s = m_session->session();
   ui->serialLabel->setText(s.deviceSerial);
   ui->userLabel->setText(database->userName(s.userId));

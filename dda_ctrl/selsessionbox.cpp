@@ -18,7 +18,6 @@ SelSessionBox::SelSessionBox(QWidget *parent) :
   m_manualMode = true;
   m_session = new DDAMeasureSession(this);
 
-
   connect(ui->filterCheck, SIGNAL(toggled(bool)), ui->dateLabel, SLOT(setEnabled(bool)));
   connect(ui->filterCheck, SIGNAL(toggled(bool)), ui->dateCombo, SLOT(setEnabled(bool)));
   connect(ui->filterCheck, SIGNAL(toggled(bool)), ui->serialLabel, SLOT(setEnabled(bool)));
@@ -33,7 +32,9 @@ SelSessionBox::SelSessionBox(QWidget *parent) :
   sessionModel = new SelSessionModel(this);
   ui->sessionView->setModel(sessionModel);
   ui->sessionView->setSelectionBehavior(QAbstractItemView::SelectRows);
-  ui->sessionView->setSelectionMode(QAbstractItemView::ExtendedSelection);
+  ui->sessionView->setSelectionMode(QAbstractItemView::SingleSelection);
+  connect(ui->sessionView->selectionModel(), SIGNAL(currentRowChanged(QModelIndex,QModelIndex)), this, SLOT(onSessionChanged(QModelIndex)));
+
   sessionModel->setQuery(database->selectSessions(m_filter));
   if(database->isError())
     QMessageBox::critical(this, tr("Database error"), database->message());

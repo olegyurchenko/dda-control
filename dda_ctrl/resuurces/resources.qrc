@@ -41,4 +41,7 @@
         <file>dstu.txt</file>
         <file>standards.txt</file>
     </qresource>
+    <qresource prefix="/qml">
+        <file>processing.qml</file>
+    </qresource>
 </RCC>

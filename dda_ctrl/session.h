@@ -68,6 +68,10 @@ class DDAMeasureSession : public QObject
 protected:
   DDASession m_session;
   DDAMeasureList m_measureList;
+  bool m_updateState;
+  unsigned m_updateMask;
+  void setSessionChanged();
+  void setMeasureListChanged();
 public:
   DDAMeasureSession(QObject *parent = 0);
   const DDASession& session() {return m_session;}
@@ -88,6 +92,10 @@ public slots:
   void setMark(const QString&);
   void onEndOfMeasuring();
   void clear();
+
+  void beginUpdate();
+  void endUpate();
+
 signals:
   void sessionChanged();
   void measureListChanged();
