@@ -17,7 +17,8 @@
 #include <QVector>
 #include <QPoint>
 /*----------------------------------------------------------------------------*/
-CurvePlotter :: CurvePlotter()
+CurvePlotter :: CurvePlotter(QObject *parent)
+  : GraphPlotter(parent)
 {
   m_pen.setColor(QColor("black"));
   m_pen.setStyle(Qt::SolidLine);

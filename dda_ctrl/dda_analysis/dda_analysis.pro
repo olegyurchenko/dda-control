@@ -54,6 +54,8 @@ FORMS    += analyswindow.ui \
     ../selsessionbox.ui \
     ../newpassworddialog.ui
 
+DEFINES += USE_QML
+
 win32 {
   DEFINES += WIN32
 }
@@ -73,4 +75,5 @@ RESOURCES += \
     ../resuurces/resources.qrc
 
 OTHER_FILES += \
-    ../resuurces/processing.qml
+    ../resuurces/processing.qml \
+    processing.js

@@ -18,8 +18,17 @@
 #include <plotter.h>
 #include <QString>
 /*----------------------------------------------------------------------------*/
-class Axis
+class Axis : public QObject
 {
+  Q_OBJECT
+  Q_PROPERTY(qreal min READ min WRITE setMin)
+  Q_PROPERTY(qreal max READ max WRITE setMax)
+  Q_PROPERTY(int decimals READ decimals WRITE setDecimals)
+  Q_PROPERTY(int steps READ steps WRITE setSteps)
+  Q_PROPERTY(qreal step READ step)
+  Q_PROPERTY(bool showValues READ showValues WRITE setShowValues)
+  Q_PROPERTY(QString text READ text WRITE setText)
+
 protected:
   bool m_modified;
   double m_min;
@@ -29,7 +38,9 @@ protected:
   bool m_showValues;
   QString m_text;
 public:
-  Axis() {
+  Axis(QObject *parent = 0)
+    : QObject(parent)
+  {
     m_modified = false;
     m_min = 0;
     m_max = 1;
@@ -100,6 +111,11 @@ public:
 /*----------------------------------------------------------------------------*/
 class AxisPlotter : public Plotter
 {
+  Q_OBJECT
+  Q_PROPERTY(Axis* x READ getX)
+  Q_PROPERTY(Axis* y READ getY)
+  Q_PROPERTY(int style READ style WRITE setStyle)
+  Q_ENUMS(Style)
 public:
   enum Style
   {
@@ -115,13 +131,15 @@ protected:
   double m_x_scale;
   double m_y_scale;
   void prepare(QPaintDevice *dev);
+  Axis* getX() {return &x;}
+  Axis* getY() {return &y;}
 public:
-  AxisPlotter();
+  AxisPlotter(QObject *parent = 0);
   Axis x;
   Axis y;
   virtual void paint(QPaintDevice *dev);
   AxisPlotter::Style style() const {return m_style;}
-  void setStyle(AxisPlotter::Style s) {m_style = s;}
+  void setStyle(int s) {m_style = (AxisPlotter::Style)s;}
   QRect& rect() {return m_rect;}
 };
 /*----------------------------------------------------------------------------*/

@@ -10,20 +10,18 @@ DDAExtension {
 
 
   //-----------------------------------------------------------------------------------
-  function displayData(label, data)
+  function modelInit()
   {
-    var str = label + ":"
-    for (var prop in data)
-      str = str + prop + "=" + data[prop] + ";"
-    console.log(str)
+    print("DDAExtension.modeInit()")
+    Functions.modelInit()
   }
   //-----------------------------------------------------------------------------------
-
-  Component.onCompleted: {
-      print("Component.onCompleted")
-      print(session)
-      print(currentDir)
-      print(database)
-      displayData("processing", Functions)
+  function modelUpdate(session)
+  {
+    Functions.modelUpdate(session)
   }
+
+  //-----------------------------------------------------------------------------------
+  //Component.onCompleted: {
+  //}
 }

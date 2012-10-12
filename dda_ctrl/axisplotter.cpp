@@ -15,7 +15,8 @@
 #include "axisplotter.h"
 #include <QPainter>
 /*----------------------------------------------------------------------------*/
-AxisPlotter :: AxisPlotter()
+AxisPlotter :: AxisPlotter(QObject *parent)
+  : Plotter(parent)
 {
   m_style = BarStyle;
   m_x_border = 3;

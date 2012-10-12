@@ -16,6 +16,8 @@
 #define QMLPROCESSING_H_1349933855
 /*----------------------------------------------------------------------------*/
 #include <QObject>
+#include <QAbstractTableModel>
+#include <QVariantMap>
 
 class DDAExtension : public QObject
 {
@@ -73,8 +75,46 @@ public:
 public:
   bool isError() {return m_isError;}
   QString message() {return m_message;}
-};
+  void update();
 
+  Q_INVOKABLE void addModel(QObject*);
+  Q_INVOKABLE QObject *newTableModel();
+  Q_INVOKABLE QObject *newCurveModel();
+  Q_INVOKABLE QObject *newHistogrammModel();
+  Q_INVOKABLE QObject *newGraphModel();
+
+signals:
+  void error(QString);
+  void modelAdded(QObject*);
+};
+/*----------------------------------------------------------------------------*/
+class TableModel : public QAbstractTableModel
+{
+  Q_OBJECT
+  Q_PROPERTY(int rowCount READ rowCount WRITE setRowCount)
+  Q_PROPERTY(int columnCount READ columnCount WRITE setColumnCount)
+protected:
+  int m_rowCount;
+  int m_columnCount;
+  QVariantMap m_data;
+public:
+  TableModel(QObject *parent = 0);
+  QVariant data(const QModelIndex &index, int role) const;
+  Qt::ItemFlags flags(const QModelIndex &index) const;
+  QVariant headerData(int section, Qt::Orientation orientation, int role = Qt::DisplayRole) const;
+  int rowCount(const QModelIndex &) const;
+  int columnCount(const QModelIndex &) const;
+public slots:
+  int rowCount() {return m_rowCount;}
+  int columnCount() {return m_columnCount;}
+  void setRowCount(int c) {m_rowCount = c;}
+  void setColumnCount(int c) {m_columnCount = c;}
+  void clear();
+  void update();
+  QVariant data(int row, int col);
+  void setData(int row, int col, const QVariant &val);
+  void setHeaderData(int section, int orientation, const QVariant &value);
+};
 /*----------------------------------------------------------------------------*/
 extern DDAProcessing *processing;
 /*----------------------------------------------------------------------------*/

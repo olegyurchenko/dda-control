@@ -16,10 +16,12 @@
 #define PLOTTER_H_1347869006
 /*----------------------------------------------------------------------------*/
 #include <QPaintDevice>
-
-class Plotter
+#include <QObject>
+/*----------------------------------------------------------------------------*/
+class Plotter : public QObject
 {
 public:
+  Plotter(QObject *parent = 0) : QObject(parent) {}
   virtual ~Plotter() {}
   virtual void paint(QPaintDevice *dev) = 0;
 };

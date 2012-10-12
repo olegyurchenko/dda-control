@@ -18,10 +18,13 @@
 #include <graphplotter.h>
 class CurvePlotter :public GraphPlotter
 {
+  Q_OBJECT
+  Q_PROPERTY(bool filed READ filed WRITE setFiled)
+
 protected:
   bool m_filed;
 public:
-  CurvePlotter();
+  CurvePlotter(QObject *parent = 0);
   virtual void paint(QPaintDevice *dev);
   bool filed() {return m_filed;}
   void setFiled(bool f) {m_filed = f;}

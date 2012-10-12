@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>522</width>
-    <height>399</height>
+    <width>607</width>
+    <height>612</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,23 +17,44 @@
    <layout class="QHBoxLayout" name="horizontalLayout">
     <item>
      <widget class="SelSessionBox" name="selSessionBox">
+      <property name="minimumSize">
+       <size>
+        <width>240</width>
+        <height>0</height>
+       </size>
+      </property>
       <property name="title">
        <string>Sessions</string>
       </property>
      </widget>
     </item>
     <item>
-     <widget class="SessionBox" name="sessionBox">
-      <property name="minimumSize">
-       <size>
-        <width>80</width>
-        <height>80</height>
-       </size>
+     <widget class="QScrollArea" name="scrollArea">
+      <property name="widgetResizable">
+       <bool>true</bool>
       </property>
-      <property name="title">
-       <string>Session</string>
-      </property>
-      <zorder>verticalSpacer</zorder>
+      <widget class="QWidget" name="scrollAreaWidgetContents">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>0</y>
+         <width>349</width>
+         <height>551</height>
+        </rect>
+       </property>
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
+        <item>
+         <widget class="QFrame" name="sessionBox">
+          <property name="frameShape">
+           <enum>QFrame::StyledPanel</enum>
+          </property>
+          <property name="frameShadow">
+           <enum>QFrame::Plain</enum>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
      </widget>
     </item>
    </layout>
@@ -43,7 +64,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>522</width>
+     <width>607</width>
      <height>21</height>
     </rect>
    </property>
@@ -64,12 +85,6 @@
    <class>SelSessionBox</class>
    <extends>QGroupBox</extends>
    <header>selsessionbox.h</header>
-   <container>1</container>
-  </customwidget>
-  <customwidget>
-   <class>SessionBox</class>
-   <extends>QGroupBox</extends>
-   <header>sessionbox.h</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

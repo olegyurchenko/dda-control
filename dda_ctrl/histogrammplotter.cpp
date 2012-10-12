@@ -15,7 +15,8 @@
 #include "histogrammplotter.h"
 #include <QPainter>
 /*----------------------------------------------------------------------------*/
-HistogrammPlotter :: HistogrammPlotter()
+HistogrammPlotter :: HistogrammPlotter(QObject *parent)
+  : AxisPlotter(parent)
 {
   m_pen.setColor(QColor("black"));
   //m_pen.setStyle(Qt::SolidLine);
@@ -53,3 +54,34 @@ void HistogrammPlotter :: paint(QPaintDevice *dev)
   AxisPlotter::paint(dev);
 }
 /*----------------------------------------------------------------------------*/
+#ifdef USE_QML
+void HistogrammPlotter :: dataListAppend(QDeclarativeListProperty<double> *property, double *value)
+{
+  HistogrammPlotter *self = qobject_cast<HistogrammPlotter *>(property->object);
+  self->data.append(*value);
+}
+/*----------------------------------------------------------------------------*/
+double *HistogrammPlotter :: dataListAt(QDeclarativeListProperty<double> *property, int index)
+{
+  HistogrammPlotter *self = qobject_cast<HistogrammPlotter *>(property->object);
+  return &self->data[index];
+}
+/*----------------------------------------------------------------------------*/
+int HistogrammPlotter :: dataListCount(QDeclarativeListProperty<double> *property)
+{
+  HistogrammPlotter *self = qobject_cast<HistogrammPlotter *>(property->object);
+  return self->data.size();
+}
+/*----------------------------------------------------------------------------*/
+void HistogrammPlotter :: dataListClear(QDeclarativeListProperty<double> *property)
+{
+  HistogrammPlotter *self = qobject_cast<HistogrammPlotter *>(property->object);
+  self->data.clear();
+}
+/*----------------------------------------------------------------------------*/
+QDeclarativeListProperty<double> HistogrammPlotter :: getData()
+{
+  return QDeclarativeListProperty<double>(this, 0, dataListAppend, dataListCount, dataListAt, dataListClear);
+}
+/*----------------------------------------------------------------------------*/
+#endif
