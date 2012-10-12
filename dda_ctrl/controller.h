@@ -78,7 +78,7 @@ public:
   static QString statusString(int s);
 
   virtual void setMode(int meshIndex, int samples, DDAMode mode = Auto);
-  virtual void start();
+  virtual void resume();
   virtual void manualMode();
 
   double size() {return m_size;}
@@ -108,6 +108,9 @@ protected:
   double m_strength;
   int m_number;
   int m_nextCell;
+  int m_particles;
+  DDAMode m_mode;
+
   enum
   {
     NoCmd,
@@ -116,7 +119,7 @@ protected:
 public:
   DemoController(QObject *parent = 0);
   virtual void setMode(int meshIndex, int samples, DDAMode mode = Auto);
-  virtual void start();
+  virtual void resume();
   virtual void manualMode();
 };
 /*----------------------------------------------------------------------------*/

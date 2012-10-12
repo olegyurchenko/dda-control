@@ -43,6 +43,8 @@ DDAProcessing :: DDAProcessing(QObject *parent)
   qmlRegisterType<CurvePlotter>("DDA", 1, 0, "CurveModel");
   qmlRegisterType<TableModel>("DDA", 1, 0, "TableModel");
   qmlRegisterUncreatableType<DDAProcessing>("DDA", 1, 0, "DDAProcessing", "Unable to create DDA object from QML");
+  qmlRegisterUncreatableType<AxisPlotter>("DDA", 1, 0, "AxisPlotter", "Unable to create DDA object from QML");
+  qmlRegisterUncreatableType<Axis>("DDA", 1, 0, "Axis", "Unable to create DDA object from QML");
 
 
   m_engine = new QDeclarativeEngine(this);

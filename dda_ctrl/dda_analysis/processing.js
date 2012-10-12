@@ -8,10 +8,8 @@ function displayData(label, data)
   console.log(str)
 }
 //-----------------------------------------------------------------------------------
-var gistogrammTable = null
-
-//-----------------------------------------------------------------------------------
 var paramTable = null
+
 var nameCol = 0
 var valueCol = 1
 var serialRow = 0
@@ -29,6 +27,10 @@ var devSizeRow = 11
 var avgFractStrRow = 12
 var devFractStrRow = 13
 var markRow = 14
+//-----------------------------------------------------------------------------------
+var histogrammTable = null
+//-----------------------------------------------------------------------------------
+var strengthHistogramm = null
 //-----------------------------------------------------------------------------------
 function modelInit()
 {
@@ -55,6 +57,20 @@ function modelInit()
   paramTable.setData(devFractStrRow, nameCol, qsTr("St. fract str [N/mm^2]"))
   paramTable.setData(markRow, nameCol, qsTr("Set mark"))
   paramTable.update()
+
+  histogrammTable = model.newTableModel()
+  histogrammTable.columnCount = 3
+  histogrammTable.rowCount = 3
+
+  strengthHistogramm = model.newHistogrammModel
+  print(strengthHistogramm, strengthHistogramm.x)
+  strengthHistogramm.x.min = 0
+  strengthHistogramm.x.max = 100
+  strengthHistogramm.x.text = "[%]"
+  strengthHistogramm.x.decimals = 0
+
+  strengthHistogramm.x.text = "[N]"
+  strengthHistogramm.x.decimals = 1
 }
 //-----------------------------------------------------------------------------------
 function modelUpdate(session)
@@ -79,6 +95,10 @@ function modelUpdate(session)
   paramTable.setData(avgFractStrRow, valueCol, session.avgFractStr)
   paramTable.setData(devFractStrRow, valueCol, session.devFractStr)
   paramTable.setData(markRow, valueCol, session.mark)
+
+
+  strengthHistogramm.y.min = session.minStrength
+  strengthHistogramm.y.max = session.maxStrength
 }
 //-----------------------------------------------------------------------------------
 function statistic(s)

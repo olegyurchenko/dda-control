@@ -68,6 +68,8 @@ MeasureWindow::MeasureWindow(QWidget *parent) :
 
   ui->currentValuePlotWidget->setPlotter(curvePlotter);
   intervalCount = 6;
+
+  controller->start();
 }
 /*----------------------------------------------------------------------------*/
 MeasureWindow::~MeasureWindow()
@@ -240,7 +242,7 @@ void MeasureWindow::onStartSession()
   {
     ui->stackedWidget->setCurrentIndex(1);
     controller->setMode(session->session().standard, session->session().particles);
-    controller->start();
+    controller->resume();
   }
 }
 /*----------------------------------------------------------------------------*/
@@ -343,7 +345,7 @@ void MeasureWindow::onEditCurrentSession()
 /*----------------------------------------------------------------------------*/
 void MeasureWindow::onResumeMeasuring()
 {
-  controller->start();
+  controller->resume();
 }
 /*----------------------------------------------------------------------------*/
 void MeasureWindow::onSingleStepMode()

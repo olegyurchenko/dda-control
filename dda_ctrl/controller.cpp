@@ -34,7 +34,6 @@ DDAController :: DDAController(QObject *parent)
   m_serial = -1;
   m_status = Offline;
   m_lastCharTime.start();
-  QThread::start();
 }
 /*----------------------------------------------------------------------------*/
 DDAController :: ~DDAController()
@@ -320,7 +319,7 @@ void DDAController :: setMode(int meshIndex, int samples, DDAMode mode)
   unlock();
 }
 /*----------------------------------------------------------------------------*/
-void DDAController :: start()
+void DDAController :: resume()
 {
   ByteVector txData;
   txData.clear();
@@ -359,7 +358,7 @@ void DemoController :: run()
   while(!m_terminated)
   {
     QCoreApplication::processEvents();
-    if(m_time.elapsed() >= 1000)
+    if(m_time.elapsed() >= 300/*1000*/)
     {
       m_time.restart();
       m_count --;
@@ -373,17 +372,21 @@ void DemoController :: run()
   }
 }
 /*----------------------------------------------------------------------------*/
-void DemoController :: setMode(int, int, DDAMode)
+void DemoController :: setMode(int, int samples, DDAMode mode)
 {
+  m_mode = mode;
+  m_particles = samples;
 }
 /*----------------------------------------------------------------------------*/
-void DemoController :: start()
+void DemoController :: resume()
 {
+  qsrand(QDateTime::currentDateTime().toTime_t());
   m_cmd = StartCmd;
 }
 /*----------------------------------------------------------------------------*/
 void DemoController :: manualMode()
 {
+  m_mode = Manual;
 }
 /*----------------------------------------------------------------------------*/
 void DemoController :: doSimulation()
@@ -414,6 +417,16 @@ void DemoController :: doSimulation()
     setStatus(Measuring);
     break;
   case Measuring:
+    if(m_strength < 1 && !(qrand() % 5))
+    {
+      setStatus(NoParticle);
+      emit noParticle();
+      m_strength = 0;
+      //m_number ++;
+      m_nextCell ++;
+      break;
+    }
+
     switch((qrand() % 4))
     {
     case 0:
@@ -435,29 +448,23 @@ void DemoController :: doSimulation()
     {
       if(!(qrand() % 4)) //end of measure
       {
-        if(!(qrand() % 5))
-        {
-          setStatus(NoParticle);
-          emit noParticle();
-          m_strength = 0;
-        }
-        else
-        {
-          setStrength(m_strength);
-          setSize(m_strength * 1.23);
-          emit measure(strength(), size(), m_number);
-          m_strength = 0;
-        }
+        setStrength(m_strength);
+        setSize(m_strength * 1.23);
+        emit measure(strength(), size(), m_number);
+        m_strength = 0;
+
         m_number ++;
         m_nextCell ++;
-        if(m_number == 10)
+        /*
+        if(!(m_number % 50))
         {
           m_count = 5;
           setStatus(NextCasseteWaiting);
           emit nextCasseteRequest();
         }
+        */
 
-        if(m_number == 20)
+        if(m_number >= m_particles)
         {
           m_count = 5;
           setStatus(EndOfMeasuring);

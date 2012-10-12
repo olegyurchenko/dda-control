@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>643</width>
-    <height>635</height>
+    <width>634</width>
+    <height>420</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -22,7 +22,7 @@
     <item>
      <widget class="QStackedWidget" name="stackedWidget">
       <property name="currentIndex">
-       <number>0</number>
+       <number>1</number>
       </property>
       <widget class="QWidget" name="startPage">
        <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -221,6 +221,12 @@
            <layout class="QVBoxLayout" name="verticalLayout_3">
             <item>
              <widget class="QGroupBox" name="groupBox_2">
+              <property name="sizePolicy">
+               <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+                <horstretch>0</horstretch>
+                <verstretch>0</verstretch>
+               </sizepolicy>
+              </property>
               <property name="title">
                <string>Device</string>
               </property>
@@ -330,6 +336,12 @@
              <layout class="QHBoxLayout" name="horizontalLayout_5">
               <item>
                <widget class="SessionBox" name="sessionBox">
+                <property name="sizePolicy">
+                 <sizepolicy hsizetype="Preferred" vsizetype="Minimum">
+                  <horstretch>0</horstretch>
+                  <verstretch>0</verstretch>
+                 </sizepolicy>
+                </property>
                 <property name="title">
                  <string>Session</string>
                 </property>
@@ -341,6 +353,12 @@
           </item>
           <item>
            <widget class="QGroupBox" name="groupBox_3">
+            <property name="sizePolicy">
+             <sizepolicy hsizetype="Preferred" vsizetype="Maximum">
+              <horstretch>0</horstretch>
+              <verstretch>0</verstretch>
+             </sizepolicy>
+            </property>
             <property name="title">
              <string>Data</string>
             </property>
@@ -430,8 +448,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>643</width>
-     <height>21</height>
+     <width>634</width>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -489,7 +507,6 @@
    <addaction name="actionResumeMeasuring"/>
    <addaction name="actionSingleStepMode"/>
    <addaction name="separator"/>
-   <addaction name="actionDataProcessing"/>
   </widget>
   <action name="actionManageProfiles">
    <property name="icon">
@@ -753,6 +770,38 @@
     <hint type="destinationlabel">
      <x>321</x>
      <y>317</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>toolButton</sender>
+   <signal>clicked()</signal>
+   <receiver>MeasureWindow</receiver>
+   <slot>onEditProfile()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>192</x>
+     <y>92</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>346</x>
+     <y>63</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>profileCombo</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>MeasureWindow</receiver>
+   <slot>onProfileChanged(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>154</x>
+     <y>91</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>492</x>
+     <y>66</y>
     </hint>
    </hints>
   </connection>

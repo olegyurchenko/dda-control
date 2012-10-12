@@ -112,8 +112,8 @@ public:
 class AxisPlotter : public Plotter
 {
   Q_OBJECT
-  Q_PROPERTY(Axis* x READ getX)
-  Q_PROPERTY(Axis* y READ getY)
+  Q_PROPERTY(QObject* x READ getX)
+  Q_PROPERTY(QObject* y READ getY)
   Q_PROPERTY(int style READ style WRITE setStyle)
   Q_ENUMS(Style)
 public:
