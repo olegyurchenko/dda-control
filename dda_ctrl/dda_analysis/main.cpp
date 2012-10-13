@@ -31,7 +31,7 @@ int main(int argc, char *argv[])
   processing = new DDAProcessing(&a);
 
   AnalysWindow w;
-  w.show();
+  w.showMaximized();
   
   return a.exec();
 }

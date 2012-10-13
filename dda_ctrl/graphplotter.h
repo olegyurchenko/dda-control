@@ -20,9 +20,6 @@
 #include <QPointF>
 #include <QBrush>
 #include <QPen>
-#ifdef USE_QML
-#include <qdeclarative.h>
-#endif
 
 /*----------------------------------------------------------------------------*/
 class GraphPlotter : public AxisPlotter
@@ -31,9 +28,6 @@ class GraphPlotter : public AxisPlotter
   Q_PROPERTY(QBrush brush READ brush WRITE setBrush)
   Q_PROPERTY(QPen pen READ pen WRITE setPen)
   Q_PROPERTY(int pointSize READ pointSize WRITE setPointSize)
-#ifdef USE_QML
-  Q_PROPERTY(QDeclarativeListProperty<QPointF> data READ getData)
-#endif
 
 protected:
   QBrush m_brush;
@@ -49,16 +43,10 @@ public:
   void setPen(const QPen& p) {m_pen = p;}
   int pointSize() {return m_pointSIze;}
   void setPointSize(int s) {m_pointSIze = s;}
-#ifdef USE_QML
-  static void dataListAppend(QDeclarativeListProperty<QPointF> *property, QPointF *);
-  static QPointF *dataListAt(QDeclarativeListProperty<QPointF> *property, int index);
-  static int dataListCount(QDeclarativeListProperty<QPointF> *property);
-  static void dataListClear(QDeclarativeListProperty<QPointF> *property);
-  QDeclarativeListProperty<QPointF> getData();
-#endif
 public slots:
   void clear() {data.clear();}
   void add(QPointF d) {data.append(d);}
+  void add(double x, double y) {data.append(QPointF(x, y));}
 };
 
 /*----------------------------------------------------------------------------*/

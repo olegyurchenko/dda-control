@@ -12,7 +12,7 @@ DDAExtension {
   //-----------------------------------------------------------------------------------
   function modelInit()
   {
-    print("DDAExtension.modeInit()")
+    //print("DDAExtension.modeInit()")
     Functions.modelInit()
   }
   //-----------------------------------------------------------------------------------

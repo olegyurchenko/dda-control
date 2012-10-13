@@ -54,34 +54,20 @@ void HistogrammPlotter :: paint(QPaintDevice *dev)
   AxisPlotter::paint(dev);
 }
 /*----------------------------------------------------------------------------*/
-#ifdef USE_QML
-void HistogrammPlotter :: dataListAppend(QDeclarativeListProperty<double> *property, double *value)
+QVariantList HistogrammPlotter::getData()
 {
-  HistogrammPlotter *self = qobject_cast<HistogrammPlotter *>(property->object);
-  self->data.append(*value);
+  QVariantList lst;
+  int size = data.size();
+  for(int i = 0; i < size; i++)
+    lst.append(data[i]);
 }
 /*----------------------------------------------------------------------------*/
-double *HistogrammPlotter :: dataListAt(QDeclarativeListProperty<double> *property, int index)
+void HistogrammPlotter::setData(const QVariantList& d)
 {
-  HistogrammPlotter *self = qobject_cast<HistogrammPlotter *>(property->object);
-  return &self->data[index];
+  data.clear();
+  int size = d.size();
+  for(int i = 0; i < size; i++)
+    data.append(d[i].toDouble());
 }
 /*----------------------------------------------------------------------------*/
-int HistogrammPlotter :: dataListCount(QDeclarativeListProperty<double> *property)
-{
-  HistogrammPlotter *self = qobject_cast<HistogrammPlotter *>(property->object);
-  return self->data.size();
-}
-/*----------------------------------------------------------------------------*/
-void HistogrammPlotter :: dataListClear(QDeclarativeListProperty<double> *property)
-{
-  HistogrammPlotter *self = qobject_cast<HistogrammPlotter *>(property->object);
-  self->data.clear();
-}
-/*----------------------------------------------------------------------------*/
-QDeclarativeListProperty<double> HistogrammPlotter :: getData()
-{
-  return QDeclarativeListProperty<double>(this, 0, dataListAppend, dataListCount, dataListAt, dataListClear);
-}
-/*----------------------------------------------------------------------------*/
-#endif
+

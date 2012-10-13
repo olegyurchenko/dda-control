@@ -11,23 +11,14 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>AnalysWindow</string>
+   <string>Data handling</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="../resuurces/resources.qrc">
+    <normaloff>:/view-expenses-categories.png</normaloff>:/view-expenses-categories.png</iconset>
   </property>
   <widget class="QWidget" name="centralWidget">
-   <layout class="QHBoxLayout" name="horizontalLayout">
-    <item>
-     <widget class="SelSessionBox" name="selSessionBox">
-      <property name="minimumSize">
-       <size>
-        <width>240</width>
-        <height>0</height>
-       </size>
-      </property>
-      <property name="title">
-       <string>Sessions</string>
-      </property>
-     </widget>
-    </item>
+   <layout class="QVBoxLayout" name="verticalLayout">
     <item>
      <widget class="QScrollArea" name="scrollArea">
       <property name="widgetResizable">
@@ -38,22 +29,29 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>349</width>
-         <height>551</height>
+         <width>593</width>
+         <height>527</height>
         </rect>
        </property>
-       <layout class="QHBoxLayout" name="horizontalLayout_2">
-        <item>
-         <widget class="QFrame" name="sessionBox">
-          <property name="frameShape">
-           <enum>QFrame::StyledPanel</enum>
-          </property>
-          <property name="frameShadow">
-           <enum>QFrame::Plain</enum>
-          </property>
-         </widget>
-        </item>
-       </layout>
+       <widget class="SelSessionBox" name="selSessionBox">
+        <property name="geometry">
+         <rect>
+          <x>4</x>
+          <y>4</y>
+          <width>341</width>
+          <height>211</height>
+         </rect>
+        </property>
+        <property name="minimumSize">
+         <size>
+          <width>240</width>
+          <height>0</height>
+         </size>
+        </property>
+        <property name="title">
+         <string>Sessions</string>
+        </property>
+       </widget>
       </widget>
      </widget>
     </item>
@@ -68,6 +66,21 @@
      <height>21</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>File</string>
+    </property>
+    <addaction name="actionExit"/>
+   </widget>
+   <widget class="QMenu" name="menuSession">
+    <property name="title">
+     <string>Session</string>
+    </property>
+    <addaction name="actionEditData"/>
+    <addaction name="actionReport"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menuSession"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -76,8 +89,33 @@
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
+   <addaction name="actionEditData"/>
+   <addaction name="actionReport"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
+  <action name="actionExit">
+   <property name="text">
+    <string>Exit</string>
+   </property>
+  </action>
+  <action name="actionEditData">
+   <property name="icon">
+    <iconset resource="../resuurces/resources.qrc">
+     <normaloff>:/story-editor.png</normaloff>:/story-editor.png</iconset>
+   </property>
+   <property name="text">
+    <string>Edit data</string>
+   </property>
+  </action>
+  <action name="actionReport">
+   <property name="icon">
+    <iconset resource="../resuurces/resources.qrc">
+     <normaloff>:/mail-mark-task.png</normaloff>:/mail-mark-task.png</iconset>
+   </property>
+   <property name="text">
+    <string>Generate report</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
@@ -88,6 +126,61 @@
    <container>1</container>
   </customwidget>
  </customwidgets>
- <resources/>
- <connections/>
+ <resources>
+  <include location="../resuurces/resources.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>actionExit</sender>
+   <signal>triggered()</signal>
+   <receiver>AnalysWindow</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>303</x>
+     <y>305</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionEditData</sender>
+   <signal>triggered()</signal>
+   <receiver>AnalysWindow</receiver>
+   <slot>onEditData()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>303</x>
+     <y>305</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionReport</sender>
+   <signal>hovered()</signal>
+   <receiver>AnalysWindow</receiver>
+   <slot>onGenerateReport()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>303</x>
+     <y>305</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <slot>onEditData()</slot>
+  <slot>onGenerateReport()</slot>
+ </slots>
 </ui>

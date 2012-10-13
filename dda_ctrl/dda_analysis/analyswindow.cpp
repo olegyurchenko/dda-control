@@ -6,7 +6,8 @@
 #include <QTableView>
 #include <QVBoxLayout>
 #include <axisplotter.h>
-
+#include <editdatadialog.h>
+#include <usermanagedialog.h>
 /*----------------------------------------------------------------------------*/
 AnalysWindow::AnalysWindow(QWidget *parent) :
   QMainWindow(parent),
@@ -14,58 +15,54 @@ AnalysWindow::AnalysWindow(QWidget *parent) :
 {
   ui->setupUi(this);
 
+  m_colCount = 2;
+  m_col = 0;
+  m_row = 0;
+
   connect(ui->selSessionBox->session(), SIGNAL(sessionChanged()), this, SLOT(onSessionChanged()));
   connect(processing, SIGNAL(modelAdded(QObject*)), this, SLOT(onModelAdded(QObject*)));
 
-  dataLayout = new QVBoxLayout(ui->sessionBox);
+  //ui->scrollArea->setWidget(ui->sessionBox);
+
+  dataLayout = new QGridLayout(ui->scrollAreaWidgetContents);
+  dataLayout->addWidget(ui->selSessionBox, m_col ++, m_row);
   if(!processing->open(ui->selSessionBox->session()))
   {
     QMessageBox::critical(this, tr("Error execute JavaScript"), processing->message());
     return;
   }
 
-  /*
-  QTableView *v = new QTableView(this);
-  dataLayout->addWidget(v);
-  v = new QTableView(this);
-  dataLayout->addWidget(v);
-  v = new QTableView(this);
-  dataLayout->addWidget(v);
-
-  PlotWidget *b = new PlotWidget(this);
-  b->setMinimumWidth(120);
-  b->setMinimumHeight(120);
-  dataLayout->addWidget(b);
-  b = new PlotWidget(this);
-  b->setMinimumWidth(120);
-  b->setMinimumHeight(120);
-  dataLayout->addWidget(b);
-  b = new PlotWidget(this);
-  b->setMinimumWidth(120);
-  b->setMinimumHeight(120);
-  dataLayout->addWidget(b);
-  */
-
-
 }
 /*----------------------------------------------------------------------------*/
 void AnalysWindow::onModelAdded(QObject *obj)
 {
+  QWidget *w = NULL;
   if(qobject_cast<AxisPlotter *>(obj))
   {
-    PlotWidget *b = new PlotWidget(ui->sessionBox);
-    b->setMinimumSize(120, 120);
-    dataLayout->addWidget(b);
+    PlotWidget *b = new PlotWidget(ui->scrollAreaWidgetContents);
+    b->setMinimumSize(200, 200);
     b->setPlotter(qobject_cast<AxisPlotter *>(obj));
+    w = b;
   }
   else
   if(qobject_cast<QAbstractTableModel *>(obj))
   {
-    QTableView *v = new QTableView(ui->sessionBox);
-    v->setMidLineWidth(120);
+    QTableView *v = new QTableView(ui->scrollAreaWidgetContents);
+    v->setMinimumSize(200, 200);
     v->setModel(qobject_cast<QAbstractTableModel *>(obj));
-    dataLayout->addWidget(v);
+    w = v;
   }
+
+  if(w)
+  {
+    dataLayout->addWidget(w, m_row, m_col ++);
+    if(m_col >= m_colCount)
+    {
+      m_col = 0;
+      m_row ++;
+    }
+  }
+  ui->scrollAreaWidgetContents->adjustSize();
 }
 /*----------------------------------------------------------------------------*/
 AnalysWindow::~AnalysWindow()
@@ -81,5 +78,19 @@ void AnalysWindow::onSessionChanged()
     QMessageBox::critical(this, tr("Error execute JavaScript"), processing->message());
     return;
   }
+  ui->scrollAreaWidgetContents->update();
+}
+/*----------------------------------------------------------------------------*/
+void AnalysWindow::onEditData()
+{
+  if(!passwordCheck(this, ui->selSessionBox->session()->session().userId))
+    return;
+
+  EditDataDialog dlg(this, ui->selSessionBox->session());
+  dlg.exec();
+}
+/*----------------------------------------------------------------------------*/
+void AnalysWindow::onGenerateReport()
+{
 }
 /*----------------------------------------------------------------------------*/

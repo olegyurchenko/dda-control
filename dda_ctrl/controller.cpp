@@ -449,7 +449,7 @@ void DemoController :: doSimulation()
       if(!(qrand() % 4)) //end of measure
       {
         setStrength(m_strength);
-        setSize(m_strength * 1.23);
+        setSize(m_strength + m_strength * (double)(qrand() % 20)/10.);
         emit measure(strength(), size(), m_number);
         m_strength = 0;
 

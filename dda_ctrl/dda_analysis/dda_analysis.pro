@@ -27,7 +27,8 @@ SOURCES += main.cpp\
     ../configuration.cpp \
     ../axisplotter.cpp \
     ../newpassworddialog.cpp \
-    ../qmlprocessing.cpp
+    ../qmlprocessing.cpp \
+    ../editdatadialog.cpp
 
 HEADERS  += analyswindow.h \
     ../usermanagedialog.h \
@@ -45,14 +46,16 @@ HEADERS  += analyswindow.h \
     ../configuration.h \
     ../axisplotter.h \
     ../newpassworddialog.h \
-    ../qmlprocessing.h
+    ../qmlprocessing.h \
+    ../editdatadialog.h
 
 FORMS    += analyswindow.ui \
     ../usermanagedialog.ui \
     ../sessiondialog.ui \
     ../sessionbox.ui \
     ../selsessionbox.ui \
-    ../newpassworddialog.ui
+    ../newpassworddialog.ui \
+    ../editdatadialog.ui
 
 DEFINES += USE_QML
 

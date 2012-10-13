@@ -125,7 +125,7 @@ void UserManageDialog::onSelectedUserChanged(int index)
 /*----------------------------------------------------------------------------*/
 bool passwordCheck(QWidget *parent, int id)
 {
-  if(database->checkPassword(id, ""))
+  if(id < 0 || database->checkPassword(id, ""))
     return true;
   QString userName = database->userName(id);
   if(id == SuperUserId)

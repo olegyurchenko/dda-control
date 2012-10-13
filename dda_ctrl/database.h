@@ -120,6 +120,7 @@ public:
   DDASession lastSession();
   void modifySession(const DDASession& session);
   int addMeasure(const DDAMeasure& measure);
+  void modifyMeasure(const DDAMeasure& measure);
   DDAMeasure lastMeasure();
   bool measureSession(int id, DDAMeasureSession *dst);
   QString userName(int id);

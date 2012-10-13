@@ -112,7 +112,7 @@ public slots:
   void clear();
   void update();
   QVariant data(int row, int col);
-  void setData(int row, int col, const QVariant &val);
+  void setData(int row, int col, const QVariant &val, int role = Qt::DisplayRole);
   void setHeaderData(int section, int orientation, const QVariant &value);
 };
 /*----------------------------------------------------------------------------*/

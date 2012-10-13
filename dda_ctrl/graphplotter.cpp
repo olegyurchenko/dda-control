@@ -44,40 +44,13 @@ void GraphPlotter :: paint(QPaintDevice *dev)
     int yi = m_rect.bottom() - (point.y() - y.min()) * m_y_scale;
     xi -= m_pointSIze/2;
     yi -= m_pointSIze/2;
+    if(xi < 0)
+      xi = 0;
+    if(yi < 0)
+      yi = 0;
     p.drawRect(xi, yi, m_pointSIze, m_pointSIze);
   }
   AxisPlotter::paint(dev);
 }
 /*----------------------------------------------------------------------------*/
-#ifdef USE_QML
-void GraphPlotter :: dataListAppend(QDeclarativeListProperty<QPointF> *property, QPointF *value)
-{
-  GraphPlotter *self = qobject_cast<GraphPlotter*>(property->object);
-  self->data.append(*value);
-}
-/*----------------------------------------------------------------------------*/
-QPointF *GraphPlotter :: dataListAt(QDeclarativeListProperty<QPointF> *property, int index)
-{
-  GraphPlotter *self = qobject_cast<GraphPlotter*>(property->object);
-  return &self->data[index];
-}
-/*----------------------------------------------------------------------------*/
-int GraphPlotter :: dataListCount(QDeclarativeListProperty<QPointF> *property)
-{
-  GraphPlotter *self = qobject_cast<GraphPlotter*>(property->object);
-  return self->data.size();
-}
-/*----------------------------------------------------------------------------*/
-void GraphPlotter :: dataListClear(QDeclarativeListProperty<QPointF> *property)
-{
-  GraphPlotter *self = qobject_cast<GraphPlotter*>(property->object);
-  self->data.clear();
-}
-/*----------------------------------------------------------------------------*/
-QDeclarativeListProperty<QPointF> GraphPlotter :: getData()
-{
-  return QDeclarativeListProperty<QPointF>(this, 0, dataListAppend, dataListCount, dataListAt, dataListClear);
-}
-/*----------------------------------------------------------------------------*/
-#endif
 

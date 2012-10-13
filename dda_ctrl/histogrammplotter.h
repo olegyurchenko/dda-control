@@ -23,14 +23,17 @@
 #include <qdeclarative.h>
 #endif
 /*----------------------------------------------------------------------------*/
+/*
+#ifdef USE_QML
+Q_DECLARE_METATYPE(QDeclarativeListProperty<double>)
+#endif
+*/
 class HistogrammPlotter : public AxisPlotter
 {
   Q_OBJECT
   Q_PROPERTY(QBrush brush READ brush WRITE setBrush)
   Q_PROPERTY(QPen pen READ pen WRITE setPen)
-#ifdef USE_QML
-  Q_PROPERTY(QDeclarativeListProperty<double> data READ getData)
-#endif
+  Q_PROPERTY(QVariantList data READ getData WRITE setData)
 protected:
   QBrush m_brush;
   QPen m_pen;
@@ -43,13 +46,8 @@ public:
   void setBrush(const QBrush& b) {m_brush = b;}
   void setPen(const QPen& p) {m_pen = p;}
 
-#ifdef USE_QML
-  static void dataListAppend(QDeclarativeListProperty<double> *property, double *value);
-  static double *dataListAt(QDeclarativeListProperty<double> *property, int index);
-  static int dataListCount(QDeclarativeListProperty<double> *property);
-  static void dataListClear(QDeclarativeListProperty<double> *property);
-  QDeclarativeListProperty<double> getData();
-#endif
+  QVariantList getData();
+  void setData(const QVariantList& d);
 
 public slots:
   void clear() {data.clear();}

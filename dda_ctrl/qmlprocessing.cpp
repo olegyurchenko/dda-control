@@ -248,18 +248,10 @@ QVariant TableModel :: data(const QModelIndex &index, int role) const
   if(row < 0 || row >= m_rowCount || col < 0 || col >= m_columnCount)
     return QVariant();
 
-  if(role == Qt::DisplayRole)
-  {
-    QString key = QString("data.row(%1).col(%2)").arg(row).arg(col);
-    QVariantMap::const_iterator it = m_data.find(key);
-    if(it != m_data.end())
-      return it.value();
-  }
-
-  if(role == Qt::TextAlignmentRole)
-  {
-    //TODO
-  }
+  QString key = QString("data.row(%1).col(%2).role(%3)").arg(row).arg(col).arg(role);
+  QVariantMap::const_iterator it = m_data.find(key);
+  if(it != m_data.end())
+    return it.value();
 
   return QVariant();
 }
@@ -308,12 +300,12 @@ QVariant TableModel :: data(int row, int col)
   return data(index(row, col), Qt::DisplayRole);
 }
 /*----------------------------------------------------------------------------*/
-void TableModel :: setData(int row, int col, const QVariant &val)
+void TableModel :: setData(int row, int col, const QVariant &val, int role)
 {
   if(row < 0 || row >= m_rowCount || col < 0 || col >= m_columnCount)
     return;
 
-  QString key = QString("data.row(%1).col(%2)").arg(row).arg(col);
+  QString key = QString("data.row(%1).col(%2).role(%3)").arg(row).arg(col).arg(role);
   m_data[key] = val;
   emit dataChanged(index(row, col), index(row, col));
 }

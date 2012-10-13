@@ -670,6 +670,20 @@ int DDADatabase :: addMeasure(const DDAMeasure& measure)
   return id;
 }
 /*----------------------------------------------------------------------------*/
+void DDADatabase :: modifyMeasure(const DDAMeasure& measure)
+{
+  QSqlQuery q(QSqlDatabase::database(CONNECTION_NAME));
+
+  q.prepare("update measures set size = ?, strenght = ?, elapsed = ?, ignored = ? where id = ?");
+  q.addBindValue(measure.size);
+  q.addBindValue(measure.strenght);
+  q.addBindValue(measure.elapsed);
+  q.addBindValue((int)measure.ignored);
+  q.addBindValue(measure.id);
+  if(!q.exec())
+    error(q);
+}
+/*----------------------------------------------------------------------------*/
 DDAMeasure DDADatabase :: getMeasure(const QSqlQuery &q)
 {
   DDAMeasure measure;
