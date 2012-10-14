@@ -8,6 +8,7 @@
 #include <axisplotter.h>
 #include <editdatadialog.h>
 #include <usermanagedialog.h>
+#include <reportwindow.h>
 /*----------------------------------------------------------------------------*/
 AnalysWindow::AnalysWindow(QWidget *parent) :
   QMainWindow(parent),
@@ -20,17 +21,20 @@ AnalysWindow::AnalysWindow(QWidget *parent) :
   m_row = 0;
 
   connect(ui->selSessionBox->session(), SIGNAL(sessionChanged()), this, SLOT(onSessionChanged()));
-  connect(processing, SIGNAL(modelAdded(QObject*)), this, SLOT(onModelAdded(QObject*)));
 
   //ui->scrollArea->setWidget(ui->sessionBox);
 
   dataLayout = new QGridLayout(ui->scrollAreaWidgetContents);
   dataLayout->addWidget(ui->selSessionBox, m_col ++, m_row);
-  if(!processing->open(ui->selSessionBox->session()))
+
+  m_processing = new DDAProcessing(this);
+  connect(m_processing, SIGNAL(modelAdded(QObject*)), this, SLOT(onModelAdded(QObject*)));
+  if(!m_processing->open(ui->selSessionBox->session()))
   {
-    QMessageBox::critical(this, tr("Error execute JavaScript"), processing->message());
+    QMessageBox::critical(this, tr("Error execute JavaScript"), m_processing->message());
     return;
   }
+
 
 }
 /*----------------------------------------------------------------------------*/
@@ -72,10 +76,10 @@ AnalysWindow::~AnalysWindow()
 /*----------------------------------------------------------------------------*/
 void AnalysWindow::onSessionChanged()
 {
-  processing->update();
-  if(processing->isError())
+  m_processing->update();
+  if(m_processing->isError())
   {
-    QMessageBox::critical(this, tr("Error execute JavaScript"), processing->message());
+    QMessageBox::critical(this, tr("Error execute JavaScript"), m_processing->message());
     return;
   }
   ui->scrollAreaWidgetContents->update();
@@ -92,5 +96,8 @@ void AnalysWindow::onEditData()
 /*----------------------------------------------------------------------------*/
 void AnalysWindow::onGenerateReport()
 {
+  ReportDialog dlg(this, ui->selSessionBox->session());
+  //win.setWindowModality(Qt::WindowModal);
+  dlg.exec();
 }
 /*----------------------------------------------------------------------------*/

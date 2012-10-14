@@ -13,6 +13,7 @@ class QHBoxLayout;
 class QFormLayout;
 class QGridLayout;
 class QStackedLayout;
+class DDAProcessing;
 class AnalysWindow : public QMainWindow
 {
   Q_OBJECT
@@ -22,6 +23,7 @@ protected:
   int m_colCount;
   int m_col;
   int m_row;
+  DDAProcessing *m_processing;
 public:
   explicit AnalysWindow(QWidget *parent = 0);
   ~AnalysWindow();

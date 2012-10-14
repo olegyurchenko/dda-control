@@ -28,8 +28,6 @@ int main(int argc, char *argv[])
     QMessageBox::critical(NULL, QObject::tr("Error open database"), database->message());
   }
 
-  processing = new DDAProcessing(&a);
-
   AnalysWindow w;
   w.showMaximized();
   

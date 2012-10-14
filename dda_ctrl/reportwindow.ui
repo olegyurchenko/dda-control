@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>ReportDialog</class>
+ <widget class="QDialog" name="ReportDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>786</width>
+    <height>623</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Generate report</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <widget class="QMenuBar" name="menuBar">
+     <widget class="QMenu" name="menu_File">
+      <property name="title">
+       <string>&amp;File</string>
+      </property>
+      <addaction name="actionPrint"/>
+      <addaction name="actionPrint_preview"/>
+      <addaction name="actionExport_to_pdf"/>
+      <addaction name="separator"/>
+      <addaction name="actionE_xit"/>
+     </widget>
+     <addaction name="menu_File"/>
+    </widget>
+   </item>
+   <item>
+    <widget class="QStatusBar" name="statusBar"/>
+   </item>
+   <item>
+    <widget class="QToolBar" name="mainToolBar">
+     <addaction name="actionPrint"/>
+     <addaction name="actionPrint_preview"/>
+     <addaction name="actionExport_to_pdf"/>
+    </widget>
+   </item>
+   <item>
+    <widget class="QWebView" name="webView">
+     <property name="url">
+      <url>
+       <string>about:blank</string>
+      </url>
+     </property>
+    </widget>
+   </item>
+  </layout>
+  <action name="actionPrint">
+   <property name="icon">
+    <iconset resource="resuurces/resources.qrc">
+     <normaloff>:/printer.png</normaloff>:/printer.png</iconset>
+   </property>
+   <property name="text">
+    <string>Print</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+P</string>
+   </property>
+  </action>
+  <action name="actionPrint_preview">
+   <property name="icon">
+    <iconset resource="resuurces/resources.qrc">
+     <normaloff>:/page-simple.png</normaloff>:/page-simple.png</iconset>
+   </property>
+   <property name="text">
+    <string>Print preview</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+V</string>
+   </property>
+  </action>
+  <action name="actionExport_to_pdf">
+   <property name="icon">
+    <iconset resource="resuurces/resources.qrc">
+     <normaloff>:/application-pdf.png</normaloff>:/application-pdf.png</iconset>
+   </property>
+   <property name="text">
+    <string>Export to pdf</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+D</string>
+   </property>
+  </action>
+  <action name="actionE_xit">
+   <property name="text">
+    <string>E&amp;xit</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+X</string>
+   </property>
+  </action>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>QWebView</class>
+   <extends>QWidget</extends>
+   <header>QtWebKit/QWebView</header>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="resuurces/resources.qrc"/>
+ </resources>
+ <connections/>
+</ui>

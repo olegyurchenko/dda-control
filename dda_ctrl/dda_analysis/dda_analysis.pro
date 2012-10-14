@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui xml sql declarative
+QT       += core gui xml sql declarative webkit
 
 TARGET = dda_analysis
 TEMPLATE = app
@@ -28,7 +28,11 @@ SOURCES += main.cpp\
     ../axisplotter.cpp \
     ../newpassworddialog.cpp \
     ../qmlprocessing.cpp \
-    ../editdatadialog.cpp
+    ../editdatadialog.cpp \
+    ../reportwindow.cpp \
+    ../html_report.cpp \
+    ../html.cpp \
+    ../template_file.cpp
 
 HEADERS  += analyswindow.h \
     ../usermanagedialog.h \
@@ -47,7 +51,11 @@ HEADERS  += analyswindow.h \
     ../axisplotter.h \
     ../newpassworddialog.h \
     ../qmlprocessing.h \
-    ../editdatadialog.h
+    ../editdatadialog.h \
+    ../reportwindow.h \
+    ../html_report.h \
+    ../html.h \
+    ../template_file.h
 
 FORMS    += analyswindow.ui \
     ../usermanagedialog.ui \
@@ -55,7 +63,8 @@ FORMS    += analyswindow.ui \
     ../sessionbox.ui \
     ../selsessionbox.ui \
     ../newpassworddialog.ui \
-    ../editdatadialog.ui
+    ../editdatadialog.ui \
+    ../reportwindow.ui
 
 DEFINES += USE_QML
 

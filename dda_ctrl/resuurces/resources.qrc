@@ -33,6 +33,10 @@
         <file>story-editor.png</file>
         <file>view-expenses-categories.png</file>
         <file>view-presentation.png</file>
+        <file>application-pdf.png</file>
+        <file>page-simple.png</file>
+        <file>printer.png</file>
+        <file>x-office-document.png</file>
     </qresource>
     <qresource prefix="/sql">
         <file>create_database.sql</file>

@@ -164,7 +164,7 @@
   </connection>
   <connection>
    <sender>actionReport</sender>
-   <signal>hovered()</signal>
+   <signal>triggered()</signal>
    <receiver>AnalysWindow</receiver>
    <slot>onGenerateReport()</slot>
    <hints>

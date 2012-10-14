@@ -1,0 +1,54 @@
+charset: "utf-8"
+title: "DDA report"
+doc:
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+<HEAD>
+  <META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
+  <TITLE>{title}</TITLE>
+</HEAD>
+<BODY>
+{body}
+</BODY>
+</HTML>
+
+body:
+<BODY LANG="ru-RU" onload="fillData()">
+  <TABLE WIDTH=80% CELLPADDING=4 CELLSPACING=0>
+    <TR VALIGN=TOP>
+      <TD WIDTH=40% STYLE="border: none; padding: 0in">
+	<IMG SRC="title.png">
+      </TD>
+    </TR>
+    <TR VALIGN=TOP>
+      <TD WIDTH=40% STYLE="border-top: 1px solid #000000; border-bottom: none; border-left: none; border-right: none; padding-top: 0.04in; padding-bottom: 0.04in; padding-left: 0.04in; padding-right: 0in">
+	<H1 WIDTH=80% ALIGN=CENTER>ПРОТОКОЛ ИСПЫТАНИЙ АЛМАЗНОГО ПОРОШКА НА СТАТИЧЕСКУЮ ПРОЧНОСТЬ</H1>
+      </TD>
+    </TR>
+  </TABLE>
+  {content}
+  <P>Примечания:</P>
+  <P><BR><BR>
+  </P>
+  <P>Испытания провел _____________ 
+  </P>
+  <DIV TYPE=FOOTER>
+	<P STYLE="margin-top: 0.2in; margin-bottom: 0in"><FONT SIZE=-1>
+	© DDA team, 2012</FONT>
+	</P>
+  </DIV>
+</BODY>
+
+table: 	
+<TABLE WIDTH={width:d}% CELLPADDING=4 CELLSPACING=0 border="1" bordercolor="#000000" >
+{content}
+</TABLE>
+
+tableColumn: <COL WIDTH={width:d}%*>
+
+row: <TR VALIGN=TOP>{content}</TR>
+
+column:	<TD WIDTH={width:d}%><P ALIGN={align}>{content}</P></TD>
+
+
+

@@ -116,7 +116,5 @@ public slots:
   void setHeaderData(int section, int orientation, const QVariant &value);
 };
 /*----------------------------------------------------------------------------*/
-extern DDAProcessing *processing;
-/*----------------------------------------------------------------------------*/
 #endif /*QMLPROCESSING_H_1349933855*/
 
