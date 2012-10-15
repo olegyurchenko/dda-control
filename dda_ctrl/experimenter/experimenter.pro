@@ -81,3 +81,6 @@ win32 {
 win32 {
    RC_FILE = experimenter.rc
 }
+
+TRANSLATIONS    = ../dda-ru.ts \
+                   ../dda-ua.ts

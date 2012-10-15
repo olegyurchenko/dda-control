@@ -90,3 +90,6 @@ OTHER_FILES += \
     ../resuurces/processing.qml \
     template/report.templ \
     template/processing.js
+
+TRANSLATIONS    = ../dda-ru.ts \
+                   ../dda-ua.ts
