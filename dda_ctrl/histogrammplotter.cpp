@@ -14,6 +14,7 @@
 /*----------------------------------------------------------------------------*/
 #include "histogrammplotter.h"
 #include <QPainter>
+#include <QtDebug>
 /*----------------------------------------------------------------------------*/
 HistogrammPlotter :: HistogrammPlotter(QObject *parent)
   : AxisPlotter(parent)
@@ -29,11 +30,14 @@ HistogrammPlotter :: HistogrammPlotter(QObject *parent)
 /*----------------------------------------------------------------------------*/
 void HistogrammPlotter :: paint(QPaintDevice *dev)
 {
-  AxisPlotter::prepare(dev);
+  //qDebug() << "HistogrammPlotter :: paint";
+
+  QPainter p(dev);
+  AxisPlotter::prepare(&p);
+
   int step = x.step() * m_x_scale;
   int w = step / 2;
 
-  QPainter p(dev);
   p.setPen(m_pen);
   p.setBrush(m_brush);
 
@@ -51,7 +55,9 @@ void HistogrammPlotter :: paint(QPaintDevice *dev)
     if(m_rect.height() - yi > 0)
       p.drawRect(xi, yi + 1, w, m_rect.height() - yi + (m_pen.style() != Qt::NoPen ? 0 : 2));
   }
+  p.end();
   AxisPlotter::paint(dev);
+  //qDebug() << "HistogrammPlotter :: paint end";
 }
 /*----------------------------------------------------------------------------*/
 QVariantList HistogrammPlotter::getData()

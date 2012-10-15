@@ -58,13 +58,12 @@ void HtmlReport :: addPlotter(Plotter *model)
   int h = m_dict["plotHeight"].toInt();
 
   if(w == 0)
-    w = 200;
+    w = 500;
   if(h == 0)
-    h = 200;
+    h = 400;
 
   QImage image(w, h, QImage::Format_ARGB32_Premultiplied);
-  QPainter p(&image);
-  p.fillRect(QRect(0, 0, w, h), QColor("white"));
+  image.fill(QColor("white"));
 
   model->paint(&image);
   QTemporaryFile *file = new QTemporaryFile(QDir::temp().filePath("reportXXXXXX.png"));
@@ -75,7 +74,7 @@ void HtmlReport :: addPlotter(Plotter *model)
   QVariantMap dict = m_dict;
   dict["fileName"] = QUrl::fromLocalFile(file->fileName());
   QString img = m_templ->getString("image", &dict);
-  qDebug() << "Image:" << img;
+  //qDebug() << "Image:" << img;
   m_dict[QString("image%1").arg(++m_imageCount)] = img;
   m_dict[QString("view%1").arg(++m_viewCount)] = img;
 }
@@ -187,7 +186,7 @@ bool HtmlReport :: generateReport()
   }
 
   m_content = m_templ->getString("doc", &m_dict);
-  qDebug() << m_content;
+  //qDebug() << m_content;
   return true;
 }
 /*----------------------------------------------------------------------------*/

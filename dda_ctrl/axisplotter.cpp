@@ -14,6 +14,8 @@
 /*----------------------------------------------------------------------------*/
 #include "axisplotter.h"
 #include <QPainter>
+#include <QtDebug>
+#include <QApplication>
 /*----------------------------------------------------------------------------*/
 AxisPlotter :: AxisPlotter(QObject *parent)
   : Plotter(parent)
@@ -23,26 +25,27 @@ AxisPlotter :: AxisPlotter(QObject *parent)
   m_y_border = 3;
 }
 /*----------------------------------------------------------------------------*/
-void AxisPlotter :: prepare(QPaintDevice *dev)
+void AxisPlotter :: prepare(QPainter *p)
 {
-  QPainter p(dev);
+  //qDebug() << "AxisPlotter :: prepare";
+
   m_rect.setLeft(0);
   if(y.showValues())
   {
     QString value;
     int x1, x2;
     value = QString::number(y.min(), 'f', y.decimals());
-    x1 = p.fontMetrics().boundingRect(value).width();
+    x1 = p->fontMetrics().boundingRect(value).width();
     value = QString::number(y.max(), 'f', y.decimals());
-    x2 = p.fontMetrics().boundingRect(value).width();
-    m_rect.setLeft((x1 > x2 ? x1 : x2) + m_x_border + p.fontMetrics().boundingRect(y.text()).width());
+    x2 = p->fontMetrics().boundingRect(value).width();
+    m_rect.setLeft((x1 > x2 ? x1 : x2) + m_x_border + p->fontMetrics().boundingRect(y.text()).width());
   }
 
-  m_rect.setRight(dev->width() - m_x_border);
-  m_rect.setBottom(dev->height() - m_y_border - p.fontMetrics().boundingRect(x.text()).height());
+  m_rect.setRight(p->device()->width() - m_x_border);
+  m_rect.setBottom(p->device()->height() - m_y_border - p->fontMetrics().boundingRect(x.text()).height());
   if(x.showValues())
   {
-    m_rect.setBottom(dev->height() - m_y_border - p.fontMetrics().boundingRect("0.00").height()  - p.fontMetrics().boundingRect(x.text()).height());
+    m_rect.setBottom(p->device()->height() - m_y_border - p->fontMetrics().boundingRect("0.00").height()  - p->fontMetrics().boundingRect(x.text()).height());
   }
 
   m_rect.setTop(m_y_border);
@@ -50,12 +53,14 @@ void AxisPlotter :: prepare(QPaintDevice *dev)
   m_x_scale = (double)m_rect.width()/(x.max() - x.min());
   m_y_scale = (double)m_rect.height()/(y.max() - y.min());
 
+  //qDebug() << "AxisPlotter :: prepare end";
 }
 /*----------------------------------------------------------------------------*/
 void AxisPlotter :: paint(QPaintDevice *dev)
 {
-  prepare(dev);
+  //qDebug() << "AxisPlotter :: paint";
   QPainter p(dev);
+  prepare(&p);
   p.setPen(QColor(0, 0, 0));
 #if 0
   p.drawLine(m_rect.left(), m_rect.top(), m_rect.left(), m_rect.bottom());
@@ -120,5 +125,6 @@ void AxisPlotter :: paint(QPaintDevice *dev)
     int h = p.fontMetrics().boundingRect(y.text()).height();
     p.drawText(0, h, y.text());
   }
+  //qDebug() << "AxisPlotter :: paint end";
 }
 /*----------------------------------------------------------------------------*/

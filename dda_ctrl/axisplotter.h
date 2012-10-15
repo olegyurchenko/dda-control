@@ -17,6 +17,7 @@
 /*----------------------------------------------------------------------------*/
 #include <plotter.h>
 #include <QString>
+#include <QPainter>
 /*----------------------------------------------------------------------------*/
 class Axis : public QObject
 {
@@ -130,7 +131,7 @@ protected:
   QRect m_rect;
   double m_x_scale;
   double m_y_scale;
-  void prepare(QPaintDevice *dev);
+  void prepare(QPainter *p);
   Axis* getX() {return &x;}
   Axis* getY() {return &y;}
 public:

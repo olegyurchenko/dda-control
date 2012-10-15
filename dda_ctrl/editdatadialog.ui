@@ -200,17 +200,12 @@
     </layout>
    </item>
   </layout>
-  <zorder>layoutWidget_2</zorder>
-  <zorder>layoutWidget_3</zorder>
-  <zorder>layoutWidget_4</zorder>
   <zorder>markEdit</zorder>
-  <zorder>particlesSpin</zorder>
   <zorder>buttonBox</zorder>
   <zorder>lotEdit</zorder>
   <zorder>frame</zorder>
   <zorder>label_3</zorder>
   <zorder>frame_2</zorder>
-  <zorder>horizontalSpacer_3</zorder>
  </widget>
  <resources/>
  <connections>

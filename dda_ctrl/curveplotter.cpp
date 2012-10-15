@@ -16,6 +16,7 @@
 #include <QPainter>
 #include <QVector>
 #include <QPoint>
+#include <QtDebug>
 /*----------------------------------------------------------------------------*/
 CurvePlotter :: CurvePlotter(QObject *parent)
   : GraphPlotter(parent)
@@ -33,9 +34,10 @@ CurvePlotter :: CurvePlotter(QObject *parent)
 /*----------------------------------------------------------------------------*/
 void CurvePlotter :: paint(QPaintDevice *dev)
 {
-  AxisPlotter::prepare(dev);
+  //qDebug() << "CurvePlotter :: paint";
 
   QPainter p(dev);
+  AxisPlotter::prepare(&p);
   p.setPen(m_pen);
   p.setBrush(m_brush);
 
@@ -67,10 +69,13 @@ void CurvePlotter :: paint(QPaintDevice *dev)
   else
     p.drawPolyline(QPolygon(points));
 
+  p.end();
   if(pointSize())
     GraphPlotter::paint(dev);
   else
     AxisPlotter::paint(dev);
+
+  //qDebug() << "CurvePlotter :: paint end";
 }
 /*----------------------------------------------------------------------------*/
 

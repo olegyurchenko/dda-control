@@ -14,6 +14,7 @@
 /*----------------------------------------------------------------------------*/
 #include "graphplotter.h"
 #include <QPainter>
+#include <QtDebug>
 /*----------------------------------------------------------------------------*/
 GraphPlotter :: GraphPlotter(QObject *parent)
   : AxisPlotter(parent)
@@ -30,9 +31,10 @@ GraphPlotter :: GraphPlotter(QObject *parent)
 /*----------------------------------------------------------------------------*/
 void GraphPlotter :: paint(QPaintDevice *dev)
 {
-  AxisPlotter::prepare(dev);
 
+  //qDebug() << "CurvePlotter :: paint";
   QPainter p(dev);
+  AxisPlotter::prepare(&p);
   p.setPen(m_pen);
   p.setBrush(m_brush);
 
@@ -50,7 +52,9 @@ void GraphPlotter :: paint(QPaintDevice *dev)
       yi = 0;
     p.drawRect(xi, yi, m_pointSIze, m_pointSIze);
   }
+  p.end();
   AxisPlotter::paint(dev);
+  //qDebug() << "CurvePlotter :: paint end";
 }
 /*----------------------------------------------------------------------------*/
 

@@ -95,6 +95,7 @@ bool DDAProcessing :: open(DDAMeasureSession *session, Role role)
   m_qml = qobject_cast<DDAExtension *>(m_component->create());
   if(m_qml != NULL)
   {
+#if 0
     const QMetaObject *us = m_qml->metaObject();
     for (int idx = DDAExtension::staticMetaObject.methodCount(); idx < us->methodCount(); ++idx)
     {
@@ -107,7 +108,7 @@ bool DDAProcessing :: open(DDAMeasureSession *session, Role role)
       qDebug() << "Object have slot:" << slt << " and type " << mm.typeName();
       //methodMap[slt.section('(', 0, 0)] = idx;
     }
-
+#endif
     clrError();
     QVariant ret;
     if(!m_qml->metaObject()->invokeMethod(m_qml, "modelInit", Qt::DirectConnection, Q_RETURN_ARG(QVariant, ret), Q_ARG(QVariant, role)))
