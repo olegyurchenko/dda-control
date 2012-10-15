@@ -10,15 +10,15 @@ DDAExtension {
 
 
   //-----------------------------------------------------------------------------------
-  function modelInit()
+  function modelInit(role)
   {
     //print("DDAExtension.modeInit()")
-    Functions.modelInit()
+    Functions.modelInit(role)
   }
   //-----------------------------------------------------------------------------------
-  function modelUpdate(session)
+  function modelUpdate(session, role)
   {
-    Functions.modelUpdate(session)
+    Functions.modelUpdate(session, role)
   }
 
   //-----------------------------------------------------------------------------------

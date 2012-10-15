@@ -10,7 +10,7 @@ class ReportDialog;
 /*----------------------------------------------------------------------------*/
 class QPrinter;
 class DDAMeasureSession;
-class DDAProcessing;
+class HtmlReport;
 /*----------------------------------------------------------------------------*/
 class ReportDialog : public QDialog
 {
@@ -18,7 +18,7 @@ class ReportDialog : public QDialog
 protected:
   QPrinter *m_printer;
   DDAMeasureSession *m_session;
-  DDAProcessing *m_processing;
+  HtmlReport *m_report;
 public:
   explicit ReportDialog(QWidget *parent, DDAMeasureSession *session);
   ~ReportDialog();

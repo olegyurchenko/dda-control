@@ -30,16 +30,17 @@ ReportDialog::ReportDialog(QWidget *parent, DDAMeasureSession *session) :
 
   //ui->webView->load(QUrl::fromLocalFile("/home/oleg/work/dda/html/templ.html"));
 
-  HtmlReport report(this, m_session);
-  if(!report.generateReport())
-    QMessageBox::critical(this, tr("Report error"), report.message());
-  ui->webView->setHtml(report.context());
+  m_report = new HtmlReport(this, m_session);
+  if(!m_report->generateReport())
+    QMessageBox::critical(this, tr("Report error"), m_report->message());
+  ui->webView->setHtml(m_report->content());
 }
 /*----------------------------------------------------------------------------*/
 ReportDialog::~ReportDialog()
 {
   delete ui;
   delete m_printer;
+  delete m_report;
 }
 /*----------------------------------------------------------------------------*/
 void ReportDialog::onActionPrint()

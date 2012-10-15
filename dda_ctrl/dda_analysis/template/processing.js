@@ -9,24 +9,24 @@ function displayData(label, data)
 }
 //-----------------------------------------------------------------------------------
 var paramTable = null
-
 var nameCol = 0
 var valueCol = 1
-var serialRow = 0
-var dateRow = 1
-var userRow = 2
-var lotRow = 3
-var gritRow = 4
-var particlesRow = 5
-var avgStretchRow = 6
-var devStrengthRow = 7
-var maxStrengthRow = 8
-var minStrengthRow = 9
-var avgSizeRow = 10
-var devSizeRow = 11
-var avgFractStrRow = 12
-var devFractStrRow = 13
-var markRow = 14
+var row = 0
+var serialRow = row ++
+var dateRow = row ++
+//var userRow = row ++
+var lotRow = row ++
+var gritRow = row ++
+var particlesRow = row ++
+var avgStretchRow = row ++
+var devStrengthRow = row ++
+var maxStrengthRow = row ++
+var minStrengthRow = row ++
+var avgSizeRow = row ++
+var devSizeRow = row ++
+var avgFractStrRow = row ++
+var devFractStrRow = row ++
+var markRow = row ++
 //-----------------------------------------------------------------------------------
 var histStrengthTable = null
 var histSizeTable = null
@@ -39,20 +39,18 @@ var fractStrengthGraph = null
 //-----------------------------------------------------------------------------------
 var histogrammColumns = 10
 //-----------------------------------------------------------------------------------
-function modelInit()
+function modelInit(role)
 {
-  //print("Functions.modelInit()")
-  //--------------------------------
   // paramTable
   //--------------------------------
   paramTable = model.newTableModel()
   paramTable.columnCount = 2
-  paramTable.rowCount = 15
+  paramTable.rowCount = markRow + 1
   paramTable.setHeaderData(0, Qt.Horizontal, qsTr("Name"))
   paramTable.setHeaderData(1, Qt.Horizontal, qsTr("Value"))
   paramTable.setData(serialRow, nameCol, qsTr("Device DDA-33"))
   paramTable.setData(dateRow, nameCol, qsTr("Measure date"))
-  paramTable.setData(userRow, nameCol, qsTr("User name"))
+  //paramTable.setData(userRow, nameCol, qsTr("User name"))
   paramTable.setData(lotRow, nameCol, qsTr("Lot"))
   paramTable.setData(gritRow, nameCol, qsTr("Grit size"))
   paramTable.setData(particlesRow, nameCol, qsTr("Particles"))
@@ -145,16 +143,20 @@ function modelInit()
 
 }
 //-----------------------------------------------------------------------------------
-function modelUpdate(session)
+function modelUpdate(session, role)
 {
 //  displayData("session", session);
+
+  model.dictionarySet("userName", session.userName)
+  model.dictionarySet("reportHeader", qsTr("The static strength diamond powder test"))
+
   statistic(session)
   //--------------------------------
   // paramTable
   //--------------------------------
   paramTable.setData(serialRow, valueCol, session.deviceSerial)
   paramTable.setData(dateRow, valueCol, Qt.formatDate(session.start, qsTr("yyyy-MM-dd")))
-  paramTable.setData(userRow, valueCol, session.userName)
+  //paramTable.setData(userRow, valueCol, session.userName)
   paramTable.setData(lotRow, valueCol, session.lot)
   paramTable.setData(gritRow, valueCol, session.grit)
   paramTable.setData(particlesRow, valueCol, session.particles)

@@ -20,10 +20,17 @@
 /*----------------------------------------------------------------------------*/
 class Plotter : public QObject
 {
+  Q_OBJECT
+  Q_PROPERTY(QString legend READ legend WRITE setLegend)
+protected:
+  QString m_legend;
 public:
   Plotter(QObject *parent = 0) : QObject(parent) {}
   virtual ~Plotter() {}
   virtual void paint(QPaintDevice *dev) = 0;
+
+  QString legend() {return m_legend;}
+  void setLegend(const QString &l) {m_legend = l;}
 };
 
 /*----------------------------------------------------------------------------*/

@@ -16,22 +16,22 @@
 #define TEMPLATE_FILE_H_1315319445
 /*----------------------------------------------------------------------------*/
 #include <QVariant>
-#include <QHash>
+#include <QMap>
 
 class TemplateSet
 {
-  typedef QHash<QString, QString> StringHash;
-  StringHash strHash;
+  typedef QMap<QString, QString> StringMap;
+  StringMap strHash;
   QString lastVar;
 protected:
   void parceString(const QString& src);
   void readFile(const QString& fileName);
-  QString resolve(const QString& name, const QString& format, QVariantHash* dict);
+  QString resolve(const QString& name, const QString& format, QVariantMap* dict);
 public:
   TemplateSet(const QString& fileName);
   ~TemplateSet();
   /**Get reult string with resolve {var} from dictionary*/
-  QString getString(const QString& name, QVariantHash* dict = NULL);
+  QString getString(const QString& name, QVariantMap* dict = NULL);
   void setString(const QString& name, const QString& value);
 };
 

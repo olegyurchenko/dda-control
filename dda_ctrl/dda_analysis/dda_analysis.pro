@@ -88,4 +88,5 @@ RESOURCES += \
 
 OTHER_FILES += \
     ../resuurces/processing.qml \
-    processing.js
+    template/report.templ \
+    template/processing.js

@@ -30,9 +30,6 @@
     </widget>
    </item>
    <item>
-    <widget class="QStatusBar" name="statusBar"/>
-   </item>
-   <item>
     <widget class="QToolBar" name="mainToolBar">
      <addaction name="actionPrint"/>
      <addaction name="actionPrint_preview"/>
@@ -41,6 +38,12 @@
    </item>
    <item>
     <widget class="QWebView" name="webView">
+     <property name="sizePolicy">
+      <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+       <horstretch>0</horstretch>
+       <verstretch>0</verstretch>
+      </sizepolicy>
+     </property>
      <property name="url">
       <url>
        <string>about:blank</string>

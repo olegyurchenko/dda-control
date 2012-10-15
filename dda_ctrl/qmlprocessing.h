@@ -50,6 +50,15 @@ class DDAMeasureSession;
 class DDAProcessing : public QObject
 {
   Q_OBJECT
+  Q_ENUMS(Role)
+
+public:
+  enum Role
+  {
+    FormRole,
+    ReportRole
+  };
+
 protected:
   QDeclarativeEngine *m_engine;
   QDeclarativeComponent *m_component;
@@ -59,6 +68,8 @@ protected:
   QString m_message;
   bool m_isError;
 
+  QVariantMap m_dictionary;
+
 protected:
   void  setError(const QString &msg, bool err = true)
   {
@@ -67,21 +78,25 @@ protected:
   }
 
   void clrError() {m_isError = false;}
-
+  void addModel(QObject *obj);
 public:
   DDAProcessing(QObject *parent = 0);
-  bool open(DDAMeasureSession *session);
+  bool open(DDAMeasureSession *session, Role role = DDAProcessing::FormRole);
 
 public:
   bool isError() {return m_isError;}
   QString message() {return m_message;}
-  void update();
+  void update(Role role = DDAProcessing::FormRole);
 
-  Q_INVOKABLE void addModel(QObject*);
+  //Q_INVOKABLE void addModel(QObject*);
   Q_INVOKABLE QObject *newTableModel();
   Q_INVOKABLE QObject *newCurveModel();
   Q_INVOKABLE QObject *newHistogrammModel();
   Q_INVOKABLE QObject *newGraphModel();
+  Q_INVOKABLE QVariant dictionaryGet(QString name) {return m_dictionary[name];}
+  Q_INVOKABLE void dictionarySet(QString name, QVariant value) {m_dictionary[name] = value;}
+  QVariantMap dictionary() {return m_dictionary;}
+  void setDictionary(const QVariantMap& d) {m_dictionary = d;}
 
 signals:
   void error(QString);

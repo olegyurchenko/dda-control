@@ -17,12 +17,12 @@ body:
   <TABLE WIDTH=80% CELLPADDING=4 CELLSPACING=0>
     <TR VALIGN=TOP>
       <TD WIDTH=40% STYLE="border: none; padding: 0in">
-	<IMG SRC="title.png">
+	<IMG SRC="{templateDir}/title.png">
       </TD>
     </TR>
     <TR VALIGN=TOP>
       <TD WIDTH=40% STYLE="border-top: 1px solid #000000; border-bottom: none; border-left: none; border-right: none; padding-top: 0.04in; padding-bottom: 0.04in; padding-left: 0.04in; padding-right: 0in">
-	<H1 WIDTH=80% ALIGN=CENTER>ПРОТОКОЛ ИСПЫТАНИЙ АЛМАЗНОГО ПОРОШКА НА СТАТИЧЕСКУЮ ПРОЧНОСТЬ</H1>
+	<H1 WIDTH=80% ALIGN=CENTER>{reportHeader}</H1>
       </TD>
     </TR>
   </TABLE>
@@ -30,7 +30,7 @@ body:
   <P>Примечания:</P>
   <P><BR><BR>
   </P>
-  <P>Испытания провел _____________ 
+  <P>Испытания провел {userName}
   </P>
   <DIV TYPE=FOOTER>
 	<P STYLE="margin-top: 0.2in; margin-bottom: 0in"><FONT SIZE=-1>
@@ -39,16 +39,74 @@ body:
   </DIV>
 </BODY>
 
+content: 
+<TABLE WIDTH=80%>
+<COL WIDTH=30%>
+<COL WIDTH=20%>
+<COL WIDTH=30%>
+<TR>
+<TD WIDTH=30%>
+  {view1}
+</TD>
+<TD WIDTH=10%>
+</TD>
+<TD WIDTH=30%>
+  {view2}
+</TD>
+</TR>
+<TR>
+<TD WIDTH=30%>
+  {view3}
+</TD>
+<TD WIDTH=10%>
+</TD>
+<TD WIDTH=30%>
+  {view4}
+</TD>
+</TR>
+<TR>
+<TD WIDTH=30%>
+  {view5}
+</TD>
+<TD WIDTH=10%>
+</TD>
+<TD WIDTH=30%>
+  {view6}
+</TD>
+</TR>
+<TR>
+<TD WIDTH=30%>
+  {view7}
+</TD>
+<TD WIDTH=10%>
+</TD>
+<TD WIDTH=30%>
+  {view8}
+</TD>
+</TR>
+<TR>
+<TD WIDTH=30%>
+  {view9}
+</TD>
+<TD WIDTH=10%>
+</TD>
+<TD WIDTH=30%>
+  {view10}
+</TD>
+</TR>
+</TABLE>
+
+
 table: 	
-<TABLE WIDTH={width:d}% CELLPADDING=4 CELLSPACING=0 border="1" bordercolor="#000000" >
+<TABLE WIDTH=100% CELLPADDING=4 CELLSPACING=0 border="1" bordercolor="#000000" >
 {content}
 </TABLE>
 
-tableColumn: <COL WIDTH={width:d}%*>
+tableColumn: <COL WIDTH={width:d}%>
 
 row: <TR VALIGN=TOP>{content}</TR>
 
-column:	<TD WIDTH={width:d}%><P ALIGN={align}>{content}</P></TD>
+column:	<TD><P ALIGN={align}>{content}</P></TD>
 
-
+image: <IMG SRC="{fileName}">
 

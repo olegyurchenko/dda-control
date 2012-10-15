@@ -17,14 +17,13 @@
 #define HTML_REPORT_H_1350210764
 /*----------------------------------------------------------------------------*/
 #include <QObject>
-#include <QVariantHash>
+#include <QVariantMap>
 #include <QList>
+#include <QFile>
 
 class DDAProcessing;
 class DDAMeasureSession;
-class GraphPlotter;
-class HistogrammPlotter;
-class CurvePlotter;
+class Plotter;
 class TableModel;
 class TemplateSet;
 class HtmlReport :public QObject
@@ -33,18 +32,20 @@ class HtmlReport :public QObject
 protected:
   DDAProcessing *m_processing;
   DDAMeasureSession *m_session;
-  QString m_context;
+  QString m_content;
   QString m_message;
   QString m_templDir;
   QString m_imageDir;
   TemplateSet *m_templ;
-  QVariantHash m_dict;
+  QVariantMap m_dict;
   QList<QObject *> m_modelList;
+  QList<QFile*> m_fileList;
+  int m_tableCount;
+  int m_imageCount;
+  int m_viewCount;
 
 protected:
-  void addGraph(GraphPlotter *model);
-  void addHistogramm(HistogrammPlotter *model);
-  void addCurve(CurvePlotter *model);
+  void addPlotter(Plotter *model);
   void addTable(TableModel *model);
 
 public:
@@ -52,7 +53,7 @@ public:
   ~HtmlReport();
   bool generateReport();
   QString message() {return m_message;}
-  const QString& context() {return m_context;}
+  const QString& content() {return m_content;}
 protected slots:
   void onModelAdded(QObject*);
 };

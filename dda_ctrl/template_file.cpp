@@ -45,7 +45,7 @@ void TemplateSet :: readFile(const QString& fileName)
 
 }
 /*----------------------------------------------------------------------------*/
-QString TemplateSet :: resolve(const QString& name, const QString& format, QVariantHash* dict)
+QString TemplateSet :: resolve(const QString& name, const QString& format, QVariantMap* dict)
 {
   QVariant result;
   QString resultStr;
@@ -53,7 +53,7 @@ QString TemplateSet :: resolve(const QString& name, const QString& format, QVari
 
   if(dict != NULL)
   {
-    QVariantHash::const_iterator it = dict->find(name);
+    QVariantMap::const_iterator it = dict->find(name);
 
     if(it != dict->end())
     {
@@ -64,7 +64,7 @@ QString TemplateSet :: resolve(const QString& name, const QString& format, QVari
 
   if(!found)
   {
-    StringHash::iterator it = strHash.find(name);
+    StringMap::iterator it = strHash.find(name);
     if(it != strHash.end())
     {
       result = it.value();
@@ -106,7 +106,7 @@ QString TemplateSet :: resolve(const QString& name, const QString& format, QVari
   return resultStr;
 }
 /*----------------------------------------------------------------------------*/
-QString TemplateSet :: getString(const QString& name, QVariantHash* dict)
+QString TemplateSet :: getString(const QString& name, QVariantMap* dict)
 {
 //  QString charset = resolve("charset", "", dict);
 //  QTextCodec* codec = QTextCodec::codecForName(charset.toAscii().constData());

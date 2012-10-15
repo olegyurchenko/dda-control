@@ -42,7 +42,7 @@ DDAProcessing :: DDAProcessing(QObject *parent)
   qmlRegisterType<HistogrammPlotter>("DDA", 1, 0, "HistogrammModel");
   qmlRegisterType<CurvePlotter>("DDA", 1, 0, "CurveModel");
   qmlRegisterType<TableModel>("DDA", 1, 0, "TableModel");
-  qmlRegisterUncreatableType<DDAProcessing>("DDA", 1, 0, "DDAProcessing", "Unable to create DDA object from QML");
+  qmlRegisterUncreatableType<DDAProcessing>("DDA", 1, 0, "DataModel", "Unable to create DDA object from QML");
   qmlRegisterUncreatableType<AxisPlotter>("DDA", 1, 0, "AxisPlotter", "Unable to create DDA object from QML");
   qmlRegisterUncreatableType<Axis>("DDA", 1, 0, "Axis", "Unable to create DDA object from QML");
 
@@ -66,7 +66,7 @@ DDAProcessing :: DDAProcessing(QObject *parent)
   clrError();
 }
 /*----------------------------------------------------------------------------*/
-bool DDAProcessing :: open(DDAMeasureSession *session)
+bool DDAProcessing :: open(DDAMeasureSession *session, Role role)
 {
   if(m_component != NULL)
     delete m_component;
@@ -95,7 +95,6 @@ bool DDAProcessing :: open(DDAMeasureSession *session)
   m_qml = qobject_cast<DDAExtension *>(m_component->create());
   if(m_qml != NULL)
   {
-    /*
     const QMetaObject *us = m_qml->metaObject();
     for (int idx = DDAExtension::staticMetaObject.methodCount(); idx < us->methodCount(); ++idx)
     {
@@ -108,11 +107,10 @@ bool DDAProcessing :: open(DDAMeasureSession *session)
       qDebug() << "Object have slot:" << slt << " and type " << mm.typeName();
       //methodMap[slt.section('(', 0, 0)] = idx;
     }
-    */
 
     clrError();
     QVariant ret;
-    if(!m_qml->metaObject()->invokeMethod(m_qml, "modelInit", Qt::DirectConnection, Q_RETURN_ARG(QVariant, ret)))
+    if(!m_qml->metaObject()->invokeMethod(m_qml, "modelInit", Qt::DirectConnection, Q_RETURN_ARG(QVariant, ret), Q_ARG(QVariant, role)))
     {
       setError(tr("Method '%1' not found").arg("modelInit"));
     }
@@ -147,7 +145,7 @@ void DDAProcessing :: addModel(QObject *obj)
     emit modelAdded(obj);
 }
 /*----------------------------------------------------------------------------*/
-void DDAProcessing :: update()
+void DDAProcessing :: update(Role role)
 {
   QVariantMap data;
   data["id"] = m_session->session().id;
@@ -181,7 +179,7 @@ void DDAProcessing :: update()
 
   clrError();
   QVariant ret;
-  if(m_qml && !m_qml->metaObject()->invokeMethod(m_qml, "modelUpdate", Qt::DirectConnection, Q_RETURN_ARG(QVariant, ret), Q_ARG(QVariant, data)))
+  if(m_qml && !m_qml->metaObject()->invokeMethod(m_qml, "modelUpdate", Qt::DirectConnection, Q_RETURN_ARG(QVariant, ret), Q_ARG(QVariant, data), Q_ARG(QVariant, role)))
   {
     setError(tr("Method '%1' not found").arg("modelUpdate"));
   }
