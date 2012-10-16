@@ -88,7 +88,7 @@ function modelInit(role)
   strengthHistogramm.y.decimals = 0
   strengthHistogramm.y.steps = 4
 
-  strengthHistogramm.x.text = "[N]"
+  strengthHistogramm.x.text = qsTr("[N]")
   strengthHistogramm.x.decimals = 1
   strengthHistogramm.x.steps = histogrammColumns
   //--------------------------------
@@ -114,7 +114,7 @@ function modelInit(role)
   sizeHistogramm.y.decimals = 0
   sizeHistogramm.y.steps = 4
 
-  sizeHistogramm.x.text = "[us]"
+  sizeHistogramm.x.text = qsTr("[um]")
   sizeHistogramm.x.decimals = 1
   sizeHistogramm.x.steps = histogrammColumns
   //--------------------------------
@@ -127,7 +127,7 @@ function modelInit(role)
   strengthCurve.y.decimals = 0
   strengthCurve.y.steps = 4
 
-  strengthCurve.x.text = "[N]"
+  strengthCurve.x.text = qsTr("[N]")
   strengthCurve.x.decimals = 1
   strengthCurve.x.steps = histogrammColumns
   //--------------------------------
@@ -136,8 +136,8 @@ function modelInit(role)
   fractStrengthGraph = model.newGraphModel()
   fractStrengthGraph.y.decimals = 1
   fractStrengthGraph.x.decimals = 1
-  fractStrengthGraph.y.text = "[N/mm^2]"
-  fractStrengthGraph.x.text = "[um]"
+  fractStrengthGraph.y.text = qsTr("[N/mm^2]")
+  fractStrengthGraph.x.text = qsTr("[um]")
   fractStrengthGraph.x.steps = 5
   fractStrengthGraph.y.steps = 5
 

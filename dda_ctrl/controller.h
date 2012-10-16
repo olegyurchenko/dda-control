@@ -20,6 +20,7 @@
 #include <QList>
 #include <QTime>
 /*----------------------------------------------------------------------------*/
+class logfile;
 class DDAController : public QThread
 {
   Q_OBJECT
@@ -51,6 +52,7 @@ protected:
   BinList m_txData;
   ByteVector m_rxData;
   QTime m_lastCharTime;
+  logfile *m_log;
 
   double m_size;
   double m_strength;
@@ -59,6 +61,9 @@ protected:
   QMutex m_mutex;
   void lock() {m_mutex.lock();}
   void unlock() {m_mutex.unlock();}
+
+  int serial_read(int fd, void *buffer, unsigned size, unsigned timeout);
+  int serial_write(int fd, void *buffer, unsigned size);
 
   void setStatus(DDAStatus s);
   bool rxPacket(int serial);

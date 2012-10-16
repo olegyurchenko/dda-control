@@ -30,6 +30,7 @@ struct DDAProfile
 struct DDASettings
 {
   QString databaseFileName;
+  QString localeName;
 };
 /*----------------------------------------------------------------------------*/
 class QDomNode;

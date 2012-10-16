@@ -5,456 +5,731 @@
     <name>AnalysWindow</name>
     <message>
         <source>Data handling</source>
-        <translation type="obsolete">Обработка данных</translation>
+        <translation>Обработка данных</translation>
     </message>
     <message>
         <source>Sessions</source>
-        <translation type="obsolete">Смены</translation>
+        <translation>Смены</translation>
     </message>
     <message>
         <source>File</source>
-        <translation type="obsolete">Файл</translation>
+        <translation>Файл</translation>
     </message>
     <message>
         <source>Session</source>
-        <translation type="obsolete">Смена</translation>
+        <translation>Смена</translation>
     </message>
     <message>
         <source>Exit</source>
-        <translation type="obsolete">Выход</translation>
+        <translation>Выход</translation>
     </message>
     <message>
         <source>Edit data</source>
-        <translation type="obsolete">Редактирование данных</translation>
+        <translation>Редактирование данных</translation>
     </message>
     <message>
         <source>Generate report</source>
-        <translation type="obsolete">Сформировать отчет</translation>
+        <translation>Сформировать отчет</translation>
     </message>
     <message>
         <source>Error execute JavaScript</source>
-        <translation type="obsolete">Ошибка выполнения JavaScript</translation>
+        <translation>Ошибка выполнения JavaScript</translation>
     </message>
 </context>
 <context>
     <name>DDAConfig</name>
     <message>
         <source>Default profile</source>
-        <translation type="obsolete">Профиль по умолчанию</translation>
+        <translation>Профиль по умолчанию</translation>
     </message>
     <message>
         <source>Profile_%1</source>
-        <translation type="obsolete">Профиль_%1</translation>
+        <translation>Профиль_%1</translation>
     </message>
     <message>
         <source>Invalid profile index</source>
-        <translation type="obsolete">Ошибка индекса профиля</translation>
+        <translation>Ошибка индекса профиля</translation>
+    </message>
+</context>
+<context>
+    <name>DDAController</name>
+    <message>
+        <source>offline</source>
+        <translation>отключен</translation>
+    </message>
+    <message>
+        <source>idle</source>
+        <translation>свободен</translation>
+    </message>
+    <message>
+        <source>calibrating</source>
+        <translation>калибровка</translation>
+    </message>
+    <message>
+        <source>measuring</source>
+        <translation>измерение</translation>
+    </message>
+    <message>
+        <source>no particle</source>
+        <translation>нет зерна</translation>
+    </message>
+    <message>
+        <source>next cassete waiting</source>
+        <translation>ожидание смены кассеты</translation>
+    </message>
+    <message>
+        <source>end of measuring</source>
+        <translation>конец измерений</translation>
     </message>
 </context>
 <context>
     <name>DDADatabase</name>
     <message>
         <source>Error open %1</source>
-        <translation type="obsolete">Ошибка открытия  %1</translation>
+        <translation>Ошибка открытия  %1</translation>
     </message>
     <message>
         <source>Undefined user</source>
-        <translation type="obsolete">Неизвестный пользователь</translation>
+        <translation>Неизвестный пользователь</translation>
     </message>
     <message>
         <source>Password check error</source>
-        <translation type="obsolete">Ошибка проверки пароля</translation>
+        <translation>Ошибка проверки пароля</translation>
     </message>
     <message>
         <source>User id=%1 not found</source>
-        <translation type="obsolete">Пользователь %1 не найден</translation>
+        <translation>Пользователь %1 не найден</translation>
     </message>
     <message>
         <source>Unkown user</source>
-        <translation type="obsolete">Неизвестный пользователь</translation>
+        <translation>Неизвестный пользователь</translation>
     </message>
 </context>
 <context>
     <name>DDAProcessing</name>
     <message>
         <source>Error open %1</source>
-        <translation type="obsolete">Ошибка открытия  %1</translation>
+        <translation>Ошибка открытия  %1</translation>
     </message>
     <message>
         <source>Method &apos;%1&apos; not found</source>
-        <translation type="obsolete">Метод %1 не найден</translation>
+        <translation>Метод %1 не найден</translation>
     </message>
 </context>
 <context>
     <name>EditDataDialog</name>
     <message>
         <source>Dialog</source>
-        <translation type="obsolete">Диалог</translation>
+        <translation>Диалог</translation>
     </message>
     <message>
         <source>Grit size</source>
-        <translation type="obsolete">Зернистость</translation>
+        <translation>Зернистость</translation>
     </message>
     <message>
         <source>Standard</source>
-        <translation type="obsolete">Стандарт</translation>
+        <translation>Стандарт</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select mesh&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Выбор сита&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Выбор сита&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Grit</source>
-        <translation type="obsolete">Зернистость</translation>
+        <translation>Зернистость</translation>
     </message>
     <message>
         <source>Lot:</source>
-        <translation type="obsolete">Партия:</translation>
+        <translation>Партия:</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Set lot&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Установите номер партии&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Установите номер партии&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Mark:</source>
-        <translation type="obsolete">Марка:</translation>
+        <translation>Марка:</translation>
     </message>
     <message>
         <source>Size [um]</source>
-        <translation type="obsolete">Размер [мкм]</translation>
+        <translation>Размер [мкм]</translation>
     </message>
     <message>
         <source>Stretch [N]</source>
-        <translation type="obsolete">Давление [Н]</translation>
+        <translation>Давление [Н]</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select gift size from russian &lt;/p&gt;&lt;p&gt;state standard&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Выберите зернистость &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
 </context>
 <context>
     <name>EditMeasureModel</name>
     <message>
         <source>true</source>
-        <translation type="obsolete">да</translation>
+        <translation>да</translation>
     </message>
     <message>
         <source>false</source>
-        <translation type="obsolete">нет</translation>
+        <translation>нет</translation>
     </message>
     <message>
         <source>Ignored</source>
-        <translation type="obsolete">отброшен</translation>
+        <translation>отброшен</translation>
     </message>
     <message>
         <source>Size [um]</source>
-        <translation type="obsolete">Размер [мкм]</translation>
+        <translation>Размер [мкм]</translation>
     </message>
     <message>
         <source>Stretch [N]</source>
-        <translation type="obsolete">Давление [Н]</translation>
+        <translation>Давление [Н]</translation>
+    </message>
+</context>
+<context>
+    <name>EditProfileDialog</name>
+    <message>
+        <source>Edit profile</source>
+        <translation>Редактировать профиль</translation>
+    </message>
+    <message>
+        <source>Profile name</source>
+        <translation>Имя профиля</translation>
+    </message>
+    <message>
+        <source>Serial</source>
+        <translation>Порт</translation>
+    </message>
+    <message>
+        <source>Baud rate</source>
+        <translation>Скорость</translation>
     </message>
 </context>
 <context>
     <name>MeasureModel</name>
     <message>
         <source>Size [um]</source>
-        <translation type="obsolete">Размер [мкм]</translation>
+        <translation>Размер [мкм]</translation>
     </message>
     <message>
         <source>Stretch [N]</source>
-        <translation type="obsolete">Давление [Н]</translation>
+        <translation>Давление [Н]</translation>
+    </message>
+</context>
+<context>
+    <name>MeasureWindow</name>
+    <message>
+        <source>DDA control system</source>
+        <translation>Система управления</translation>
+    </message>
+    <message>
+        <source>Profile</source>
+        <translation>Профиль</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select profile&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Выбор профиля&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Edit profile&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Редактирование профиля&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>...</source>
+        <translation>...</translation>
+    </message>
+    <message>
+        <source>Serial:1 Baud: 9600</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Device</source>
+        <translation>Прибор</translation>
+    </message>
+    <message>
+        <source>Device serial:</source>
+        <translation>Серийный номер:</translation>
+    </message>
+    <message>
+        <source>Device status:</source>
+        <translation>Статус прибора:</translation>
+    </message>
+    <message>
+        <source>offline</source>
+        <translation>отключен</translation>
+    </message>
+    <message>
+        <source>Current value:</source>
+        <translation>Текущее значение:</translation>
+    </message>
+    <message>
+        <source>Session</source>
+        <translation>Смена</translation>
+    </message>
+    <message>
+        <source>Data</source>
+        <translation>Дата</translation>
+    </message>
+    <message>
+        <source>Plot</source>
+        <translation>График</translation>
+    </message>
+    <message>
+        <source>Histogramm</source>
+        <translation>Гистограмма</translation>
+    </message>
+    <message>
+        <source>File</source>
+        <translation>Файл</translation>
+    </message>
+    <message>
+        <source>Settings</source>
+        <translation>Настройки</translation>
+    </message>
+    <message>
+        <source>Manage profiles</source>
+        <translation>Управление профилями</translation>
+    </message>
+    <message>
+        <source>Manage users</source>
+        <translation>Управление пользователями</translation>
+    </message>
+    <message>
+        <source>E&amp;xit</source>
+        <translation>Вы&amp;ход</translation>
+    </message>
+    <message>
+        <source>Edit current profile</source>
+        <translation>Редактировать текущий профиль</translation>
+    </message>
+    <message>
+        <source>Start measure session</source>
+        <translation>Старт измерительной смены</translation>
+    </message>
+    <message>
+        <source>Set user management password</source>
+        <translation>Установить пароль управления пользователями</translation>
+    </message>
+    <message>
+        <source>Edit current session</source>
+        <translation>Редактировать текущую смену</translation>
+    </message>
+    <message>
+        <source>Resume measuring</source>
+        <translation>Запуск измерения</translation>
+    </message>
+    <message>
+        <source>Single step mode</source>
+        <translation>Пошаговый режим</translation>
+    </message>
+    <message>
+        <source>Data processing</source>
+        <translation>Обработка данных</translation>
+    </message>
+    <message>
+        <source>Options...</source>
+        <translation>Параметры...</translation>
+    </message>
+    <message>
+        <source>[s]</source>
+        <translation>[с]</translation>
+    </message>
+    <message>
+        <source>[N]</source>
+        <translation>[Н]</translation>
+    </message>
+    <message>
+        <source>Serial:%1 Baud:%2</source>
+        <translation>Порт %1 Скорость %2</translation>
+    </message>
+    <message>
+        <source>Error</source>
+        <translation>Ошибка</translation>
+    </message>
+    <message>
+        <source>Error open serial port</source>
+        <translation>Ошибка открытия порта</translation>
     </message>
 </context>
 <context>
     <name>NewPasswordDialog</name>
     <message>
         <source>New password</source>
-        <translation type="obsolete">Новый пароль</translation>
+        <translation>Новый пароль</translation>
     </message>
     <message>
         <source>Ernter new password:</source>
-        <translation type="obsolete">Введите новый пароль</translation>
+        <translation>Введите новый пароль:</translation>
     </message>
     <message>
         <source>Retype new password:</source>
-        <translation type="obsolete">Повторите пароль</translation>
+        <translation>Повторите пароль:</translation>
+    </message>
+</context>
+<context>
+    <name>OptionsDialog</name>
+    <message>
+        <source>Dialog</source>
+        <translation>Диалог</translation>
+    </message>
+</context>
+<context>
+    <name>ProfileSelectDialog</name>
+    <message>
+        <source>Manage profiles</source>
+        <translation>Управление профилями</translation>
+    </message>
+    <message>
+        <source>Edit</source>
+        <translation>Правка</translation>
+    </message>
+    <message>
+        <source>Create</source>
+        <translation>Создать</translation>
+    </message>
+    <message>
+        <source>Delete</source>
+        <translation>Удалить</translation>
     </message>
 </context>
 <context>
     <name>QObject</name>
     <message>
         <source>Error load config</source>
-        <translation type="obsolete">Ошибка загрузки конфигурации</translation>
+        <translation>Ошибка загрузки конфигурации</translation>
     </message>
     <message>
         <source>Error open database</source>
-        <translation type="obsolete">Ошибка открытия базы данных</translation>
+        <translation>Ошибка открытия базы данных</translation>
     </message>
     <message>
         <source>yyyy-MM-dd hh:mm</source>
         <comment>Session model date-time format</comment>
-        <translation type="obsolete">dd.MM.yyyy hh:mm</translation>
+        <translation>dd.MM.yyyy hh:mm</translation>
     </message>
     <message>
         <source>yyyy-MM-dd</source>
         <comment>Session model date format</comment>
-        <translation type="obsolete">dd.MM.yyyy</translation>
+        <translation>dd.MM.yyyy</translation>
     </message>
     <message>
         <source>Enter password</source>
-        <translation type="obsolete">Введите пароль</translation>
+        <translation>Введите пароль</translation>
     </message>
     <message>
         <source>User %1 password:</source>
-        <translation type="obsolete">Пароль пользователя %1</translation>
+        <translation>Пароль пользователя %1:</translation>
     </message>
     <message>
         <source>Error</source>
-        <translation type="obsolete">Ошибка</translation>
+        <translation>Ошибка</translation>
     </message>
     <message>
         <source>Invalid password</source>
-        <translation type="obsolete">Не правильный пароль</translation>
+        <translation>Не правильный пароль</translation>
+    </message>
+    <message>
+        <source>Error translation</source>
+        <translation>Ошибка перевода</translation>
     </message>
 </context>
 <context>
     <name>ReportDialog</name>
     <message>
         <source>Generate report</source>
-        <translation type="obsolete">Формирование отчета</translation>
+        <translation>Формирование отчета</translation>
     </message>
     <message>
         <source>&amp;File</source>
-        <translation type="obsolete">&amp;Файл</translation>
+        <translation>&amp;Файл</translation>
     </message>
     <message>
         <source>Print</source>
-        <translation type="obsolete">Печать</translation>
+        <translation>Печать</translation>
     </message>
     <message>
         <source>Print preview</source>
-        <translation type="obsolete">Предварительный просмотр</translation>
+        <translation>Предварительный просмотр</translation>
     </message>
     <message>
         <source>Export to pdf</source>
-        <translation type="obsolete">Экспорт в PDF</translation>
+        <translation>Экспорт в PDF</translation>
     </message>
     <message>
         <source>E&amp;xit</source>
-        <translation type="obsolete">Выход</translation>
+        <translation>Вы&amp;ход</translation>
     </message>
     <message>
         <source>Report error</source>
-        <translation type="obsolete">Ошибка отчета</translation>
+        <translation>Ошибка отчета</translation>
     </message>
     <message>
         <source>Save File</source>
-        <translation type="obsolete">Сохранить файл</translation>
+        <translation>Сохранить файл</translation>
     </message>
     <message>
         <source>Pdf files (*.pdf)</source>
-        <translation type="obsolete">Файлы PDF</translation>
+        <translation>Файлы PDF</translation>
+    </message>
+    <message>
+        <source>about:blank</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Ctrl+P</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Ctrl+V</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Ctrl+D</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Ctrl+X</source>
+        <translation></translation>
     </message>
 </context>
 <context>
     <name>SelSessionBox</name>
     <message>
         <source>Sessions</source>
-        <translation type="obsolete">Смены</translation>
+        <translation>Смены</translation>
     </message>
     <message>
         <source>&amp;filter</source>
-        <translation type="obsolete">&amp;Фильтр</translation>
+        <translation>&amp;Фильтр</translation>
     </message>
     <message>
         <source>Refresh</source>
-        <translation type="obsolete">Обновить</translation>
+        <translation>Обновить</translation>
     </message>
     <message>
         <source>Refresh button</source>
-        <translation type="obsolete">Кнопка &quot;обновить&quot;</translation>
+        <translation>Кнопка &quot;обновить&quot;</translation>
     </message>
     <message>
         <source>...</source>
-        <translation type="obsolete">...</translation>
+        <translation>...</translation>
     </message>
     <message>
         <source>Date</source>
-        <translation type="obsolete">Дата</translation>
+        <translation>Дата</translation>
     </message>
     <message>
         <source>User</source>
-        <translation type="obsolete">Пользователь</translation>
+        <translation>Пользователь</translation>
     </message>
     <message>
         <source>Select user</source>
-        <translation type="obsolete">Выбор пользователя</translation>
+        <translation>Выбор пользователя</translation>
     </message>
     <message>
         <source>Select user combo box</source>
-        <translation type="obsolete">Кнопка выбора пользователя</translation>
+        <translation>Кнопка выбора пользователя</translation>
     </message>
     <message>
         <source>DDA serial</source>
-        <translation type="obsolete">Серийный номер</translation>
+        <translation>Серийный номер</translation>
     </message>
     <message>
         <source>Select device serial</source>
-        <translation type="obsolete">Выбор серийного номера</translation>
+        <translation>Выбор серийного номера</translation>
     </message>
     <message>
         <source>Device serial combo box</source>
-        <translation type="obsolete">Выбор серийного номера</translation>
+        <translation>Выбор серийного номера</translation>
     </message>
     <message>
         <source>Database error</source>
-        <translation type="obsolete">Ошибка базы данных</translation>
+        <translation>Ошибка базы данных</translation>
+    </message>
+    <message>
+        <source>GroupBox</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Ctrl+F</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>F5</source>
+        <translation></translation>
     </message>
 </context>
 <context>
     <name>SessionBox</name>
     <message>
         <source>Session</source>
-        <translation type="obsolete">Смена</translation>
+        <translation>Смена</translation>
     </message>
     <message>
         <source>Device serial:</source>
-        <translation type="obsolete">Серийный номер:</translation>
+        <translation>Серийный номер:</translation>
     </message>
     <message>
         <source>User name</source>
-        <translation type="obsolete">Пользователь</translation>
+        <translation>Пользователь</translation>
     </message>
     <message>
         <source>Lot:</source>
-        <translation type="obsolete">Партия:</translation>
+        <translation>Партия:</translation>
     </message>
     <message>
         <source>Particles:</source>
-        <translation type="obsolete">Зерен:</translation>
+        <translation>Зерен:</translation>
     </message>
     <message>
         <source>Standard:</source>
-        <translation type="obsolete">Стандарт:</translation>
+        <translation>Стандарт:</translation>
     </message>
     <message>
         <source>Grit:</source>
-        <translation type="obsolete">Зернистость:</translation>
+        <translation>Зернистость:</translation>
     </message>
     <message>
         <source>Mark:</source>
-        <translation type="obsolete">Марка:</translation>
+        <translation>Марка:</translation>
+    </message>
+    <message>
+        <source>GroupBox</source>
+        <translation></translation>
     </message>
 </context>
 <context>
     <name>SessionDialog</name>
     <message>
         <source>Session</source>
-        <translation type="obsolete">Смена</translation>
+        <translation>Смена</translation>
     </message>
     <message>
         <source>User name</source>
-        <translation type="obsolete">Пользователь</translation>
+        <translation>Пользователь</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select user name&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Выбор пользователя&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Выбор пользователя&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Manage users&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Управленее пользователями&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Управленее пользователями&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>...</source>
-        <translation type="obsolete">...</translation>
+        <translation>...</translation>
     </message>
     <message>
         <source>Lot:</source>
-        <translation type="obsolete">Партия:</translation>
+        <translation>Партия:</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Set lot&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Ввод партии&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Ввод партии&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Grit size</source>
-        <translation type="obsolete">Зернистость</translation>
+        <translation>Зернистость</translation>
     </message>
     <message>
         <source>Standard</source>
-        <translation type="obsolete">Стандарт</translation>
+        <translation>Стандарт</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select mesh&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation type="obsolete">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Выбор сита&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Выбор сита&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>Grit</source>
-        <translation type="obsolete">Ячейка</translation>
+        <translation>Ячейка</translation>
     </message>
     <message>
         <source>Particles</source>
-        <translation type="obsolete">Зерен</translation>
+        <translation>Зерен</translation>
     </message>
     <message>
         <source>Mark:</source>
-        <translation type="obsolete">Марка:</translation>
+        <translation>Марка:</translation>
+    </message>
+    <message>
+        <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select gift size from russian &lt;/p&gt;&lt;p&gt;state standard&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Выбор зернистости &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
 </context>
 <context>
     <name>UserManageDialog</name>
     <message>
         <source>User management</source>
-        <translation type="obsolete">Управление пользователями</translation>
+        <translation>Управление пользователями</translation>
     </message>
     <message>
         <source>Add user to database</source>
-        <translation type="obsolete">Добавить пользователя в базу данных</translation>
+        <translation>Добавить пользователя в базу данных</translation>
     </message>
     <message>
         <source>Add user button</source>
-        <translation type="obsolete">Кнопка добавления пользователя</translation>
+        <translation>Кнопка добавления пользователя</translation>
     </message>
     <message>
         <source>Add user</source>
-        <translation type="obsolete">Добавить</translation>
+        <translation>Добавить</translation>
     </message>
     <message>
         <source>Remove user from database</source>
-        <translation type="obsolete">Удалить пользователя из базы данных</translation>
+        <translation>Удалить пользователя из базы данных</translation>
     </message>
     <message>
         <source>Delete user button</source>
-        <translation type="obsolete">Кнопка удаления пользователя</translation>
+        <translation>Кнопка удаления пользователя</translation>
     </message>
     <message>
         <source>Delete user</source>
-        <translation type="obsolete">Удалить</translation>
+        <translation>Удалить</translation>
     </message>
     <message>
         <source>Set user password</source>
-        <translation type="obsolete">Установить пароль</translation>
+        <translation>Установить пароль</translation>
     </message>
     <message>
         <source>Set user password button</source>
-        <translation type="obsolete">Кнопка установки пароля пользователя</translation>
+        <translation>Кнопка установки пароля пользователя</translation>
     </message>
     <message>
         <source>User password</source>
-        <translation type="obsolete">Устанвить пароль</translation>
+        <translation>Устанвить пароль</translation>
     </message>
     <message>
         <source>User add</source>
-        <translation type="obsolete">Добавить пользователя</translation>
+        <translation>Добавить пользователя</translation>
     </message>
     <message>
         <source>Enter user name</source>
-        <translation type="obsolete">Введите имя пользователя</translation>
+        <translation>Введите имя пользователя</translation>
     </message>
     <message>
         <source>User name:</source>
-        <translation type="obsolete">Имя пользователя:</translation>
+        <translation>Имя пользователя:</translation>
     </message>
     <message>
         <source>Are you shure to delte user &apos;%1&apos; ?</source>
-        <translation type="obsolete">Вы уверены в том, что хотите удалить пользователя %1 ?</translation>
+        <translation>Вы уверены в том, что хотите удалить пользователя %1 ?</translation>
+    </message>
+    <message>
+        <source>Ins</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Del</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Ctrl+P</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>actionUserAdd</source>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -542,6 +817,22 @@
     <message>
         <source>yyyy-MM-dd</source>
         <translation>dd.MM.yyyy</translation>
+    </message>
+    <message>
+        <source>[N]</source>
+        <translation>[Н]</translation>
+    </message>
+    <message>
+        <source>[us]</source>
+        <translation>[мкс]</translation>
+    </message>
+    <message>
+        <source>[N/mm^2]</source>
+        <translation>[Н/мм^2]</translation>
+    </message>
+    <message>
+        <source>[um]</source>
+        <translation>[мкм]</translation>
     </message>
 </context>
 </TS>

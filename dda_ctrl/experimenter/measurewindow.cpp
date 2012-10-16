@@ -236,8 +236,8 @@ void MeasureWindow::onEndOfMeasuring()
 /*----------------------------------------------------------------------------*/
 void MeasureWindow::onStartSession()
 {
-  SessionDialog dialog;
   session->clear();
+  SessionDialog dialog;
   if(dialog.exec() == QDialog::Accepted)
   {
     ui->stackedWidget->setCurrentIndex(1);

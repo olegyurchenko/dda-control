@@ -63,7 +63,7 @@ void HtmlReport :: addPlotter(Plotter *model)
     h = 400;
 
   QImage image(w, h, QImage::Format_ARGB32_Premultiplied);
-  image.fill(QColor("white"));
+  image.fill(QColor("white").rgb());
 
   model->paint(&image);
   QTemporaryFile *file = new QTemporaryFile(QDir::temp().filePath("reportXXXXXX.png"));

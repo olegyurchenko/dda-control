@@ -31,7 +31,9 @@ SOURCES += main.cpp\
     ../usermanagedialog.cpp \
     ../newpassworddialog.cpp \
     ../selsessionbox.cpp \
-    ../sessionbox.cpp
+    ../sessionbox.cpp \
+    ../logfile.cpp \
+    ../optionsdialog.cpp
 
 HEADERS  += measurewindow.h \
     ../configuration.h \
@@ -53,7 +55,9 @@ HEADERS  += measurewindow.h \
     ../usermanagedialog.h \
     ../newpassworddialog.h \
     ../selsessionbox.h \
-    ../sessionbox.h
+    ../sessionbox.h \
+    ../logfile.h \
+    ../optionsdialog.h
 
 FORMS    += measurewindow.ui \
     ../profileselectdialog.ui \
@@ -62,7 +66,8 @@ FORMS    += measurewindow.ui \
     ../usermanagedialog.ui \
     ../newpassworddialog.ui \
     ../selsessionbox.ui \
-    ../sessionbox.ui
+    ../sessionbox.ui \
+    ../optionsdialog.ui
 
 INCLUDEPATH += \
  ..
@@ -81,6 +86,3 @@ win32 {
 win32 {
    RC_FILE = experimenter.rc
 }
-
-TRANSLATIONS    = ../dda-ru.ts \
-                   ../dda-ua.ts

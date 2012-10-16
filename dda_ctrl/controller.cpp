@@ -18,6 +18,8 @@
 #include <pc_serial.h>
 #include <QByteArray>
 #include <QStringList>
+#include <logfile.h>
+#include <stdio.h>
 /*----------------------------------------------------------------------------*/
 DDAController *controller = NULL;
 /*----------------------------------------------------------------------------*/
@@ -34,12 +36,15 @@ DDAController :: DDAController(QObject *parent)
   m_serial = -1;
   m_status = Offline;
   m_lastCharTime.start();
+  m_log = new logfile("controller.log", false);
+  m_log->Info("Controller created");
 }
 /*----------------------------------------------------------------------------*/
 DDAController :: ~DDAController()
 {
   m_terminated = true;
   wait(1000);
+  m_log->Info("Controlled destroyed");
 }
 /*----------------------------------------------------------------------------*/
 void DDAController :: setStatus(DDAStatus s)
@@ -53,12 +58,17 @@ void DDAController :: setStatus(DDAStatus s)
 /*----------------------------------------------------------------------------*/
 bool DDAController :: open(int serial, int baud)
 {
+  m_log->Info("Try to open: serial:%d, baud:%d", serial, baud);
   if(m_serial > 0)
     close();
   setStatus(Offline);
   int s = serial_open(serial, 8, baud, 'n', 2);
   if(s <= 0)
+  {
+    m_log->Exception("Error open port");
     return false;
+  }
+  m_log->Info("Port opened Ok");
   lock();
   m_serial = s;
   unlock();
@@ -67,6 +77,7 @@ bool DDAController :: open(int serial, int baud)
 /*----------------------------------------------------------------------------*/
 void DDAController :: close()
 {
+  m_log->Info("Port close");
   if(m_serial > 0)
   {
     int s = m_serial;
@@ -131,6 +142,36 @@ void DDAController :: run()
   }
 }
 /*----------------------------------------------------------------------------*/
+int DDAController :: serial_read(int fd, void *buffer, unsigned size, unsigned timeout)
+{
+  int count = ::serial_read(fd, buffer, size, timeout);
+  if(count)
+  {
+    char *buf = new char[count * 8];
+    int sz = 0;
+    for(int i = 0; i < count; i++)
+      sz += sprintf(buf + sz, "%02X ", (unsigned)((char *)buffer)[i] & 0xff);
+    m_log->Info("RX %s", buf);
+    delete [] buf;
+  }
+  return count;
+}
+/*----------------------------------------------------------------------------*/
+int DDAController :: serial_write(int fd, void *buffer, unsigned size)
+{
+  int count = ::serial_write(fd, buffer, size);
+  if(count)
+  {
+    char *buf = new char[count * 8];
+    int sz = 0;
+    for(int i = 0; i < count; i++)
+      sz += sprintf(buf + sz, "%02X ", (unsigned)((char *)buffer)[i] & 0xff);
+    m_log->Info("TX %s", buf);
+    delete [] buf;
+  }
+  return count;
+}
+/*----------------------------------------------------------------------------*/
 bool DDAController :: rxPacket(int serial)
 {
   if(m_lastCharTime.elapsed() >= RxTimeout)
@@ -155,7 +196,10 @@ bool DDAController :: rxPacket(int serial)
       if(m_rxData.size() == 3) //Pack length received
       {
         if(rx < 4) //Invalid packet length
+        {
+          m_log->Exception("Invalid packet length (%d)", rx);
           m_rxData.clear();
+        }
       }
     }
     else
@@ -169,6 +213,7 @@ bool DDAController :: rxPacket(int serial)
         if(crc == rx) //CRC Ok !
         {
           int txSize;
+          m_log->Info("Crc Ok");
           lock();
           txSize = m_txData.size();
           unlock();
@@ -187,6 +232,7 @@ bool DDAController :: rxPacket(int serial)
         {
           //Send NAK
           unsigned char tx = NAK;
+          m_log->Message("Crc Error");
           serial_write(serial, &tx, 1);
           m_rxData.clear();
         }
@@ -230,6 +276,7 @@ bool DDAController :: waitAck(int serial)
     {
       if(rx == ACK)
       {
+        m_log->Info("ACK received");
         lock();
         if(m_txData.size())
           m_txData.erase(m_txData.begin());
@@ -240,6 +287,7 @@ bool DDAController :: waitAck(int serial)
       break;
     }
   }
+  m_log->Message("Wait ACK error");
   emit cmdSendError();
   return false;
 }
@@ -253,11 +301,13 @@ void DDAController :: handleData(const ByteVector& data)
   switch(data[1]) //Header
   {
   case 'N':
+    m_log->Info("Serial received '%s'", s.toAscii().constData());
     setDeviceSerial(s);
     emit serialReceived(s);
     setStatus(Idle);
     break;
   case 'A':
+    m_log->Info("Strength receved '%s'", s.toAscii().constData());
     if(s[0] == '0' && s.toInt() == 0)
     {
       setStatus(Calibrating);
@@ -271,6 +321,7 @@ void DDAController :: handleData(const ByteVector& data)
     m_size = 0;
     break;
   case 'M':
+    m_log->Info("Measure received '%s'", s.toAscii().constData());
     if(s[0] == '-')
     {
       setStatus(NoParticle);
@@ -291,13 +342,16 @@ void DDAController :: handleData(const ByteVector& data)
     break;
   case 'G':
     //emit giftSize(s.simplified().toDouble());
+    m_log->Info("Size received '%s'", s.toAscii().constData());
     setSize(s.simplified().toDouble());
     break;
   case 'C':
+    m_log->Info("NextCasseteWaiting received");
     setStatus(NextCasseteWaiting);
     emit nextCasseteRequest();
     break;
   case 'E':
+    m_log->Info("EndOfMeasuring received");
     setStatus(EndOfMeasuring);
     emit endOfMeasuring();
     break;
@@ -306,6 +360,7 @@ void DDAController :: handleData(const ByteVector& data)
 /*----------------------------------------------------------------------------*/
 void DDAController :: setMode(int meshIndex, int samples, DDAMode mode)
 {
+  m_log->Info("setMode: meshIndex:%d samples:%d mode:%d", meshIndex, samples, mode);
   ByteVector txData;
   txData.push_back(ENQ);
   txData.push_back('I');
@@ -321,6 +376,7 @@ void DDAController :: setMode(int meshIndex, int samples, DDAMode mode)
 /*----------------------------------------------------------------------------*/
 void DDAController :: resume()
 {
+  m_log->Info("resume()");
   ByteVector txData;
   txData.clear();
   txData.push_back(ENQ);
@@ -333,6 +389,7 @@ void DDAController :: resume()
 /*----------------------------------------------------------------------------*/
 void DDAController :: manualMode()
 {
+  m_log->Info("manualMode()");
   ByteVector txData;
   txData.clear();
   txData.push_back(ENQ);

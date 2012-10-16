@@ -16,6 +16,7 @@
 #include <QDir>
 #include <QDomDocument>
 #include <QFile>
+#include <QCoreApplication>
 /*----------------------------------------------------------------------------*/
 DDAConfig *config = NULL;
 /*----------------------------------------------------------------------------*/
@@ -23,12 +24,18 @@ DDAConfig :: DDAConfig(QObject *parent)
   : QObject(parent)
 {
   m_profileIndex = -1;
-  QDir dir = QDir::home();
-  if(!dir.exists(".dda"))
-    dir.mkpath(".dda");
-  dir.setPath(dir.filePath(".dda"));
+  QDir dir(qApp->applicationDirPath());
   m_path = dir.filePath("config.xml");
   m_fileExists = dir.exists("config.xml");
+  if(!m_fileExists)
+  {
+    dir = QDir::home();
+    if(!dir.exists(".dda"))
+      dir.mkpath(".dda");
+    dir.setPath(dir.filePath(".dda"));
+    m_path = dir.filePath("config.xml");
+    m_fileExists = dir.exists("config.xml");
+  }
   defaultSettings(&m_settings);
   if(m_fileExists)
     m_isError = !load();
@@ -131,6 +138,7 @@ void DDAConfig :: defaultSettings(DDASettings *dst) const
     dir.mkpath(".dda");
   dir.setPath(dir.filePath(".dda"));
   dst->databaseFileName = dir.filePath("main.db");
+  dst->localeName = "";
 }
 /*----------------------------------------------------------------------------*/
 void DDAConfig :: parceProfile(QDomNode *node, DDAProfile *dst)
@@ -203,6 +211,8 @@ void DDAConfig :: parceSettings(QDomNode *node, DDASettings *dst)
     {
       if(e.tagName() == "databaseFileName")
         dst->databaseFileName = e.text();
+      if(e.tagName() == "localeName")
+        dst->localeName = e.text();
       if(e.tagName() == "profileIndex")
         m_profileIndex = e.text().toInt();
     }
@@ -214,6 +224,10 @@ void DDAConfig :: saveSettings(const DDASettings *src, QDomDocument *doc, QDomNo
 {
   QDomElement e = doc->createElement("databaseFileName");
   e.appendChild(doc->createTextNode(src->databaseFileName));
+  dst->appendChild(e);
+
+  e = doc->createElement("localeName");
+  e.appendChild(doc->createTextNode(src->localeName));
   dst->appendChild(e);
 
   e = doc->createElement("profileIndex");

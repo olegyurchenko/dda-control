@@ -17,6 +17,7 @@
 /*----------------------------------------------------------------------------*/
 #include <axisplotter.h>
 #include <QList>
+#include <QVariantList>
 #include <QBrush>
 #include <QPen>
 #ifdef USE_QML
