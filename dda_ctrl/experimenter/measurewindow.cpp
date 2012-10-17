@@ -12,6 +12,7 @@
 #include <newpassworddialog.h>
 #include <histogrammplotter.h>
 #include <curveplotter.h>
+#include <optionsdialog.h>
 /*----------------------------------------------------------------------------*/
 MeasureWindow::MeasureWindow(QWidget *parent) :
   QMainWindow(parent),
@@ -132,36 +133,40 @@ void MeasureWindow::onStatusChanged(int s)
     ui->actionStartSession->setEnabled(false);
     ui->actionResumeMeasuring->setEnabled(false);
     ui->actionSingleStepMode->setEnabled(false);
+    ui->actionOptions->setEnabled(true);
     break;
   case DDAController::Idle:
     ui->actionStartSession->setEnabled(true);
     ui->actionResumeMeasuring->setEnabled(session->session().id != InvalidId);
     ui->actionSingleStepMode->setEnabled(session->session().id != InvalidId);
+    ui->actionOptions->setEnabled(true);
     break;
   case DDAController::Calibrating:
     ui->actionStartSession->setEnabled(false);
     ui->actionResumeMeasuring->setEnabled(false);
     ui->actionSingleStepMode->setEnabled(true);
+    ui->actionOptions->setEnabled(false);
     break;
   case DDAController::Measuring:
     ui->actionStartSession->setEnabled(false);
     ui->actionResumeMeasuring->setEnabled(false);
     ui->actionSingleStepMode->setEnabled(true);
+    ui->actionOptions->setEnabled(false);
     break;
   case DDAController::NoParticle:
     ui->actionStartSession->setEnabled(false);
     ui->actionResumeMeasuring->setEnabled(false);
-    ui->actionSingleStepMode->setEnabled(true);
+    ui->actionOptions->setEnabled(false);
     break;
   case DDAController::NextCasseteWaiting:
     ui->actionStartSession->setEnabled(false);
     ui->actionResumeMeasuring->setEnabled(true);
-    ui->actionSingleStepMode->setEnabled(true);
+    ui->actionOptions->setEnabled(false);
     break;
   case DDAController::EndOfMeasuring:
     ui->actionStartSession->setEnabled(false);
     ui->actionResumeMeasuring->setEnabled(true);
-    ui->actionSingleStepMode->setEnabled(true);
+    ui->actionOptions->setEnabled(false);
     break;
   }
 }
@@ -351,5 +356,18 @@ void MeasureWindow::onResumeMeasuring()
 void MeasureWindow::onSingleStepMode()
 {
   controller->manualMode();
+}
+/*----------------------------------------------------------------------------*/
+void MeasureWindow::onOptions()
+{
+  OptionsDialog dlg;
+  if(dlg.exec() == QDialog::Accepted)
+  {
+    ui->retranslateUi(this);
+    disconnect(database, SIGNAL(dbError(QString)));
+    connect(database, SIGNAL(dbError(QString)), this, SLOT(onDatabaseError()));
+    onProfileChanged(ui->profileCombo->currentIndex());
+    onStatusChanged(controller->status());
+  }
 }
 /*----------------------------------------------------------------------------*/

@@ -9,6 +9,7 @@
 #include <editdatadialog.h>
 #include <usermanagedialog.h>
 #include <reportwindow.h>
+#include <optionsdialog.h>
 /*----------------------------------------------------------------------------*/
 AnalysWindow::AnalysWindow(QWidget *parent) :
   QMainWindow(parent),
@@ -99,5 +100,16 @@ void AnalysWindow::onGenerateReport()
   ReportDialog dlg(this, ui->selSessionBox->session());
   //win.setWindowModality(Qt::WindowModal);
   dlg.exec();
+}
+/*----------------------------------------------------------------------------*/
+void AnalysWindow::onOptions()
+{
+  OptionsDialog dlg;
+  if(dlg.exec() == QDialog::Accepted)
+  {
+    ui->retranslateUi(this);
+    QMessageBox::information(this, tr("Options changed"),
+                             tr("All settings will changed after application restart"));
+  }
 }
 /*----------------------------------------------------------------------------*/

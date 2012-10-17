@@ -32,7 +32,8 @@ SOURCES += main.cpp\
     ../reportwindow.cpp \
     ../html_report.cpp \
     ../html.cpp \
-    ../template_file.cpp
+    ../template_file.cpp \
+    ../optionsdialog.cpp
 
 HEADERS  += analyswindow.h \
     ../usermanagedialog.h \
@@ -55,7 +56,8 @@ HEADERS  += analyswindow.h \
     ../reportwindow.h \
     ../html_report.h \
     ../html.h \
-    ../template_file.h
+    ../template_file.h \
+    ../optionsdialog.h
 
 FORMS    += analyswindow.ui \
     ../usermanagedialog.ui \
@@ -64,7 +66,8 @@ FORMS    += analyswindow.ui \
     ../selsessionbox.ui \
     ../newpassworddialog.ui \
     ../editdatadialog.ui \
-    ../reportwindow.ui
+    ../reportwindow.ui \
+    ../optionsdialog.ui
 
 DEFINES += USE_QML
 

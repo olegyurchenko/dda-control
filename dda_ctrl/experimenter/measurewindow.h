@@ -53,6 +53,7 @@ protected slots:
   void onEditCurrentSession();
   void onResumeMeasuring();
   void onSingleStepMode();
+  void onOptions();
 };
 /*----------------------------------------------------------------------------*/
 

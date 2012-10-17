@@ -539,7 +539,7 @@
   <action name="actionEditCurrentProfile">
    <property name="icon">
     <iconset resource="../resuurces/resources.qrc">
-     <normaloff>:/config-options.png</normaloff>:/config-options.png</iconset>
+     <normaloff>:/run-build.png</normaloff>:/run-build.png</iconset>
    </property>
    <property name="text">
     <string>Edit current profile</string>
@@ -813,6 +813,22 @@
     <hint type="destinationlabel">
      <x>492</x>
      <y>66</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionOptions</sender>
+   <signal>triggered()</signal>
+   <receiver>MeasureWindow</receiver>
+   <slot>onOptions()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>316</x>
+     <y>209</y>
     </hint>
    </hints>
   </connection>

@@ -27,21 +27,38 @@
 DDADatabase *database = NULL;
 /*----------------------------------------------------------------------------*/
 #define CONNECTION_NAME "DDA"
+static int m_unique = 0;
 /*----------------------------------------------------------------------------*/
 
 DDADatabase :: DDADatabase(QObject *parent)
   : QObject(parent)
 {
+  open(config->settings().databaseFileName);
+}
+/*----------------------------------------------------------------------------*/
+DDADatabase :: DDADatabase(QObject *parent, const QString& fileName)
+  : QObject(parent)
+{
+  open(fileName);
+}
+/*----------------------------------------------------------------------------*/
+DDADatabase :: ~DDADatabase()
+{
+  QSqlDatabase::removeDatabase(m_connectionName);
+}
+/*----------------------------------------------------------------------------*/
+bool DDADatabase :: open(const QString& dbFileName)
+{
   m_session = -1;
-  QString dbFileName = config->settings().databaseFileName;
+  m_connectionName = QString("%1_%2").arg(CONNECTION_NAME).arg(++m_unique);
 
-  QSqlDatabase m_database = QSqlDatabase::addDatabase("QSQLITE", CONNECTION_NAME);
+  QSqlDatabase m_database = QSqlDatabase::addDatabase("QSQLITE", m_connectionName);
   m_database.setDatabaseName(dbFileName);
   if(!m_database.open())
   {
     m_isError = true;
     m_message = m_database.lastError().text();
-    return;
+    return false;
   }
 
   QFile f(":/sql/create_database.sql");
@@ -49,7 +66,7 @@ DDADatabase :: DDADatabase(QObject *parent)
   {
     m_isError = true;
     m_message = tr("Error open %1").arg("create_database.sql");
-    return;
+    return false;
   }
   QString sql = f.readAll();
   QSqlQuery q(m_database);
@@ -69,14 +86,14 @@ DDADatabase :: DDADatabase(QObject *parent)
     if(!q.exec(s))
     {
       error(q);
-      return;
+      return false;
     }
   }
 
   if(!q.exec("select count(*) from standards"))
   {
     error(q);
-    return;
+    return false;
   }
 
   if(!q.first() || !q.value(0).toInt())
@@ -87,7 +104,7 @@ DDADatabase :: DDADatabase(QObject *parent)
     {
       m_isError = true;
       m_message = tr("Error open %1").arg("mesh.txt");
-      return;
+      return false;
     }
     QString txt = f.readAll();
     txt.remove('\r');
@@ -101,7 +118,7 @@ DDADatabase :: DDADatabase(QObject *parent)
       if(!q.exec())
       {
         error(q);
-        return;
+        return false;
       }
     }
   }
@@ -109,7 +126,7 @@ DDADatabase :: DDADatabase(QObject *parent)
   if(!q.exec("select count(*) from gritSizes"))
   {
     error(q);
-    return;
+    return false;
   }
 
   if(!q.first() || !q.value(0).toInt())
@@ -120,7 +137,7 @@ DDADatabase :: DDADatabase(QObject *parent)
     {
       m_isError = true;
       m_message = tr("Error open %1").arg("mesh.txt");
-      return;
+      return false;
     }
     QString txt = f.readAll();
     txt.remove('\r');
@@ -134,7 +151,7 @@ DDADatabase :: DDADatabase(QObject *parent)
       if(!q.exec())
       {
         error(q);
-        return;
+        return false;
       }
     }
 
@@ -144,7 +161,7 @@ DDADatabase :: DDADatabase(QObject *parent)
     {
       m_isError = true;
       m_message = tr("Error open %1").arg("gost.txt");
-      return;
+      return false;
     }
     txt = f.readAll();
     txt.remove('\r');
@@ -158,7 +175,7 @@ DDADatabase :: DDADatabase(QObject *parent)
       if(!q.exec())
       {
         error(q);
-        return;
+        return false;
       }
     }
 
@@ -168,7 +185,7 @@ DDADatabase :: DDADatabase(QObject *parent)
     {
       m_isError = true;
       m_message = tr("Error open %1").arg("dstu.txt");
-      return;
+      return false;
     }
     txt = f.readAll();
     txt.remove('\r');
@@ -182,7 +199,7 @@ DDADatabase :: DDADatabase(QObject *parent)
       if(!q.exec())
       {
         error(q);
-        return;
+        return false;
       }
     }
   }
@@ -192,7 +209,7 @@ DDADatabase :: DDADatabase(QObject *parent)
   if(!q.exec())
   {
     error(q);
-    return;
+    return false;
   }
 
   if(!q.first())
@@ -203,7 +220,7 @@ DDADatabase :: DDADatabase(QObject *parent)
     if(!q.exec())
     {
       error(q);
-      return;
+      return false;
     }
   }
 
@@ -212,7 +229,7 @@ DDADatabase :: DDADatabase(QObject *parent)
   if(!q.exec())
   {
     error(q);
-    return;
+    return false;
   }
 
   if(!q.first())
@@ -223,7 +240,7 @@ DDADatabase :: DDADatabase(QObject *parent)
     if(!q.exec())
     {
       error(q);
-      return;
+      return false;
     }
     setPassword(SuperUserId, "");
     if(!checkPassword(SuperUserId, ""))
@@ -231,17 +248,13 @@ DDADatabase :: DDADatabase(QObject *parent)
       m_message = tr("Password check error");
       m_isError = true;
       emit dbError(m_message);
-      return;
+      return false;
     }
   }
 
   connect(this, SIGNAL(userChanged(int)), this, SLOT(onUserChanged()));
   m_isError = false;
-}
-/*----------------------------------------------------------------------------*/
-DDADatabase :: ~DDADatabase()
-{
-  QSqlDatabase::removeDatabase(CONNECTION_NAME);
+  return true;
 }
 /*----------------------------------------------------------------------------*/
 bool DDADatabase :: error(const QSqlQuery &q)
@@ -259,7 +272,7 @@ bool DDADatabase :: error(const QSqlQuery &q)
 /*----------------------------------------------------------------------------*/
 QStringList DDADatabase :: standardList()
 {
-  QSqlQuery q(QSqlDatabase::database(CONNECTION_NAME));
+  QSqlQuery q(QSqlDatabase::database(m_connectionName));
   if(!q.exec("select txt from standards order by id"))
   {
     error(q);
@@ -278,7 +291,7 @@ QStringList DDADatabase :: standardList()
 /*----------------------------------------------------------------------------*/
 QStringList DDADatabase :: gritList(int standard)
 {
-  QSqlQuery q(QSqlDatabase::database(CONNECTION_NAME));
+  QSqlQuery q(QSqlDatabase::database(m_connectionName));
   q.prepare("select txt from gritSizes where standard = ? order by gritIndex");
   q.addBindValue(standard);
   if(!q.exec())
@@ -314,7 +327,7 @@ DDAUserList DDADatabase :: userList(bool forFilter)
     return lst;
   }
 
-  QSqlQuery q(QSqlDatabase::database(CONNECTION_NAME));
+  QSqlQuery q(QSqlDatabase::database(m_connectionName));
   if(forFilter)
   {
     if(!q.exec("select u.id, u.name from users u, sessions s where u.id = s.user group by u.id, u.name order by u.id"))
@@ -348,7 +361,7 @@ DDAUserList DDADatabase :: userList(bool forFilter)
 /*----------------------------------------------------------------------------*/
 void DDADatabase :: userAdd(QString name, QString passw)
 {
-  QSqlQuery q(QSqlDatabase::database(CONNECTION_NAME));
+  QSqlQuery q(QSqlDatabase::database(m_connectionName));
   int id = 0;
   if(!q.exec("select max(id) from users"))
   {
@@ -375,7 +388,7 @@ void DDADatabase :: userAdd(QString name, QString passw)
 /*----------------------------------------------------------------------------*/
 void DDADatabase :: userDel(int id)
 {
-  QSqlQuery q(QSqlDatabase::database(CONNECTION_NAME));
+  QSqlQuery q(QSqlDatabase::database(m_connectionName));
   int used = 0;
   q.prepare("select used from users where id = ?");
   q.addBindValue(id);
@@ -399,7 +412,7 @@ void DDADatabase :: userDel(int id)
 /*----------------------------------------------------------------------------*/
 bool DDADatabase :: checkPassword(int id, QString passw)
 {
-  QSqlQuery q(QSqlDatabase::database(CONNECTION_NAME));
+  QSqlQuery q(QSqlDatabase::database(m_connectionName));
   if(!q.prepare("select pswd from users where id = ?"))
   {
     error(q);
@@ -430,7 +443,7 @@ bool DDADatabase :: checkPassword(int id, QString passw)
 /*----------------------------------------------------------------------------*/
 void DDADatabase :: setPassword(int id, QString passw)
 {
-  QSqlQuery q(QSqlDatabase::database(CONNECTION_NAME));
+  QSqlQuery q(QSqlDatabase::database(m_connectionName));
   if(!q.prepare("update users set pswd = ? where id = ?"))
   {
     error(q);
@@ -457,7 +470,7 @@ void DDADatabase :: setPassword(int id, QString passw)
 /*----------------------------------------------------------------------------*/
 int DDADatabase :: deviceId(const QString& serial)
 {
-  QSqlQuery q(QSqlDatabase::database(CONNECTION_NAME));
+  QSqlQuery q(QSqlDatabase::database(m_connectionName));
   q.prepare("select id from devices where serial = ?");
   q.addBindValue(serial);
   if(!q.exec())
@@ -489,7 +502,7 @@ int DDADatabase :: deviceId(const QString& serial)
 /*----------------------------------------------------------------------------*/
 QString DDADatabase :: deviceSerial(int id)
 {
-  QSqlQuery q(QSqlDatabase::database(CONNECTION_NAME));
+  QSqlQuery q(QSqlDatabase::database(m_connectionName));
   q.prepare("select serial from devices where id = ?");
   q.addBindValue(id);
   if(!q.exec())
@@ -507,7 +520,7 @@ QString DDADatabase :: deviceSerial(int id)
 DDASerialList DDADatabase :: serialList(bool forFilter)
 {
   DDASerialList lst;
-  QSqlQuery q(QSqlDatabase::database(CONNECTION_NAME));
+  QSqlQuery q(QSqlDatabase::database(m_connectionName));
   if(forFilter)
   {
     if(!q.exec("select d.id, d.serial from devices d, sessions s where d.id = s.device group by d.id, d.serial order by d.id"))
@@ -539,7 +552,7 @@ DDASerialList DDADatabase :: serialList(bool forFilter)
 /*----------------------------------------------------------------------------*/
 int DDADatabase :: sessionAdd(const DDASession& session)
 {
-  QSqlQuery q(QSqlDatabase::database(CONNECTION_NAME));
+  QSqlQuery q(QSqlDatabase::database(m_connectionName));
   int devId = deviceId(session.deviceSerial);
 
   if(!q.exec("select max(id) from sessions"))
@@ -596,7 +609,7 @@ DDASession DDADatabase :: getSession(const QSqlQuery &q)
 DDASession DDADatabase :: lastSession()
 {
   DDASession session;
-  QSqlQuery q(QSqlDatabase::database(CONNECTION_NAME));
+  QSqlQuery q(QSqlDatabase::database(m_connectionName));
   q.prepare(
         "select id, user,device,start,end, lot,standard,grit,mark\n"
         "from sessions\n"
@@ -620,7 +633,7 @@ void DDADatabase :: modifySession(const DDASession& session)
   if(session.id == InvalidId)
     return;
   int devId = deviceId(session.deviceSerial);
-  QSqlQuery q(QSqlDatabase::database(CONNECTION_NAME));
+  QSqlQuery q(QSqlDatabase::database(m_connectionName));
   q.prepare(
         "update sessions set user = ?, device = ?, start = ?, end = ?,\n"
         "lot = ?, standard = ?, grit = ?, mark = ?\n"
@@ -644,7 +657,7 @@ void DDADatabase :: modifySession(const DDASession& session)
 /*----------------------------------------------------------------------------*/
 int DDADatabase :: addMeasure(const DDAMeasure& measure)
 {
-  QSqlQuery q(QSqlDatabase::database(CONNECTION_NAME));
+  QSqlQuery q(QSqlDatabase::database(m_connectionName));
   if(!q.exec("select max(id) from measures"))
   {
     error(q);
@@ -672,7 +685,7 @@ int DDADatabase :: addMeasure(const DDAMeasure& measure)
 /*----------------------------------------------------------------------------*/
 void DDADatabase :: modifyMeasure(const DDAMeasure& measure)
 {
-  QSqlQuery q(QSqlDatabase::database(CONNECTION_NAME));
+  QSqlQuery q(QSqlDatabase::database(m_connectionName));
 
   q.prepare("update measures set size = ?, strenght = ?, elapsed = ?, ignored = ? where id = ?");
   q.addBindValue(measure.size);
@@ -700,7 +713,7 @@ DDAMeasure DDADatabase :: getMeasure(const QSqlQuery &q)
 DDAMeasure DDADatabase :: lastMeasure()
 {
   DDAMeasure measure;
-  QSqlQuery q(QSqlDatabase::database(CONNECTION_NAME));
+  QSqlQuery q(QSqlDatabase::database(m_connectionName));
   q.prepare("select id, session, size, strenght, elapsed, ignored from measures\n"
             "where id = (select max(id) from measures)");
 
@@ -718,7 +731,7 @@ DDAMeasure DDADatabase :: lastMeasure()
 /*----------------------------------------------------------------------------*/
 bool DDADatabase :: measureSession(int id, DDAMeasureSession *dst)
 {
-  QSqlQuery q(QSqlDatabase::database(CONNECTION_NAME));
+  QSqlQuery q(QSqlDatabase::database(m_connectionName));
   q.prepare(
         "select id, user,device,start,end, lot, standard, grit, mark\n"
         "from sessions\n"
@@ -780,7 +793,7 @@ void DDADatabase :: setSerial(const QString& serial)
 /*----------------------------------------------------------------------------*/
 void DDADatabase :: updateCurrentSession()
 {
-  QSqlQuery q(QSqlDatabase::database(CONNECTION_NAME));
+  QSqlQuery q(QSqlDatabase::database(m_connectionName));
   q.prepare("update sessions set end = ? where id = ?");
   q.addBindValue(QDateTime::currentDateTime());
   q.addBindValue(m_session);
@@ -813,7 +826,7 @@ void DDADatabase :: currentStretch(double)
 /*----------------------------------------------------------------------------*/
 QSqlQuery DDADatabase :: selectSessions(const SessionFilter& filter)
 {
-  QSqlQuery q(QSqlDatabase::database(CONNECTION_NAME));
+  QSqlQuery q(QSqlDatabase::database(m_connectionName));
   QString sql;
 
   sql = "select s.id, s.start, d.serial, u.name, s.lot \n"
@@ -862,7 +875,7 @@ QSqlQuery DDADatabase :: selectSessions(const SessionFilter& filter)
 QList<QDate> DDADatabase :: sessionDateList()
 {
   QList<QDate> lst;
-  QSqlQuery q(QSqlDatabase::database(CONNECTION_NAME));
+  QSqlQuery q(QSqlDatabase::database(m_connectionName));
   if(!q.exec("select distinct DATE(start) from sessions order by start desc"))
   {
     error(q);

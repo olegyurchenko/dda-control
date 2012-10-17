@@ -37,7 +37,7 @@ void SessionBox::setSession(DDAMeasureSession *s)
 /*----------------------------------------------------------------------------*/
 void SessionBox::onSessionChanged()
 {
-  qDebug() << "SessionBox::onSessionChanged()";
+  //qDebug() << "SessionBox::onSessionChanged()";
   DDASession s = m_session->session();
   ui->serialLabel->setText(s.deviceSerial);
   ui->userLabel->setText(database->userName(s.userId));

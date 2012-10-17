@@ -77,8 +77,10 @@ signals:
   void profileChanged();
   void settingsChanged();
 };
+class QTranslator;
 /*----------------------------------------------------------------------------*/
 extern DDAConfig *config;
+extern QTranslator *translator;
 /*----------------------------------------------------------------------------*/
 #endif /*CONFIGURATION_H_1348473493*/
 

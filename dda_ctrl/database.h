@@ -95,6 +95,8 @@ protected:
   int m_session;
   UserMap m_userMap;
   QTime m_startMeasure;
+  QString m_connectionName;
+  QString m_fileName;
 
   bool error(const QSqlQuery &q);
   DDASession getSession(const QSqlQuery &q);
@@ -104,6 +106,7 @@ protected:
   void updateCurrentSession();
 public:
   DDADatabase(QObject *parent = 0);
+  DDADatabase(QObject *parent, const QString& fileName);
   ~DDADatabase();
   bool isError() const {return m_isError;}
   QString message() {return m_message;}
@@ -127,6 +130,7 @@ public:
 
   int currentSessionId(){return m_session;}
   QSqlQuery selectSessions(const SessionFilter& filter);
+  bool open(const QString& fileName);
 
 public slots:
   void setSerial(const QString&);

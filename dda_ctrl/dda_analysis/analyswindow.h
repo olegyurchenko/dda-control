@@ -36,6 +36,7 @@ protected slots:
   void onModelAdded(QObject *m);
   void onEditData();
   void onGenerateReport();
+  void onOptions();
 };
 /*----------------------------------------------------------------------------*/
 

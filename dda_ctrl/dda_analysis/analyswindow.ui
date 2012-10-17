@@ -29,8 +29,8 @@
         <rect>
          <x>0</x>
          <y>0</y>
-         <width>593</width>
-         <height>527</height>
+         <width>587</width>
+         <height>517</height>
         </rect>
        </property>
        <widget class="SelSessionBox" name="selSessionBox">
@@ -79,8 +79,15 @@
     <addaction name="actionEditData"/>
     <addaction name="actionReport"/>
    </widget>
+   <widget class="QMenu" name="menuSettings">
+    <property name="title">
+     <string>Settings</string>
+    </property>
+    <addaction name="actionOptions"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuSession"/>
+   <addaction name="menuSettings"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -114,6 +121,15 @@
    </property>
    <property name="text">
     <string>Generate report</string>
+   </property>
+  </action>
+  <action name="actionOptions">
+   <property name="icon">
+    <iconset resource="../resuurces/resources.qrc">
+     <normaloff>:/config-options.png</normaloff>:/config-options.png</iconset>
+   </property>
+   <property name="text">
+    <string>Options...</string>
    </property>
   </action>
  </widget>
@@ -178,9 +194,26 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionOptions</sender>
+   <signal>triggered()</signal>
+   <receiver>AnalysWindow</receiver>
+   <slot>onOptions()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>303</x>
+     <y>305</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>onEditData()</slot>
   <slot>onGenerateReport()</slot>
+  <slot>onOptions()</slot>
  </slots>
 </ui>

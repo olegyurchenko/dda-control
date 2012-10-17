@@ -181,7 +181,7 @@ bool DDAController :: rxPacket(int serial)
 
   bool ok = false;
   unsigned char rx;
-  while(serial_read(serial, &rx, 1, 10) > 0 && !m_terminated)
+  while(!ok && serial_read(serial, &rx, 1, 10) > 0 && !m_terminated)
   {
     m_lastCharTime.restart();
     if(m_rxData.isEmpty())
@@ -204,7 +204,7 @@ bool DDAController :: rxPacket(int serial)
     }
     else
     {
-      unsigned sz = m_rxData[3];
+      unsigned sz = m_rxData[2];
       if((unsigned)m_rxData.size() == sz) //CRC received
       {
         unsigned char crc = 0;

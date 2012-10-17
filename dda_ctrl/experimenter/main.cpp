@@ -25,7 +25,7 @@ int main(int argc, char *argv[])
     QMessageBox::critical(NULL, QObject::tr("Error load config"), config->message());
   }
 
-  QTranslator translator;
+  QTranslator trans;
   QString locale;
   locale = config->settings().localeName;
   if(locale.isEmpty())
@@ -33,13 +33,17 @@ int main(int argc, char *argv[])
 
   if( locale.length() >= 2
     && locale.left(2) != "en"
-    && !translator.load("dda-" + locale)
-    && !translator.load("dda-" + locale, QLibraryInfo::location(QLibraryInfo::TranslationsPath)))
+    && !trans.load("dda-" + locale)
+    && !trans.load("dda-" + locale, QCoreApplication::applicationDirPath())
+    && !trans.load("dda-" + locale, QLibraryInfo::location(QLibraryInfo::TranslationsPath)))
   {
     QString error = QString("Error load language file for `%1` locale").arg(locale);
     QMessageBox::critical(NULL, QObject::tr("Error translation"), error);
   }
-  a.installTranslator(&translator);
+
+  a.installTranslator(&trans);
+  translator = &trans;
+
 
   database = new DDADatabase(&a);
   if(database->isError())
