@@ -79,6 +79,7 @@ protected:
 
   void clrError() {m_isError = false;}
   void addModel(QObject *obj);
+  void updateDictionary();
 public:
   DDAProcessing(QObject *parent = 0);
   bool open(DDAMeasureSession *session, Role role = DDAProcessing::FormRole);

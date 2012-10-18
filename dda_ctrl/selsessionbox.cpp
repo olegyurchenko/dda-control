@@ -7,14 +7,17 @@
 #include <QSqlRecord>
 #include <QPainter>
 /*----------------------------------------------------------------------------*/
-const QString timeFormat = QObject::tr("yyyy-MM-dd hh:mm", "Session model date-time format");
-const QString dateFormat = QObject::tr("yyyy-MM-dd", "Session model date format");
+static QString timeFormat = "yyyy-MM-dd hh:mm";
+static QString dateFormat = "yyyy-MM-dd";
 /*----------------------------------------------------------------------------*/
 SelSessionBox::SelSessionBox(QWidget *parent) :
   QGroupBox(parent),
   ui(new Ui::SelSessionBox)
 {
   ui->setupUi(this);
+  timeFormat = QObject::tr("yyyy-MM-dd hh:mm", "Session model date-time format");
+  dateFormat = QObject::tr("yyyy-MM-dd", "Session model date format");
+
   m_manualMode = true;
   m_session = new DDAMeasureSession(this);
 
@@ -48,6 +51,9 @@ SelSessionBox::SelSessionBox(QWidget *parent) :
   onUsersChanged();
   onSerialsChanged();
   m_manualMode = false;
+
+  ui->sessionView->selectRow(0);
+  onSessionChanged(sessionModel->index(0, 0));
 }
 /*----------------------------------------------------------------------------*/
 SelSessionBox::~SelSessionBox()

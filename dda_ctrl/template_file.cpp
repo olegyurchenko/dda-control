@@ -147,7 +147,7 @@ QString TemplateSet :: getString(const QString& name, QVariantMap* dict)
 /*----------------------------------------------------------------------------*/
 void TemplateSet :: parceString(const QString& src)
 {
-  int pos = src.indexOf(QRegExp("^[a-zA-Z_@][a-zA-Z_@0-9]*:"));
+  int pos = src.indexOf(QRegExp("^[a-zA-Z_@][a-zA-Z_@0-9\.]*:"));
 
   int size = src.size();
 

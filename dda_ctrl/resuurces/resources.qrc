@@ -37,6 +37,10 @@
         <file>page-simple.png</file>
         <file>printer.png</file>
         <file>x-office-document.png</file>
+        <file>document_graph.png</file>
+        <file>report.png</file>
+        <file>report2.png</file>
+        <file>document_print_preview.png</file>
     </qresource>
     <qresource prefix="/sql">
         <file>create_database.sql</file>

@@ -27,11 +27,7 @@ body:
     </TR>
   </TABLE>
   {content}
-  <P>Примечания:</P>
-  <P><BR><BR>
-  </P>
-  <P>Испытания провел {userName}
-  </P>
+  {note.{LANG}}
   <DIV TYPE=FOOTER>
 	<P STYLE="margin-top: 0.2in; margin-bottom: 0in"><FONT SIZE=-1>
 	© DDA team, 2012</FONT>
@@ -48,7 +44,7 @@ content:
 <TD WIDTH=30%>
   {table1}
 </TD>
-<TD WIDTH=10%>
+<TD WIDTH=20%>
 </TD>
 <TD WIDTH=30%>
   {table2}
@@ -68,7 +64,7 @@ content:
 <TD WIDTH=30%>
   {image3}
 </TD>
-<TD WIDTH=10%>
+<TD WIDTH=20%>
 </TD>
 <TD WIDTH=30%>
   {image4}
@@ -90,3 +86,20 @@ column:	<TD><P ALIGN={align}>{content}</P></TD>
 
 image: <IMG SRC="{fileName}">
 
+note.en:
+<P>Notes:</P>
+   <P><BR><BR>
+   </P>
+   <P><FONT SIZE=-1>Tests conducted {userName}</FONT></P>
+
+note.ru:
+  <P>Примечания:</P>
+  <P><BR><BR>
+  </P>
+  <P><FONT SIZE=-1>Испытания провел {userName}</FONT></P>
+
+note.uk:
+  <P>Примітки:</ P>
+  <P><BR><BR>
+  </P>
+  <P><FONT SIZE=-1>Випробування провів {userName}</FONT></P>

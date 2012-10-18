@@ -35,6 +35,42 @@
         <source>Error execute JavaScript</source>
         <translation>Ошибка выполнения JavaScript</translation>
     </message>
+    <message>
+        <source>Settings</source>
+        <translation>Настройки</translation>
+    </message>
+    <message>
+        <source>Options...</source>
+        <translation>Параметры...</translation>
+    </message>
+    <message>
+        <source>Options changed</source>
+        <translation>Настройки изменены</translation>
+    </message>
+    <message>
+        <source>All settings will changed after application restart</source>
+        <translation>Все настройки вступят в силу только после перезагрузки программы</translation>
+    </message>
+    <message>
+        <source>Help</source>
+        <translation>Справка</translation>
+    </message>
+    <message>
+        <source>About</source>
+        <translation>О программе</translation>
+    </message>
+    <message>
+        <source>&lt;p&gt;The &lt;b&gt;dda_analys&lt;/b&gt; is part of a software-hardware system for testing the static strength of diamond powder.&lt;/p&gt;</source>
+        <translation>&lt;p&gt;Программа &lt;b&gt;dda_analys&lt;/b&gt; является частью програмно-аппаратного комплекса для проведения испытаний статической прочности алмазного порошка.&lt;/p&gt;</translation>
+    </message>
+    <message>
+        <source>&lt;p&gt;The analyzer processes the test results and generates a report for printing.&lt;/p&gt;</source>
+        <translation>&lt;p&gt;Анализатор производит обработку результатов испытаний и формирует отчет для печати.&lt;/p&gt;</translation>
+    </message>
+    <message>
+        <source>About dda_analys</source>
+        <translation>О программе dda_analys</translation>
+    </message>
 </context>
 <context>
     <name>DDAConfig</name>
@@ -350,6 +386,26 @@
         <source>Error open serial port</source>
         <translation>Ошибка открытия порта</translation>
     </message>
+    <message>
+        <source>Help</source>
+        <translation>Справка</translation>
+    </message>
+    <message>
+        <source>About</source>
+        <translation>О программе</translation>
+    </message>
+    <message>
+        <source>&lt;p&gt;The &lt;b&gt;experimenter&lt;/b&gt; is part of a software-hardware system for testing the static strength of diamond powder.&lt;/p&gt;</source>
+        <translation>&lt;p&gt;Программа &lt;b&gt;experimenter&lt;/b&gt; является частью програмно-аппаратного комплекса для проведения испытаний статической прочности алмазного порошка.&lt;/p&gt;</translation>
+    </message>
+    <message>
+        <source>&lt;p&gt;Experimenter from device receive test data and stores them in a database for later analysis.&lt;/p&gt;</source>
+        <translation>&lt;p&gt;Экспериментатор получает от прибора данные испытаний и записывает их в базу данных для последующего анализа.&lt;/p&gt;</translation>
+    </message>
+    <message>
+        <source>About experimenter</source>
+        <translation>О программе experimenter</translation>
+    </message>
 </context>
 <context>
     <name>NewPasswordDialog</name>
@@ -370,7 +426,31 @@
     <name>OptionsDialog</name>
     <message>
         <source>Dialog</source>
-        <translation>Диалог</translation>
+        <translation type="obsolete">Диалог</translation>
+    </message>
+    <message>
+        <source>Database file</source>
+        <translation>Файл базы данных</translation>
+    </message>
+    <message>
+        <source>...</source>
+        <translation>...</translation>
+    </message>
+    <message>
+        <source>Language</source>
+        <translation>Язык</translation>
+    </message>
+    <message>
+        <source>Select database file</source>
+        <translation>Выбор фала базы данных</translation>
+    </message>
+    <message>
+        <source>Databases (*.db);;All files (*)</source>
+        <translation>Базы данных (*.db);;Все файлы (*)</translation>
+    </message>
+    <message>
+        <source>Options</source>
+        <translation>Параметры</translation>
     </message>
 </context>
 <context>
@@ -824,7 +904,7 @@
     </message>
     <message>
         <source>[us]</source>
-        <translation>[мкс]</translation>
+        <translation type="obsolete">[мкс]</translation>
     </message>
     <message>
         <source>[N/mm^2]</source>

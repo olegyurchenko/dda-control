@@ -11,7 +11,11 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>Edit data</string>
+  </property>
+  <property name="windowIcon">
+   <iconset resource="resuurces/resources.qrc">
+    <normaloff>:/document-edit.png</normaloff>:/document-edit.png</iconset>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_3">
    <item>
@@ -200,14 +204,10 @@
     </layout>
    </item>
   </layout>
-  <zorder>markEdit</zorder>
-  <zorder>buttonBox</zorder>
-  <zorder>lotEdit</zorder>
-  <zorder>frame</zorder>
-  <zorder>label_3</zorder>
-  <zorder>frame_2</zorder>
  </widget>
- <resources/>
+ <resources>
+  <include location="resuurces/resources.qrc"/>
+ </resources>
  <connections>
   <connection>
    <sender>standardCombo</sender>

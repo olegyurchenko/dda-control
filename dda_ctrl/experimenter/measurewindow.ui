@@ -480,11 +480,17 @@
     <addaction name="actionResumeMeasuring"/>
     <addaction name="actionSingleStepMode"/>
     <addaction name="separator"/>
-    <addaction name="actionDataProcessing"/>
+   </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <addaction name="actionAbout"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menuSession"/>
    <addaction name="menuProfile"/>
+   <addaction name="menuHelp"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <property name="iconSize">
@@ -521,6 +527,9 @@
    <property name="toolTip">
     <string>Manage profiles</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+P</string>
+   </property>
   </action>
   <action name="actionManageUsers">
    <property name="icon">
@@ -530,10 +539,16 @@
    <property name="text">
     <string>Manage users</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+U</string>
+   </property>
   </action>
   <action name="actionFileExit">
    <property name="text">
     <string>E&amp;xit</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+X</string>
    </property>
   </action>
   <action name="actionEditCurrentProfile">
@@ -543,6 +558,9 @@
    </property>
    <property name="text">
     <string>Edit current profile</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+C</string>
    </property>
   </action>
   <action name="actionStartSession">
@@ -556,6 +574,9 @@
    <property name="text">
     <string>Start measure session</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+Return</string>
+   </property>
   </action>
   <action name="actionSetAdminPassword">
    <property name="icon">
@@ -564,6 +585,9 @@
    </property>
    <property name="text">
     <string>Set user management password</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+P</string>
    </property>
   </action>
   <action name="actionEditCurrentSession">
@@ -577,6 +601,9 @@
    <property name="text">
     <string>Edit current session</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+E</string>
+   </property>
   </action>
   <action name="actionResumeMeasuring">
    <property name="enabled">
@@ -589,6 +616,9 @@
    <property name="text">
     <string>Resume measuring</string>
    </property>
+   <property name="shortcut">
+    <string>Alt+Return</string>
+   </property>
   </action>
   <action name="actionSingleStepMode">
    <property name="enabled">
@@ -600,6 +630,9 @@
    </property>
    <property name="text">
     <string>Single step mode</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+S</string>
    </property>
   </action>
   <action name="actionDataProcessing">
@@ -618,6 +651,17 @@
    </property>
    <property name="text">
     <string>Options...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="actionAbout">
+   <property name="text">
+    <string>About</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+/</string>
    </property>
   </action>
  </widget>
@@ -832,6 +876,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionAbout</sender>
+   <signal>triggered()</signal>
+   <receiver>MeasureWindow</receiver>
+   <slot>onHelpAbout()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>316</x>
+     <y>209</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>316</x>
+     <y>209</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>onProfileChanged(int)</slot>
@@ -844,5 +904,6 @@
   <slot>onResumeMeasuring()</slot>
   <slot>onSingleStepMode()</slot>
   <slot>onOptions()</slot>
+  <slot>onHelpAbout()</slot>
  </slots>
 </ui>

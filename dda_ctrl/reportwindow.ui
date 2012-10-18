@@ -13,6 +13,10 @@
   <property name="windowTitle">
    <string>Generate report</string>
   </property>
+  <property name="windowIcon">
+   <iconset resource="resuurces/resources.qrc">
+    <normaloff>:/report2.png</normaloff>:/report2.png</iconset>
+  </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <widget class="QMenuBar" name="menuBar">
@@ -67,7 +71,7 @@
   <action name="actionPrint_preview">
    <property name="icon">
     <iconset resource="resuurces/resources.qrc">
-     <normaloff>:/page-simple.png</normaloff>:/page-simple.png</iconset>
+     <normaloff>:/document_print_preview.png</normaloff>:/document_print_preview.png</iconset>
    </property>
    <property name="text">
     <string>Print preview</string>

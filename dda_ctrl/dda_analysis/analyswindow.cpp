@@ -36,7 +36,7 @@ AnalysWindow::AnalysWindow(QWidget *parent) :
     return;
   }
 
-
+  onSessionChanged();
 }
 /*----------------------------------------------------------------------------*/
 void AnalysWindow::onModelAdded(QObject *obj)
@@ -111,5 +111,28 @@ void AnalysWindow::onOptions()
     QMessageBox::information(this, tr("Options changed"),
                              tr("All settings will changed after application restart"));
   }
+}
+/*----------------------------------------------------------------------------*/
+void AnalysWindow::onHelpAbout()
+{
+  QString contens;
+
+  contens += QString("<p>dda_analys v%1 (build date %2)</p>").arg("0.9.b").arg(__DATE__);
+  contens +=  tr(
+      "<p>The <b>dda_analys</b> "
+      "is part of a software-hardware system "
+      "for testing the static strength of diamond powder.</p>"
+      );
+  contens +=  tr(
+      "<p>The analyzer processes the test "
+      "results and generates a report for printing.</p>"
+      );
+
+  QMessageBox::about(this, tr("About dda_analys"), contens);
+
+/*
+Программа является частью програмно-аппаратного комплекса для проведения испытаний статической прочности алмазного порошка.
+Анализатор производит обработку результатов испытаний и формирует отчет для печати.
+*/
 }
 /*----------------------------------------------------------------------------*/

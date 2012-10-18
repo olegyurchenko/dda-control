@@ -371,3 +371,28 @@ void MeasureWindow::onOptions()
   }
 }
 /*----------------------------------------------------------------------------*/
+void MeasureWindow::onHelpAbout()
+{
+  QString contens;
+
+  contens += QString("<p>experimenter v%1 (build date %2)</p>").arg("0.9.b").arg(__DATE__);
+  contens +=  tr(
+      "<p>The <b>experimenter</b> "
+      "is part of a software-hardware system "
+      "for testing the static strength of diamond powder.</p>"
+      );
+  contens +=  tr(
+      "<p>Experimenter from device receive "
+      "test data and stores them in a database "
+      "for later analysis.</p>"
+      );
+
+  QMessageBox::about(this, tr("About experimenter"), contens);
+
+/*
+Экспериментатор получает от прибора
+данные испытаний и записывает их в
+базу данных для последующего анализа
+*/
+}
+/*----------------------------------------------------------------------------*/

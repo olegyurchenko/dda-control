@@ -85,9 +85,16 @@
     </property>
     <addaction name="actionOptions"/>
    </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>Help</string>
+    </property>
+    <addaction name="actionAbout"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menuSession"/>
    <addaction name="menuSettings"/>
+   <addaction name="menuHelp"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
    <attribute name="toolBarArea">
@@ -104,23 +111,32 @@
    <property name="text">
     <string>Exit</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+X</string>
+   </property>
   </action>
   <action name="actionEditData">
    <property name="icon">
     <iconset resource="../resuurces/resources.qrc">
-     <normaloff>:/story-editor.png</normaloff>:/story-editor.png</iconset>
+     <normaloff>:/document-edit.png</normaloff>:/document-edit.png</iconset>
    </property>
    <property name="text">
     <string>Edit data</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+E</string>
    </property>
   </action>
   <action name="actionReport">
    <property name="icon">
     <iconset resource="../resuurces/resources.qrc">
-     <normaloff>:/mail-mark-task.png</normaloff>:/mail-mark-task.png</iconset>
+     <normaloff>:/report2.png</normaloff>:/report2.png</iconset>
    </property>
    <property name="text">
     <string>Generate report</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+R</string>
    </property>
   </action>
   <action name="actionOptions">
@@ -130,6 +146,17 @@
    </property>
    <property name="text">
     <string>Options...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="actionAbout">
+   <property name="text">
+    <string>About</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+/</string>
    </property>
   </action>
  </widget>
@@ -210,10 +237,27 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionAbout</sender>
+   <signal>triggered()</signal>
+   <receiver>AnalysWindow</receiver>
+   <slot>onHelpAbout()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>303</x>
+     <y>305</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>onEditData()</slot>
   <slot>onGenerateReport()</slot>
   <slot>onOptions()</slot>
+  <slot>onHelpAbout()</slot>
  </slots>
 </ui>

@@ -28,6 +28,7 @@
 #include <graphplotter.h>
 #include <histogrammplotter.h>
 #include <curveplotter.h>
+#include<configuration.h>
 /*----------------------------------------------------------------------------*/
 DDAProcessing *processing = NULL;
 /*----------------------------------------------------------------------------*/
@@ -64,6 +65,11 @@ DDAProcessing :: DDAProcessing(QObject *parent)
   m_engine->rootContext()->setContextProperty("database", database);
   m_engine->rootContext()->setContextProperty("model", this);
   clrError();
+}
+/*----------------------------------------------------------------------------*/
+void DDAProcessing :: updateDictionary()
+{
+  dictionarySet("LANG", config->settings().localeName);
 }
 /*----------------------------------------------------------------------------*/
 bool DDAProcessing :: open(DDAMeasureSession *session, Role role)
@@ -110,6 +116,7 @@ bool DDAProcessing :: open(DDAMeasureSession *session, Role role)
     }
 #endif
     clrError();
+    updateDictionary();
     QVariant ret;
     if(!m_qml->metaObject()->invokeMethod(m_qml, "modelInit", Qt::DirectConnection, Q_RETURN_ARG(QVariant, ret), Q_ARG(QVariant, role)))
     {
@@ -178,6 +185,7 @@ void DDAProcessing :: update(Role role)
   data["measures"] = lst;
 
 
+  updateDictionary();
   clrError();
   QVariant ret;
   if(m_qml && !m_qml->metaObject()->invokeMethod(m_qml, "modelUpdate", Qt::DirectConnection, Q_RETURN_ARG(QVariant, ret), Q_ARG(QVariant, data), Q_ARG(QVariant, role)))

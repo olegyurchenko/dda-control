@@ -37,6 +37,7 @@ protected slots:
   void onEditData();
   void onGenerateReport();
   void onOptions();
+  void onHelpAbout();
 };
 /*----------------------------------------------------------------------------*/
 

@@ -54,6 +54,7 @@ protected slots:
   void onResumeMeasuring();
   void onSingleStepMode();
   void onOptions();
+  void onHelpAbout();
 };
 /*----------------------------------------------------------------------------*/
 
