@@ -39,6 +39,21 @@ int main(int argc, char *argv[])
   {
     QString error = QString("Error load language file for `%1` locale").arg(locale);
     QMessageBox::critical(NULL, QObject::tr("Error translation"), error);
+    if(config->settings().localeName.isEmpty())
+    {
+      DDASettings s = config->settings();
+      s.localeName = "en";
+      config->setSettings(s);
+    }
+  }
+  else
+  {
+    if(config->settings().localeName.isEmpty())
+    {
+      DDASettings s = config->settings();
+      s.localeName = QLocale::system().name().left(2);
+      config->setSettings(s);
+    }
   }
 
   a.installTranslator(&trans);
