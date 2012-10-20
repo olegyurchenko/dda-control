@@ -176,6 +176,11 @@ bool DDAController :: rxPacket(int serial)
 {
   if(m_lastCharTime.elapsed() >= RxTimeout)
   {
+    if(status() != Offline)
+    {
+      setStatus(Offline);
+      m_log->Exception("Rx timeout");
+    }
     m_rxData.clear();
   }
 
@@ -198,6 +203,7 @@ bool DDAController :: rxPacket(int serial)
         if(rx < 4) //Invalid packet length
         {
           m_log->Exception("Invalid packet length (%d)", rx);
+          setStatus(Offline);
           m_rxData.clear();
         }
       }
@@ -235,6 +241,7 @@ bool DDAController :: rxPacket(int serial)
           m_log->Message("Crc Error");
           serial_write(serial, &tx, 1);
           m_rxData.clear();
+          setStatus(Offline);
         }
       }
       else
