@@ -137,6 +137,7 @@ public slots:
   void measure(double strength, double size, int number);
   void onEndOfMeasuring();
   void currentStretch(double);
+  void onNoParticle();
 protected slots:
   void onUserChanged() {m_userMap.clear();}
 

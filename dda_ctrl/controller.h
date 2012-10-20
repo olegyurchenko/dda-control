@@ -96,6 +96,7 @@ signals:
   void cmdSendError();
   void serialReceived(const QString&);
   void currentStretch(double);
+  void sizeReceived(double);
   void noParticle();
   void measure(double strength, double size, int number);
   void nextCasseteRequest();

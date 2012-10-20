@@ -91,6 +91,7 @@ public slots:
   void setParticles(int i);
   void setMark(const QString&);
   void onEndOfMeasuring();
+  void onNoParticle();
   void clear();
 
   void beginUpdate();

@@ -100,10 +100,12 @@ int main(int argc, char *argv[])
   QObject::connect(controller, SIGNAL(measure(double,double,int)), session, SLOT(addMeasure(double,double,int)));
   QObject::connect(controller, SIGNAL(serialReceived(QString)), session, SLOT(setSerial(QString)));
   QObject::connect(controller, SIGNAL(endOfMeasuring()), session, SLOT(onEndOfMeasuring()));
+  QObject::connect(controller, SIGNAL(noParticle()), session, SLOT(onNoParticle()));
 
   QObject::connect(controller, SIGNAL(measure(double,double,int)), database, SLOT(measure(double,double,int)));
   QObject::connect(controller, SIGNAL(serialReceived(QString)), database, SLOT(setSerial(QString)));
   QObject::connect(controller, SIGNAL(endOfMeasuring()), database, SLOT(onEndOfMeasuring()));
+  QObject::connect(controller, SIGNAL(noParticle()), database, SLOT(onNoParticle()));
 
   MeasureWindow w;
   w.show();

@@ -33,7 +33,8 @@ SOURCES += main.cpp\
     ../html_report.cpp \
     ../html.cpp \
     ../template_file.cpp \
-    ../optionsdialog.cpp
+    ../optionsdialog.cpp \
+    ../version.cpp
 
 HEADERS  += analyswindow.h \
     ../usermanagedialog.h \
@@ -57,7 +58,8 @@ HEADERS  += analyswindow.h \
     ../html_report.h \
     ../html.h \
     ../template_file.h \
-    ../optionsdialog.h
+    ../optionsdialog.h \
+    ../version.h
 
 FORMS    += analyswindow.ui \
     ../usermanagedialog.ui \

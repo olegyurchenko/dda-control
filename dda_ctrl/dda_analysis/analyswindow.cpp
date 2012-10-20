@@ -10,6 +10,7 @@
 #include <usermanagedialog.h>
 #include <reportwindow.h>
 #include <optionsdialog.h>
+#include <version.h>
 /*----------------------------------------------------------------------------*/
 AnalysWindow::AnalysWindow(QWidget *parent) :
   QMainWindow(parent),
@@ -117,7 +118,7 @@ void AnalysWindow::onHelpAbout()
 {
   QString contens;
 
-  contens += QString("<p>dda_analys v%1 (build date %2)</p>").arg("0.9.b").arg(__DATE__);
+  contens += QString("<p>dda_analys %1</p>").arg(versionStr());
   contens +=  tr(
       "<p>The <b>dda_analys</b> "
       "is part of a software-hardware system "

@@ -41,6 +41,7 @@ protected slots:
   void onCmdSendError();
   void onSerialReceived(const QString&);
   void onCurrentStretch(double);
+  void onSizeReceived(double);
   void onNoParticle();
   void onMeasure(double strength, double size, int number);
   void onNextCasseteRequest();

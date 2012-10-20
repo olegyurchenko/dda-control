@@ -49,6 +49,7 @@ void SessionBox::onSessionChanged()
 /*----------------------------------------------------------------------------*/
 void SessionBox::onMeasuringChanged()
 {
-  ui->particlesLabel->setText(QString::number(m_session->measureList().size()));
+  QString txt = QString("%1/%2").arg(m_session->measureList().size()).arg(m_session->session().particles);
+  ui->particlesLabel->setText(txt);
 }
 /*----------------------------------------------------------------------------*/

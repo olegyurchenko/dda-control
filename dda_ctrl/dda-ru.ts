@@ -9,7 +9,7 @@
     </message>
     <message>
         <source>Sessions</source>
-        <translation>Смены</translation>
+        <translation>Пробы</translation>
     </message>
     <message>
         <source>File</source>
@@ -17,7 +17,7 @@
     </message>
     <message>
         <source>Session</source>
-        <translation>Смена</translation>
+        <translation>Проба</translation>
     </message>
     <message>
         <source>Exit</source>
@@ -70,6 +70,26 @@
     <message>
         <source>About dda_analys</source>
         <translation>О программе dda_analys</translation>
+    </message>
+    <message>
+        <source>Ctrl+X</source>
+        <translation>Ctrl+X</translation>
+    </message>
+    <message>
+        <source>Ctrl+E</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Ctrl+R</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Ctrl+S</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Ctrl+/</source>
+        <translation></translation>
     </message>
 </context>
 <context>
@@ -126,7 +146,7 @@
     </message>
     <message>
         <source>Undefined user</source>
-        <translation>Неизвестный пользователь</translation>
+        <translation>Неизвестный оператор</translation>
     </message>
     <message>
         <source>Password check error</source>
@@ -134,11 +154,11 @@
     </message>
     <message>
         <source>User id=%1 not found</source>
-        <translation>Пользователь %1 не найден</translation>
+        <translation>Оператор %1 не найден</translation>
     </message>
     <message>
         <source>Unkown user</source>
-        <translation>Неизвестный пользователь</translation>
+        <translation>Неизвестный оператор</translation>
     </message>
 </context>
 <context>
@@ -156,7 +176,7 @@
     <name>EditDataDialog</name>
     <message>
         <source>Dialog</source>
-        <translation>Диалог</translation>
+        <translation type="obsolete">Диалог</translation>
     </message>
     <message>
         <source>Grit size</source>
@@ -192,11 +212,15 @@
     </message>
     <message>
         <source>Stretch [N]</source>
-        <translation>Давление [Н]</translation>
+        <translation>Прочность [Н]</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select gift size from russian &lt;/p&gt;&lt;p&gt;state standard&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Выберите зернистость &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Выбор зернистости &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>Edit data</source>
+        <translation>Редактирование данных</translation>
     </message>
 </context>
 <context>
@@ -219,7 +243,7 @@
     </message>
     <message>
         <source>Stretch [N]</source>
-        <translation>Давление [Н]</translation>
+        <translation>Прочность [Н]</translation>
     </message>
 </context>
 <context>
@@ -249,14 +273,14 @@
     </message>
     <message>
         <source>Stretch [N]</source>
-        <translation>Давление [Н]</translation>
+        <translation>Прочность [Н]</translation>
     </message>
 </context>
 <context>
     <name>MeasureWindow</name>
     <message>
         <source>DDA control system</source>
-        <translation>Система управления</translation>
+        <translation>Система испытанй</translation>
     </message>
     <message>
         <source>Profile</source>
@@ -296,11 +320,11 @@
     </message>
     <message>
         <source>Current value:</source>
-        <translation>Текущее значение:</translation>
+        <translation type="obsolete">Текущее значение:</translation>
     </message>
     <message>
         <source>Session</source>
-        <translation>Смена</translation>
+        <translation>Проба</translation>
     </message>
     <message>
         <source>Data</source>
@@ -328,7 +352,7 @@
     </message>
     <message>
         <source>Manage users</source>
-        <translation>Управление пользователями</translation>
+        <translation>Управление операторами</translation>
     </message>
     <message>
         <source>E&amp;xit</source>
@@ -340,15 +364,15 @@
     </message>
     <message>
         <source>Start measure session</source>
-        <translation>Старт измерительной смены</translation>
+        <translation>Старт измерения пробы</translation>
     </message>
     <message>
         <source>Set user management password</source>
-        <translation>Установить пароль управления пользователями</translation>
+        <translation>Установить пароль управления операторами</translation>
     </message>
     <message>
         <source>Edit current session</source>
-        <translation>Редактировать текущую смену</translation>
+        <translation>Редактировать текущую пробу</translation>
     </message>
     <message>
         <source>Resume measuring</source>
@@ -405,6 +429,58 @@
     <message>
         <source>About experimenter</source>
         <translation>О программе experimenter</translation>
+    </message>
+    <message>
+        <source>Ctrl+P</source>
+        <translation>Ctrl+P</translation>
+    </message>
+    <message>
+        <source>Ctrl+U</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Ctrl+X</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Alt+C</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Ctrl+Return</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Alt+P</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Ctrl+E</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Alt+Return</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Alt+S</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Ctrl+S</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Ctrl+/</source>
+        <translation></translation>
+    </message>
+    <message>
+        <source>Current strength [N]:</source>
+        <translation>Текущее усилие [Н]:</translation>
+    </message>
+    <message>
+        <source>Current size [um]:</source>
+        <translation>Текущий размер [мкм]:</translation>
     </message>
 </context>
 <context>
@@ -576,7 +652,7 @@
     <name>SelSessionBox</name>
     <message>
         <source>Sessions</source>
-        <translation>Смены</translation>
+        <translation>Пробы</translation>
     </message>
     <message>
         <source>&amp;filter</source>
@@ -600,15 +676,15 @@
     </message>
     <message>
         <source>User</source>
-        <translation>Пользователь</translation>
+        <translation>Оператор</translation>
     </message>
     <message>
         <source>Select user</source>
-        <translation>Выбор пользователя</translation>
+        <translation>Выбор оператора</translation>
     </message>
     <message>
         <source>Select user combo box</source>
-        <translation>Кнопка выбора пользователя</translation>
+        <translation>Панель выбора оператора</translation>
     </message>
     <message>
         <source>DDA serial</source>
@@ -643,7 +719,7 @@
     <name>SessionBox</name>
     <message>
         <source>Session</source>
-        <translation>Смена</translation>
+        <translation>Проба</translation>
     </message>
     <message>
         <source>Device serial:</source>
@@ -651,7 +727,7 @@
     </message>
     <message>
         <source>User name</source>
-        <translation>Пользователь</translation>
+        <translation>Оператор</translation>
     </message>
     <message>
         <source>Lot:</source>
@@ -659,7 +735,7 @@
     </message>
     <message>
         <source>Particles:</source>
-        <translation>Зерен:</translation>
+        <translation>Замеров:</translation>
     </message>
     <message>
         <source>Standard:</source>
@@ -682,19 +758,19 @@
     <name>SessionDialog</name>
     <message>
         <source>Session</source>
-        <translation>Смена</translation>
+        <translation>Проба</translation>
     </message>
     <message>
         <source>User name</source>
-        <translation>Пользователь</translation>
+        <translation>Оператор</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select user name&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Выбор пользователя&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Выбор оператора&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Manage users&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
-        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Управленее пользователями&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+        <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Управление операторами&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <source>...</source>
@@ -722,11 +798,11 @@
     </message>
     <message>
         <source>Grit</source>
-        <translation>Ячейка</translation>
+        <translation>Зернистость</translation>
     </message>
     <message>
         <source>Particles</source>
-        <translation>Зерен</translation>
+        <translation>Замеров</translation>
     </message>
     <message>
         <source>Mark:</source>
@@ -741,15 +817,15 @@
     <name>UserManageDialog</name>
     <message>
         <source>User management</source>
-        <translation>Управление пользователями</translation>
+        <translation>Управление операторами</translation>
     </message>
     <message>
         <source>Add user to database</source>
-        <translation>Добавить пользователя в базу данных</translation>
+        <translation>Добавить оператора в базу данных</translation>
     </message>
     <message>
         <source>Add user button</source>
-        <translation>Кнопка добавления пользователя</translation>
+        <translation>Кнопка добавления оператора</translation>
     </message>
     <message>
         <source>Add user</source>
@@ -757,11 +833,11 @@
     </message>
     <message>
         <source>Remove user from database</source>
-        <translation>Удалить пользователя из базы данных</translation>
+        <translation>Удалить оператора из базы данных</translation>
     </message>
     <message>
         <source>Delete user button</source>
-        <translation>Кнопка удаления пользователя</translation>
+        <translation>Кнопка удаления оператора</translation>
     </message>
     <message>
         <source>Delete user</source>
@@ -773,7 +849,7 @@
     </message>
     <message>
         <source>Set user password button</source>
-        <translation>Кнопка установки пароля пользователя</translation>
+        <translation>Кнопка установки пароля оператора</translation>
     </message>
     <message>
         <source>User password</source>
@@ -781,19 +857,19 @@
     </message>
     <message>
         <source>User add</source>
-        <translation>Добавить пользователя</translation>
+        <translation>Добавить оператора</translation>
     </message>
     <message>
         <source>Enter user name</source>
-        <translation>Введите имя пользователя</translation>
+        <translation>Ввод имени оператора</translation>
     </message>
     <message>
         <source>User name:</source>
-        <translation>Имя пользователя:</translation>
+        <translation>Оператор:</translation>
     </message>
     <message>
         <source>Are you shure to delte user &apos;%1&apos; ?</source>
-        <translation>Вы уверены в том, что хотите удалить пользователя %1 ?</translation>
+        <translation>Вы уверены в том, что хотите удалить оператора %1 ?</translation>
     </message>
     <message>
         <source>Ins</source>
@@ -816,7 +892,7 @@
     <name>processing</name>
     <message>
         <source>Name</source>
-        <translation>Имя</translation>
+        <translation>Название</translation>
     </message>
     <message>
         <source>Value</source>
@@ -840,7 +916,7 @@
     </message>
     <message>
         <source>Particles</source>
-        <translation>Зерен</translation>
+        <translation>Замеров</translation>
     </message>
     <message>
         <source>Avg. strength [N]</source>

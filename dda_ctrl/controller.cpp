@@ -341,9 +341,9 @@ void DDAController :: handleData(const ByteVector& data)
     }
     break;
   case 'G':
-    //emit giftSize(s.simplified().toDouble());
     m_log->Info("Size received '%s'", s.toAscii().constData());
     setSize(s.simplified().toDouble());
+    emit sizeReceived(s.simplified().toDouble());
     break;
   case 'C':
     m_log->Info("NextCasseteWaiting received");
@@ -412,6 +412,7 @@ DemoController :: DemoController(QObject *parent)
 /*----------------------------------------------------------------------------*/
 void DemoController :: run()
 {
+  qsrand(QDateTime::currentDateTime().toTime_t());
   while(!m_terminated)
   {
     QCoreApplication::processEvents();
@@ -437,7 +438,6 @@ void DemoController :: setMode(int, int samples, DDAMode mode)
 /*----------------------------------------------------------------------------*/
 void DemoController :: resume()
 {
-  qsrand(QDateTime::currentDateTime().toTime_t());
   m_cmd = StartCmd;
 }
 /*----------------------------------------------------------------------------*/
@@ -474,14 +474,20 @@ void DemoController :: doSimulation()
     setStatus(Measuring);
     break;
   case Measuring:
-    if(m_strength < 1 && !(qrand() % 5))
+    if(m_strength < 1)
     {
-      setStatus(NoParticle);
-      emit noParticle();
-      m_strength = 0;
-      //m_number ++;
-      m_nextCell ++;
-      break;
+      if(!(qrand() % 5))
+      {
+        setStatus(NoParticle);
+        emit noParticle();
+        m_strength = 0;
+        //m_number ++;
+        m_nextCell ++;
+        break;
+      }
+
+      setSize(234.5 + 345.6 * (double)(qrand() % 20)/10.);
+      emit sizeReceived(size());
     }
 
     switch((qrand() % 4))
@@ -506,7 +512,6 @@ void DemoController :: doSimulation()
       if(!(qrand() % 4)) //end of measure
       {
         setStrength(m_strength);
-        setSize(m_strength + m_strength * (double)(qrand() % 20)/10.);
         emit measure(strength(), size(), m_number);
         m_strength = 0;
 

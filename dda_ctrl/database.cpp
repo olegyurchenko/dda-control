@@ -818,6 +818,11 @@ void DDADatabase :: onEndOfMeasuring()
   updateCurrentSession();
 }
 /*----------------------------------------------------------------------------*/
+void DDADatabase :: onNoParticle()
+{
+  //TODO: Add empty measure ?
+}
+/*----------------------------------------------------------------------------*/
 void DDADatabase :: currentStretch(double)
 {
   if(m_startMeasure.isNull())

@@ -33,7 +33,8 @@ SOURCES += main.cpp\
     ../selsessionbox.cpp \
     ../sessionbox.cpp \
     ../logfile.cpp \
-    ../optionsdialog.cpp
+    ../optionsdialog.cpp \
+    ../version.cpp
 
 HEADERS  += measurewindow.h \
     ../configuration.h \
@@ -57,7 +58,8 @@ HEADERS  += measurewindow.h \
     ../selsessionbox.h \
     ../sessionbox.h \
     ../logfile.h \
-    ../optionsdialog.h
+    ../optionsdialog.h \
+    ../version.h
 
 FORMS    += measurewindow.ui \
     ../profileselectdialog.ui \

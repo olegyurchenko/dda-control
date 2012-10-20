@@ -13,6 +13,7 @@
 #include <histogrammplotter.h>
 #include <curveplotter.h>
 #include <optionsdialog.h>
+#include <version.h>
 /*----------------------------------------------------------------------------*/
 MeasureWindow::MeasureWindow(QWidget *parent) :
   QMainWindow(parent),
@@ -37,6 +38,7 @@ MeasureWindow::MeasureWindow(QWidget *parent) :
   connect(controller, SIGNAL(noParticle()), this, SLOT(onNoParticle()));
   connect(controller, SIGNAL(serialReceived(QString)), this, SLOT(onSerialReceived(QString)));
   connect(controller, SIGNAL(statusChanged(int)), this, SLOT(onStatusChanged(int)));
+  connect(controller, SIGNAL(sizeReceived(double)), this, SLOT(onSizeReceived(double)));
 
   connect(session, SIGNAL(sessionChanged()), this, SLOT(onSessionChanged()));
   connect(session, SIGNAL(measureListChanged()), this, SLOT(onMeasureListChanged()));
@@ -217,6 +219,11 @@ void MeasureWindow::onCurrentStretch(double d)
   ui->currentValuePlotWidget->update();
 }
 /*----------------------------------------------------------------------------*/
+void MeasureWindow::onSizeReceived(double size)
+{
+  ui->currentSizeLabel->setText(QString::number(size, 'f', 1));
+}
+/*----------------------------------------------------------------------------*/
 void MeasureWindow::onNoParticle()
 {
   m_newMeasure = true;
@@ -375,7 +382,7 @@ void MeasureWindow::onHelpAbout()
 {
   QString contens;
 
-  contens += QString("<p>experimenter v%1 (build date %2)</p>").arg("0.9.b").arg(__DATE__);
+  contens += QString("<p>experimenter %1</p>").arg(versionStr());
   contens +=  tr(
       "<p>The <b>experimenter</b> "
       "is part of a software-hardware system "

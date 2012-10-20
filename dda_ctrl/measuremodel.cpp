@@ -44,8 +44,12 @@ QVariant MeasureModel :: data(const QModelIndex &index, int role) const
     switch(col)
     {
     case SizeCol:
+      if(measure.ignored)
+        return "--.-";
       return QString::number(measure.size, 'f', 1);
     case StrenthCol:
+      if(measure.ignored)
+        return "--.-";
       return QString::number(measure.strenght, 'f', 1);
     default:
       return QVariant();

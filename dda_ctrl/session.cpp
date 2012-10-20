@@ -82,6 +82,16 @@ void DDAMeasureSession :: addMeasure(double strength, double size, int)
   setMeasureListChanged();
 }
 /*----------------------------------------------------------------------------*/
+void DDAMeasureSession :: onNoParticle()
+{
+  DDAMeasure m;
+  m.strenght = 0;
+  m.size = 0;
+  m.ignored = true;
+  m_measureList.append(m);
+  setMeasureListChanged();
+}
+/*----------------------------------------------------------------------------*/
 void DDAMeasureSession :: setSession(const DDASession& s)
 {
   m_session = s;
