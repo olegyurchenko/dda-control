@@ -53,9 +53,10 @@ protected slots:
   void onSetAdminPassword();
   void onEditCurrentSession();
   void onResumeMeasuring();
-  void onSingleStepMode();
   void onOptions();
   void onHelpAbout();
+  void onSingleStepMode();
+  void onAutoMode();
 };
 /*----------------------------------------------------------------------------*/
 

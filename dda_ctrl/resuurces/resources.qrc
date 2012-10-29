@@ -41,6 +41,8 @@
         <file>report.png</file>
         <file>report2.png</file>
         <file>document_print_preview.png</file>
+        <file>auto-mode.png</file>
+        <file>step-mode.png</file>
     </qresource>
     <qresource prefix="/sql">
         <file>create_database.sql</file>

@@ -85,6 +85,7 @@ public:
   virtual void setMode(int meshIndex, int samples, DDAMode mode = Auto);
   virtual void resume();
   virtual void manualMode();
+  virtual void autoMode();
 
   double size() {return m_size;}
   double strength() {return m_strength;}

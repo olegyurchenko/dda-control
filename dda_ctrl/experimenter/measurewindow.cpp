@@ -134,25 +134,25 @@ void MeasureWindow::onStatusChanged(int s)
   case DDAController::Offline:
     ui->actionStartSession->setEnabled(false);
     ui->actionResumeMeasuring->setEnabled(false);
-    ui->actionSingleStepMode->setEnabled(false);
+    //ui->actionSingleStepMode->setEnabled(false);
     ui->actionOptions->setEnabled(true);
     break;
   case DDAController::Idle:
     ui->actionStartSession->setEnabled(true);
     ui->actionResumeMeasuring->setEnabled(session->session().id != InvalidId);
-    ui->actionSingleStepMode->setEnabled(session->session().id != InvalidId);
+    //ui->actionSingleStepMode->setEnabled(session->session().id != InvalidId);
     ui->actionOptions->setEnabled(true);
     break;
   case DDAController::Calibrating:
     ui->actionStartSession->setEnabled(false);
     ui->actionResumeMeasuring->setEnabled(false);
-    ui->actionSingleStepMode->setEnabled(true);
+    //ui->actionSingleStepMode->setEnabled(true);
     ui->actionOptions->setEnabled(false);
     break;
   case DDAController::Measuring:
     ui->actionStartSession->setEnabled(false);
     ui->actionResumeMeasuring->setEnabled(false);
-    ui->actionSingleStepMode->setEnabled(true);
+    //ui->actionSingleStepMode->setEnabled(true);
     ui->actionOptions->setEnabled(false);
     break;
   case DDAController::NoParticle:
@@ -253,7 +253,10 @@ void MeasureWindow::onStartSession()
   if(dialog.exec() == QDialog::Accepted)
   {
     ui->stackedWidget->setCurrentIndex(1);
-    controller->setMode(session->session().standard, session->session().particles);
+    controller->setMode(session->session().standard,
+                        session->session().particles,
+                        ui->actionAutoMode->isChecked() ? DDAController::Auto : DDAController::Manual);
+
     controller->resume();
   }
 }
@@ -363,6 +366,15 @@ void MeasureWindow::onResumeMeasuring()
 void MeasureWindow::onSingleStepMode()
 {
   controller->manualMode();
+  ui->actionSingleStepMode->setChecked(true);
+  ui->actionAutoMode->setChecked(false);
+}
+/*----------------------------------------------------------------------------*/
+void MeasureWindow::onAutoMode()
+{
+  controller->autoMode();
+  ui->actionSingleStepMode->setChecked(false);
+  ui->actionAutoMode->setChecked(true);
 }
 /*----------------------------------------------------------------------------*/
 void MeasureWindow::onOptions()
@@ -396,10 +408,5 @@ void MeasureWindow::onHelpAbout()
 
   QMessageBox::about(this, tr("About experimenter"), contens);
 
-/*
-Экспериментатор получает от прибора
-данные испытаний и записывает их в
-базу данных для последующего анализа
-*/
 }
 /*----------------------------------------------------------------------------*/

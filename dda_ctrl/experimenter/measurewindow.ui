@@ -524,6 +524,7 @@
     <addaction name="actionEditCurrentSession"/>
     <addaction name="separator"/>
     <addaction name="actionResumeMeasuring"/>
+    <addaction name="actionAutoMode"/>
     <addaction name="actionSingleStepMode"/>
     <addaction name="separator"/>
    </widget>
@@ -559,8 +560,10 @@
    <addaction name="actionEditCurrentSession"/>
    <addaction name="separator"/>
    <addaction name="actionResumeMeasuring"/>
-   <addaction name="actionSingleStepMode"/>
    <addaction name="separator"/>
+   <addaction name="separator"/>
+   <addaction name="actionAutoMode"/>
+   <addaction name="actionSingleStepMode"/>
   </widget>
   <action name="actionManageProfiles">
    <property name="icon">
@@ -667,12 +670,15 @@
    </property>
   </action>
   <action name="actionSingleStepMode">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
    <property name="enabled">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <property name="icon">
     <iconset resource="../resuurces/resources.qrc">
-     <normaloff>:/media-playback-pause.png</normaloff>:/media-playback-pause.png</iconset>
+     <normaloff>:/step-mode.png</normaloff>:/step-mode.png</iconset>
    </property>
    <property name="text">
     <string>Single step mode</string>
@@ -708,6 +714,30 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+/</string>
+   </property>
+  </action>
+  <action name="actionAutoMode">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../resuurces/resources.qrc">
+     <normaloff>:/auto-mode.png</normaloff>:/auto-mode.png</iconset>
+   </property>
+   <property name="text">
+    <string>Auto mode</string>
+   </property>
+   <property name="toolTip">
+    <string>Auto mode</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+A</string>
    </property>
   </action>
  </widget>
@@ -938,6 +968,22 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>actionAutoMode</sender>
+   <signal>triggered()</signal>
+   <receiver>MeasureWindow</receiver>
+   <slot>onAutoMode()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>277</x>
+     <y>243</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>onProfileChanged(int)</slot>
@@ -951,5 +997,6 @@
   <slot>onSingleStepMode()</slot>
   <slot>onOptions()</slot>
   <slot>onHelpAbout()</slot>
+  <slot>onAutoMode()</slot>
  </slots>
 </ui>

@@ -407,6 +407,19 @@ void DDAController :: manualMode()
   unlock();
 }
 /*----------------------------------------------------------------------------*/
+void DDAController :: autoMode()
+{
+  m_log->Info("autoMode()");
+  ByteVector txData;
+  txData.clear();
+  txData.push_back(ENQ);
+  txData.push_back('L');
+  txData.push_back(3);
+  lock();
+  m_txData.append(txData);
+  unlock();
+}
+/*----------------------------------------------------------------------------*/
 // DevoController
 /*----------------------------------------------------------------------------*/
 DemoController :: DemoController(QObject *parent)
