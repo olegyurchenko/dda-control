@@ -100,33 +100,33 @@
         <translation></translation>
     </message>
     <message>
-        <location filename="dda_analysis/analyswindow.cpp" line="35"/>
-        <location filename="dda_analysis/analyswindow.cpp" line="83"/>
+        <location filename="dda_analysis/analyswindow.cpp" line="36"/>
+        <location filename="dda_analysis/analyswindow.cpp" line="84"/>
         <source>Error execute JavaScript</source>
         <translation>Помилка виконяння JavaScript</translation>
     </message>
     <message>
-        <location filename="dda_analysis/analyswindow.cpp" line="111"/>
+        <location filename="dda_analysis/analyswindow.cpp" line="112"/>
         <source>Options changed</source>
         <translation>Налаштування змінені</translation>
     </message>
     <message>
-        <location filename="dda_analysis/analyswindow.cpp" line="112"/>
+        <location filename="dda_analysis/analyswindow.cpp" line="113"/>
         <source>All settings will changed after application restart</source>
         <translation>Всі налаштування набудуть чинності після перезапуску програми</translation>
     </message>
     <message>
-        <location filename="dda_analysis/analyswindow.cpp" line="121"/>
+        <location filename="dda_analysis/analyswindow.cpp" line="122"/>
         <source>&lt;p&gt;The &lt;b&gt;dda_analys&lt;/b&gt; is part of a software-hardware system for testing the static strength of diamond powder.&lt;/p&gt;</source>
         <translation>&lt;p&gt;Програма &lt;b&gt;dda_analys&lt;/b&gt; є частиною програмно-апаратного комплексу для проведення випробовування статичної міцності алмазного порошку.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="dda_analysis/analyswindow.cpp" line="126"/>
+        <location filename="dda_analysis/analyswindow.cpp" line="127"/>
         <source>&lt;p&gt;The analyzer processes the test results and generates a report for printing.&lt;/p&gt;</source>
         <translation>&lt;p&gt;Аналізатор обробляє результати випробувань і формує звіт для друку.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="dda_analysis/analyswindow.cpp" line="131"/>
+        <location filename="dda_analysis/analyswindow.cpp" line="132"/>
         <source>About dda_analys</source>
         <translation>Про програму dda_analys</translation>
     </message>
@@ -153,37 +153,37 @@
 <context>
     <name>DDAController</name>
     <message>
-        <location filename="controller.cpp" line="98"/>
+        <location filename="controller.cpp" line="100"/>
         <source>offline</source>
         <translation>відключений</translation>
     </message>
     <message>
-        <location filename="controller.cpp" line="101"/>
+        <location filename="controller.cpp" line="103"/>
         <source>idle</source>
         <translation>вільний</translation>
     </message>
     <message>
-        <location filename="controller.cpp" line="104"/>
+        <location filename="controller.cpp" line="106"/>
         <source>calibrating</source>
         <translation>калібровка</translation>
     </message>
     <message>
-        <location filename="controller.cpp" line="107"/>
+        <location filename="controller.cpp" line="109"/>
         <source>measuring</source>
         <translation>вимірювання</translation>
     </message>
     <message>
-        <location filename="controller.cpp" line="110"/>
+        <location filename="controller.cpp" line="112"/>
         <source>no particle</source>
         <translation>нема зарна</translation>
     </message>
     <message>
-        <location filename="controller.cpp" line="113"/>
+        <location filename="controller.cpp" line="115"/>
         <source>next cassete waiting</source>
         <translation>очікування зміни касети</translation>
     </message>
     <message>
-        <location filename="controller.cpp" line="116"/>
+        <location filename="controller.cpp" line="118"/>
         <source>end of measuring</source>
         <translation>кінець вимірювань</translation>
     </message>
@@ -377,67 +377,67 @@
     <name>MeasureWindow</name>
     <message>
         <location filename="experimenter/measurewindow.ui" line="14"/>
-        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="566"/>
+        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="580"/>
         <source>DDA control system</source>
         <translation>Система випробовувань</translation>
     </message>
     <message>
         <location filename="experimenter/measurewindow.ui" line="47"/>
-        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="593"/>
+        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="612"/>
         <source>Profile</source>
         <translation>Профіль</translation>
     </message>
     <message>
         <location filename="experimenter/measurewindow.ui" line="66"/>
-        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="595"/>
+        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="614"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select profile&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Вибір профіля&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="experimenter/measurewindow.ui" line="73"/>
-        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="598"/>
+        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="617"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Edit profile&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Редагування профіля&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
         <location filename="experimenter/measurewindow.ui" line="76"/>
-        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="600"/>
+        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="619"/>
         <source>...</source>
         <translation>...</translation>
     </message>
     <message>
         <location filename="experimenter/measurewindow.ui" line="93"/>
-        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="601"/>
+        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="620"/>
         <source>Serial:1 Baud: 9600</source>
         <translation>Порт 1 Швидкість 9600</translation>
     </message>
     <message>
         <location filename="experimenter/measurewindow.ui" line="105"/>
         <location filename="experimenter/measurewindow.ui" line="231"/>
-        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="602"/>
-        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="607"/>
+        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="621"/>
+        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="626"/>
         <source>Device</source>
         <translation>Прилад</translation>
     </message>
     <message>
         <location filename="experimenter/measurewindow.ui" line="125"/>
-        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="603"/>
+        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="622"/>
         <source>Device serial:</source>
         <translation>Серійний номер:</translation>
     </message>
     <message>
         <location filename="experimenter/measurewindow.ui" line="155"/>
         <location filename="experimenter/measurewindow.ui" line="239"/>
-        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="605"/>
-        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="608"/>
+        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="624"/>
+        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="627"/>
         <source>Device status:</source>
         <translation>Стан приладу:</translation>
     </message>
     <message>
         <location filename="experimenter/measurewindow.ui" line="171"/>
         <location filename="experimenter/measurewindow.ui" line="255"/>
-        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="606"/>
-        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="609"/>
+        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="625"/>
+        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="628"/>
         <source>offline</source>
         <translation>відключений</translation>
     </message>
@@ -447,14 +447,14 @@
     </message>
     <message>
         <location filename="experimenter/measurewindow.ui" line="282"/>
-        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="610"/>
+        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="629"/>
         <source>Current strength [N]:</source>
         <oldsource>Current strength:</oldsource>
         <translation>Поточне зусилля [Н]:</translation>
     </message>
     <message>
         <location filename="experimenter/measurewindow.ui" line="328"/>
-        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="612"/>
+        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="631"/>
         <source>Current size [um]:</source>
         <oldsource>Current size:</oldsource>
         <translation>Поточний розмір [мкм]:</translation>
@@ -462,225 +462,239 @@
     <message>
         <location filename="experimenter/measurewindow.ui" line="381"/>
         <location filename="experimenter/measurewindow.ui" line="521"/>
-        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="614"/>
-        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="620"/>
+        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="633"/>
+        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="639"/>
         <source>Session</source>
         <translation>Проба</translation>
     </message>
     <message>
         <location filename="experimenter/measurewindow.ui" line="396"/>
-        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="615"/>
+        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="634"/>
         <source>Data</source>
         <translation>Данні</translation>
     </message>
     <message>
         <location filename="experimenter/measurewindow.ui" line="431"/>
-        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="616"/>
+        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="635"/>
         <source>Plot</source>
         <translation>Графік</translation>
     </message>
     <message>
         <location filename="experimenter/measurewindow.ui" line="462"/>
-        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="617"/>
+        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="636"/>
         <source>Histogramm</source>
         <translation>Гістограма</translation>
     </message>
     <message>
         <location filename="experimenter/measurewindow.ui" line="503"/>
-        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="618"/>
+        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="637"/>
         <source>File</source>
         <translation>Файл</translation>
     </message>
     <message>
         <location filename="experimenter/measurewindow.ui" line="509"/>
-        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="619"/>
+        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="638"/>
         <source>Settings</source>
         <translation>Налаштування</translation>
     </message>
     <message>
-        <location filename="experimenter/measurewindow.ui" line="532"/>
-        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="621"/>
+        <location filename="experimenter/measurewindow.ui" line="533"/>
+        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="640"/>
         <source>Help</source>
         <translation>Довідка</translation>
     </message>
     <message>
-        <location filename="experimenter/measurewindow.ui" line="571"/>
         <location filename="experimenter/measurewindow.ui" line="574"/>
-        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="567"/>
-        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="569"/>
+        <location filename="experimenter/measurewindow.ui" line="577"/>
+        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="581"/>
+        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="583"/>
         <source>Manage profiles</source>
         <translation>Управління профілями</translation>
     </message>
     <message>
-        <location filename="experimenter/measurewindow.ui" line="577"/>
-        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="571"/>
+        <location filename="experimenter/measurewindow.ui" line="580"/>
+        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="585"/>
         <source>Ctrl+P</source>
         <translation>Ctrl+P</translation>
     </message>
     <message>
-        <location filename="experimenter/measurewindow.ui" line="586"/>
-        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="572"/>
+        <location filename="experimenter/measurewindow.ui" line="589"/>
+        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="586"/>
         <source>Manage users</source>
         <translation>Управління операторами</translation>
     </message>
     <message>
-        <location filename="experimenter/measurewindow.ui" line="589"/>
-        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="573"/>
+        <location filename="experimenter/measurewindow.ui" line="592"/>
+        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="587"/>
         <source>Ctrl+U</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="experimenter/measurewindow.ui" line="594"/>
-        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="574"/>
+        <location filename="experimenter/measurewindow.ui" line="597"/>
+        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="588"/>
         <source>E&amp;xit</source>
         <translation>Ви&amp;хід</translation>
     </message>
     <message>
-        <location filename="experimenter/measurewindow.ui" line="597"/>
-        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="575"/>
+        <location filename="experimenter/measurewindow.ui" line="600"/>
+        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="589"/>
         <source>Ctrl+X</source>
         <translation>Ctrl+X</translation>
     </message>
     <message>
-        <location filename="experimenter/measurewindow.ui" line="606"/>
-        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="576"/>
+        <location filename="experimenter/measurewindow.ui" line="609"/>
+        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="590"/>
         <source>Edit current profile</source>
         <translation>Редагувати поточний профіль</translation>
     </message>
     <message>
-        <location filename="experimenter/measurewindow.ui" line="609"/>
-        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="577"/>
+        <location filename="experimenter/measurewindow.ui" line="612"/>
+        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="591"/>
         <source>Alt+C</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="experimenter/measurewindow.ui" line="621"/>
-        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="578"/>
+        <location filename="experimenter/measurewindow.ui" line="624"/>
+        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="592"/>
         <source>Start measure session</source>
         <translation>Старт заміру проби</translation>
     </message>
     <message>
-        <location filename="experimenter/measurewindow.ui" line="624"/>
-        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="579"/>
+        <location filename="experimenter/measurewindow.ui" line="627"/>
+        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="593"/>
         <source>Ctrl+Return</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="experimenter/measurewindow.ui" line="633"/>
-        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="580"/>
+        <location filename="experimenter/measurewindow.ui" line="636"/>
+        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="594"/>
         <source>Set user management password</source>
         <translation>Встановити пароль управління операторами</translation>
     </message>
     <message>
-        <location filename="experimenter/measurewindow.ui" line="636"/>
-        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="581"/>
+        <location filename="experimenter/measurewindow.ui" line="639"/>
+        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="595"/>
         <source>Alt+P</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="experimenter/measurewindow.ui" line="648"/>
-        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="582"/>
+        <location filename="experimenter/measurewindow.ui" line="651"/>
+        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="596"/>
         <source>Edit current session</source>
         <translation>Редагувати поточну пробу</translation>
     </message>
     <message>
-        <location filename="experimenter/measurewindow.ui" line="651"/>
-        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="583"/>
+        <location filename="experimenter/measurewindow.ui" line="654"/>
+        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="597"/>
         <source>Ctrl+E</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="experimenter/measurewindow.ui" line="663"/>
-        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="584"/>
+        <location filename="experimenter/measurewindow.ui" line="666"/>
+        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="598"/>
         <source>Resume measuring</source>
         <translation>Продовжити вимірювання</translation>
     </message>
     <message>
-        <location filename="experimenter/measurewindow.ui" line="666"/>
-        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="585"/>
+        <location filename="experimenter/measurewindow.ui" line="669"/>
+        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="599"/>
         <source>Alt+Return</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="experimenter/measurewindow.ui" line="678"/>
-        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="586"/>
+        <location filename="experimenter/measurewindow.ui" line="684"/>
+        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="600"/>
         <source>Single step mode</source>
         <translation>Покроковий режим</translation>
     </message>
     <message>
-        <location filename="experimenter/measurewindow.ui" line="681"/>
-        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="587"/>
+        <location filename="experimenter/measurewindow.ui" line="687"/>
+        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="601"/>
         <source>Alt+S</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="experimenter/measurewindow.ui" line="690"/>
-        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="588"/>
+        <location filename="experimenter/measurewindow.ui" line="696"/>
+        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="602"/>
         <source>Data processing</source>
         <translation>Обробка даних</translation>
     </message>
     <message>
-        <location filename="experimenter/measurewindow.ui" line="699"/>
-        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="589"/>
+        <location filename="experimenter/measurewindow.ui" line="705"/>
+        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="603"/>
         <source>Options...</source>
         <translation>Параметри...</translation>
     </message>
     <message>
-        <location filename="experimenter/measurewindow.ui" line="702"/>
-        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="590"/>
+        <location filename="experimenter/measurewindow.ui" line="708"/>
+        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="604"/>
         <source>Ctrl+S</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="experimenter/measurewindow.ui" line="707"/>
-        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="591"/>
+        <location filename="experimenter/measurewindow.ui" line="713"/>
+        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="605"/>
         <source>About</source>
         <translation>Про програму</translation>
     </message>
     <message>
-        <location filename="experimenter/measurewindow.ui" line="710"/>
-        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="592"/>
+        <location filename="experimenter/measurewindow.ui" line="716"/>
+        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="606"/>
         <source>Ctrl+/</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="experimenter/measurewindow.cpp" line="55"/>
+        <location filename="experimenter/measurewindow.ui" line="734"/>
+        <location filename="experimenter/measurewindow.ui" line="737"/>
+        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="607"/>
+        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="609"/>
+        <source>Auto mode</source>
+        <translation>Автоматичний режим</translation>
+    </message>
+    <message>
+        <location filename="experimenter/measurewindow.ui" line="740"/>
+        <location filename="experimenter-build-desktop/ui_measurewindow.h" line="611"/>
+        <source>Alt+A</source>
+        <translation></translation>
+    </message>
+    <message>
+        <location filename="experimenter/measurewindow.cpp" line="56"/>
         <source>[s]</source>
         <translation>[с]</translation>
     </message>
     <message>
-        <location filename="experimenter/measurewindow.cpp" line="62"/>
-        <location filename="experimenter/measurewindow.cpp" line="312"/>
+        <location filename="experimenter/measurewindow.cpp" line="63"/>
+        <location filename="experimenter/measurewindow.cpp" line="327"/>
         <source>[N]</source>
         <translation>[Н]</translation>
     </message>
     <message>
-        <location filename="experimenter/measurewindow.cpp" line="93"/>
+        <location filename="experimenter/measurewindow.cpp" line="94"/>
         <source>Serial:%1 Baud:%2</source>
         <translation>Порт:%1 Швидкість:%2</translation>
     </message>
     <message>
-        <location filename="experimenter/measurewindow.cpp" line="96"/>
+        <location filename="experimenter/measurewindow.cpp" line="97"/>
         <source>Error</source>
         <translation>Помилка</translation>
     </message>
     <message>
-        <location filename="experimenter/measurewindow.cpp" line="96"/>
+        <location filename="experimenter/measurewindow.cpp" line="97"/>
         <source>Error open serial port</source>
         <translation>Помилка відкриття порту</translation>
     </message>
     <message>
-        <location filename="experimenter/measurewindow.cpp" line="385"/>
+        <location filename="experimenter/measurewindow.cpp" line="409"/>
         <source>&lt;p&gt;The &lt;b&gt;experimenter&lt;/b&gt; is part of a software-hardware system for testing the static strength of diamond powder.&lt;/p&gt;</source>
         <translation>&lt;p&gt;Програма &lt;b&gt;experimenter&lt;/b&gt; є частиною програмно-апаратного комплексу для проведення випробовування статичної міцності алмазного порошку.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="experimenter/measurewindow.cpp" line="390"/>
+        <location filename="experimenter/measurewindow.cpp" line="414"/>
         <source>&lt;p&gt;Experimenter from device receive test data and stores them in a database for later analysis.&lt;/p&gt;</source>
         <translation>&lt;p&gt;Experimenter одержує від приладу дані випробувань і записує їх у базу даних для подальшого аналізу.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="experimenter/measurewindow.cpp" line="396"/>
+        <location filename="experimenter/measurewindow.cpp" line="420"/>
         <source>About experimenter</source>
         <translation>Про програму experimenter</translation>
     </message>
@@ -1464,7 +1478,7 @@
         <location filename="dda_analysis/template/processing.js" line="140"/>
         <source>[um]</source>
         <oldsource>[us]</oldsource>
-        <translation>[мкс]</translation>
+        <translation>[мкм]</translation>
     </message>
     <message>
         <location filename="bin bin/template/processing.js" line="139"/>

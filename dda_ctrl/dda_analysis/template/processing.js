@@ -24,8 +24,8 @@ var maxStrengthRow = row ++
 var minStrengthRow = row ++
 var avgSizeRow = row ++
 var devSizeRow = row ++
-var avgFractStrRow = row ++
-var devFractStrRow = row ++
+//var avgFractStrRow = row ++
+//var devFractStrRow = row ++
 var markRow = row ++
 //-----------------------------------------------------------------------------------
 var histStrengthTable = null
@@ -60,8 +60,8 @@ function modelInit(role)
   paramTable.setData(minStrengthRow, nameCol, qsTr("Min strength [N]"))
   paramTable.setData(avgSizeRow, nameCol, qsTr("Avg. size [um]"))
   paramTable.setData(devSizeRow, nameCol, qsTr("St. dev. size [um]"))
-  paramTable.setData(avgFractStrRow, nameCol, qsTr("Avg. fract str [N/mm^2]"))
-  paramTable.setData(devFractStrRow, nameCol, qsTr("St. fract str [N/mm^2]"))
+  //paramTable.setData(avgFractStrRow, nameCol, qsTr("Avg. fract str [N/mm^2]"))
+  //paramTable.setData(devFractStrRow, nameCol, qsTr("St. fract str [N/mm^2]"))
   paramTable.setData(markRow, nameCol, qsTr("Set mark"))
   paramTable.update()
 
@@ -136,7 +136,7 @@ function modelInit(role)
   fractStrengthGraph = model.newGraphModel()
   fractStrengthGraph.y.decimals = 1
   fractStrengthGraph.x.decimals = 1
-  fractStrengthGraph.y.text = qsTr("[N/mm^2]")
+  fractStrengthGraph.y.text = qsTr("[N]")
   fractStrengthGraph.x.text = qsTr("[um]")
   fractStrengthGraph.x.steps = 5
   fractStrengthGraph.y.steps = 5
@@ -166,8 +166,8 @@ function modelUpdate(session, role)
   paramTable.setData(minStrengthRow, valueCol, session.minStrength.toFixed(2))
   paramTable.setData(avgSizeRow, valueCol, session.avgSize.toFixed(2))
   paramTable.setData(devSizeRow, valueCol, session.devSize.toFixed(2))
-  paramTable.setData(avgFractStrRow, valueCol, session.avgFractStr.toFixed(2))
-  paramTable.setData(devFractStrRow, valueCol, session.devFractStr.toFixed(2))
+  //paramTable.setData(avgFractStrRow, valueCol, session.avgFractStr.toFixed(2))
+  //paramTable.setData(devFractStrRow, valueCol, session.devFractStr.toFixed(2))
   paramTable.setData(markRow, valueCol, session.mark)
 
 
@@ -220,6 +220,7 @@ function modelUpdate(session, role)
     hSize[col] += 1
   }
 
+  var percSum = 0
   for(i = 0; i < histogrammColumns; i++)
   {
     histStrengthTable.setData(i, 0, (session.minStrength + i * strengthStep).toFixed(2))
@@ -232,20 +233,21 @@ function modelUpdate(session, role)
     histSizeTable.setData(i, 2, hSize[i])
     histSizeTable.setData(i, 3, (hSize[i] * 100. / session.particles).toFixed(2))
 
-    strengthCurve.add(session.minStrength + i * strengthStep, hStrength[i] * 100. / session.particles)
+    percSum += hStrength[i] * 100. / session.particles
+    strengthCurve.add(session.minStrength + i * strengthStep, percSum)
 
     hStrength[i] *= 100. / session.particles
     hSize[i] *= 100. / session.particles
   }
   strengthHistogramm.data = hStrength
   sizeHistogramm.data = hSize
-  strengthCurve.add(session.minStrength + i * strengthStep, 0)
+  //strengthCurve.add(session.minStrength + i * strengthStep, 0)
 
   //--------------------------------
   // fractStrengthGraph
   //--------------------------------
-  fractStrengthGraph.y.min = session.minFractStr
-  fractStrengthGraph.y.max = session.maxFractStr
+  fractStrengthGraph.y.min = session.minStrength
+  fractStrengthGraph.y.max = session.maxStrength
   fractStrengthGraph.x.min = session.minSize
   fractStrengthGraph.x.max = session.maxSize
   fractStrengthGraph.clear()
@@ -255,7 +257,7 @@ function modelUpdate(session, role)
     if(m.ignored)
       continue
     var x = m.size
-    var y = fractalStrength(m.strength, m.size)
+    var y = m.strength//fractalStrength(m.strength, m.size)
     fractStrengthGraph.add(x, y)
     //print(i, x, y)
   }

@@ -66,6 +66,7 @@ QVariantList HistogrammPlotter::getData()
   int size = data.size();
   for(int i = 0; i < size; i++)
     lst.append(data[i]);
+  return lst;
 }
 /*----------------------------------------------------------------------------*/
 void HistogrammPlotter::setData(const QVariantList& d)

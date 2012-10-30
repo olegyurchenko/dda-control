@@ -57,6 +57,7 @@ protected:
   double m_size;
   double m_strength;
   QString m_deviceSerial;
+  DDAMode m_mode;
 
   QMutex m_mutex;
   void lock() {m_mutex.lock();}
@@ -116,7 +117,6 @@ protected:
   int m_number;
   int m_nextCell;
   int m_particles;
-  DDAMode m_mode;
 
   enum
   {

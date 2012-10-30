@@ -275,8 +275,19 @@ double getValue(const DDAMeasure& m)
 void MeasureWindow::onMeasureListChanged()
 {
   //Buid histogramm
-  int size = session->measureList().size();
-  if(size < 2)
+  DDAMeasureList measureList = session->measureList();
+  int size = measureList.size();
+  for(int i = 0; i < size; i++)
+  {
+    if(measureList[i].ignored)
+    {
+      measureList.erase(measureList.begin() + i);
+      i --;
+      size --;
+    }
+  }
+
+  if(size < 5)
   {
     ui->currentHPlotWidget->setPlotter(NULL);
     return;
@@ -284,12 +295,12 @@ void MeasureWindow::onMeasureListChanged()
 
   double min, max, step, value;
   QList<double> hist;
-  value = getValue(session->measureList()[0]);
+  value = getValue(measureList[0]);
   min = max = value;
 
   for(int i = 0; i < size; i++)
   {
-    value = getValue(session->measureList()[i]);
+    value = getValue(measureList[i]);
     if(min > value)
       min = value;
     if(max < value)
@@ -322,7 +333,7 @@ void MeasureWindow::onMeasureListChanged()
 
   for(int i = 0; i < size; i++)
   {
-    value = getValue(session->measureList()[i]);
+    value = getValue(measureList[i]);
     int column = (value - min) / step;
     if(column < intervalCount)
     {

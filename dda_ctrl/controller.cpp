@@ -38,6 +38,7 @@ DDAController :: DDAController(QObject *parent)
   m_lastCharTime.start();
   m_log = new logfile("controller.log", false);
   m_log->Info("Controller created");
+  m_mode = (DDAMode) -1;
 }
 /*----------------------------------------------------------------------------*/
 DDAController :: ~DDAController()
@@ -72,6 +73,7 @@ bool DDAController :: open(int serial, int baud)
   lock();
   m_serial = s;
   unlock();
+  m_mode = (DDAMode) -1;
   return true;
 }
 /*----------------------------------------------------------------------------*/
@@ -178,7 +180,8 @@ bool DDAController :: rxPacket(int serial)
   {
     if(status() != Offline)
     {
-      setStatus(Offline);
+      if(m_status == Idle)
+        setStatus(Offline);
       m_log->Exception("Rx timeout");
     }
     m_rxData.clear();
@@ -203,7 +206,8 @@ bool DDAController :: rxPacket(int serial)
         if(rx < 4) //Invalid packet length
         {
           m_log->Exception("Invalid packet length (%d)", rx);
-          setStatus(Offline);
+          if(m_status == Idle)
+            setStatus(Offline);
           m_rxData.clear();
         }
       }
@@ -379,6 +383,7 @@ void DDAController :: setMode(int meshIndex, int samples, DDAMode mode)
   lock();
   m_txData.append(txData);
   unlock();
+  m_mode = mode;
 }
 /*----------------------------------------------------------------------------*/
 void DDAController :: resume()
@@ -396,6 +401,11 @@ void DDAController :: resume()
 /*----------------------------------------------------------------------------*/
 void DDAController :: manualMode()
 {
+  if(m_mode == Manual)
+  {
+    m_log->Info("manualMode() skip");
+    return;
+  }
   m_log->Info("manualMode()");
   ByteVector txData;
   txData.clear();
@@ -405,10 +415,16 @@ void DDAController :: manualMode()
   lock();
   m_txData.append(txData);
   unlock();
+  m_mode = Manual;
 }
 /*----------------------------------------------------------------------------*/
 void DDAController :: autoMode()
 {
+  if(m_mode == Auto)
+  {
+    m_log->Info("autoMode() skip");
+    return;
+  }
   m_log->Info("autoMode()");
   ByteVector txData;
   txData.clear();
@@ -418,6 +434,7 @@ void DDAController :: autoMode()
   lock();
   m_txData.append(txData);
   unlock();
+  m_mode = Auto;
 }
 /*----------------------------------------------------------------------------*/
 // DevoController

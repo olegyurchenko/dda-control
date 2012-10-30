@@ -482,6 +482,14 @@
         <source>Current size [um]:</source>
         <translation>Текущий размер [мкм]:</translation>
     </message>
+    <message>
+        <source>Auto mode</source>
+        <translation>Автоматический режим</translation>
+    </message>
+    <message>
+        <source>Alt+A</source>
+        <translation></translation>
+    </message>
 </context>
 <context>
     <name>NewPasswordDialog</name>
