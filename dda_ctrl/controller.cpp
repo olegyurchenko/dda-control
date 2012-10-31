@@ -185,6 +185,7 @@ bool DDAController :: rxPacket(int serial)
       m_log->Exception("Rx timeout");
     }
     m_rxData.clear();
+    m_lastCharTime.restart();
   }
 
   bool ok = false;

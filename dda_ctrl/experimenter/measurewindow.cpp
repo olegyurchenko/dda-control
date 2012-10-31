@@ -253,7 +253,7 @@ void MeasureWindow::onStartSession()
   if(dialog.exec() == QDialog::Accepted)
   {
     ui->stackedWidget->setCurrentIndex(1);
-    controller->setMode(session->session().standard,
+    controller->setMode(session->session().gritIndex,
                         session->session().particles,
                         ui->actionAutoMode->isChecked() ? DDAController::Auto : DDAController::Manual);
 
