@@ -36,11 +36,12 @@ txt VARCHAR(24)
 
 create table
 if not exists
-gritSizes
+grits
 (
 id INTEGER PRIMARY KEY,
 standard INTEGER,
 gritIndex INTEGER,
+meshIndex INTEGER,
 txt VARCHAR(24)
 );
 

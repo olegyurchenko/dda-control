@@ -112,6 +112,7 @@ public:
   QString message() {return m_message;}
   QStringList standardList();
   QStringList gritList(int standard);
+  int meshIndex(int standard, int gritIndex);
   DDAUserList userList(bool forFilter = false);
   QList<QDate> sessionDateList();
   DDASerialList serialList(bool forFilter = false);

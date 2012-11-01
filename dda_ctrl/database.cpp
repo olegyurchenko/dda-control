@@ -123,7 +123,7 @@ bool DDADatabase :: open(const QString& dbFileName)
     }
   }
 
-  if(!q.exec("select count(*) from gritSizes"))
+  if(!q.exec("select count(*) from grits"))
   {
     error(q);
     return false;
@@ -145,9 +145,12 @@ bool DDADatabase :: open(const QString& dbFileName)
     int size = lst.size();
     for(int i = 0; i < size; i++)
     {
-      q.prepare("insert into gritSizes(standard, gritIndex, txt) values(0, ?, ?)");
+      int pos = lst[i].indexOf('=');
+
+      q.prepare("insert into grits(standard, gritIndex, meshIndex, txt) values(0, ?, ?, ?)");
       q.addBindValue(i);
-      q.addBindValue(lst[i]);
+      q.addBindValue(lst[i].mid(pos + 1).toInt());
+      q.addBindValue(lst[i].left(pos));
       if(!q.exec())
       {
         error(q);
@@ -169,9 +172,12 @@ bool DDADatabase :: open(const QString& dbFileName)
     size = lst.size();
     for(int i = 0; i < size; i++)
     {
-      q.prepare("insert into gritSizes(standard, gritIndex, txt) values(1, ?, ?)");
+      int pos = lst[i].indexOf('=');
+
+      q.prepare("insert into grits(standard, gritIndex, meshIndex, txt) values(1, ?, ?, ?)");
       q.addBindValue(i);
-      q.addBindValue(lst[i]);
+      q.addBindValue(lst[i].mid(pos + 1).toInt());
+      q.addBindValue(lst[i].left(pos));
       if(!q.exec())
       {
         error(q);
@@ -193,9 +199,12 @@ bool DDADatabase :: open(const QString& dbFileName)
     size = lst.size();
     for(int i = 0; i < size; i++)
     {
-      q.prepare("insert into gritSizes(standard, gritIndex, txt) values(2, ?, ?)");
+      int pos = lst[i].indexOf('=');
+
+      q.prepare("insert into grits(standard, gritIndex, meshIndex, txt) values(2, ?, ?, ?)");
       q.addBindValue(i);
-      q.addBindValue(lst[i]);
+      q.addBindValue(lst[i].mid(pos + 1).toInt());
+      q.addBindValue(lst[i].left(pos));
       if(!q.exec())
       {
         error(q);
@@ -292,7 +301,7 @@ QStringList DDADatabase :: standardList()
 QStringList DDADatabase :: gritList(int standard)
 {
   QSqlQuery q(QSqlDatabase::database(m_connectionName));
-  q.prepare("select txt from gritSizes where standard = ? order by gritIndex");
+  q.prepare("select txt from grits where standard = ? order by gritIndex");
   q.addBindValue(standard);
   if(!q.exec())
   {
@@ -309,6 +318,24 @@ QStringList DDADatabase :: gritList(int standard)
     eof = !q.next();
   }
   return lst;
+}
+/*----------------------------------------------------------------------------*/
+int DDADatabase :: meshIndex(int standard, int gritIndex)
+{
+  QSqlQuery q(QSqlDatabase::database(m_connectionName));
+  q.prepare("select meshIndex from grits where standard = ? and gritIndex = ?");
+  q.addBindValue(standard);
+  q.addBindValue(gritIndex);
+  if(!q.exec())
+  {
+    error(q);
+    return 0;
+  }
+
+  if(!q.first())
+    return 0;
+
+  return q.value(0).toInt();
 }
 /*----------------------------------------------------------------------------*/
 DDAUserList DDADatabase :: userList(bool forFilter)

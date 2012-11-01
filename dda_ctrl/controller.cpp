@@ -306,10 +306,10 @@ bool DDAController :: waitAck(int serial)
 /*----------------------------------------------------------------------------*/
 void DDAController :: handleData(const ByteVector& data)
 {
-  int size = data.size();
-  if(size < 3)
+  int sz = data.size();
+  if(sz < 3)
     return;
-  QString s = QByteArray((const char *)&data[3], size - 3);
+  QString s = QByteArray((const char *)&data[3], sz - 3);
   switch(data[1]) //Header
   {
   case 'N':
@@ -330,7 +330,6 @@ void DDAController :: handleData(const ByteVector& data)
       setStrength(s.simplified().toDouble());
       emit currentStretch(strength());
     }
-    m_size = 0;
     break;
   case 'M':
     m_log->Info("Measure received '%s'", s.toAscii().constData());
@@ -348,14 +347,14 @@ void DDAController :: handleData(const ByteVector& data)
         int number = lst[1].simplified().toInt();
         //int nextCell = lst[2].simplified().toInt();
         setStatus(Measuring);
-        emit measure(strength(), DDAController::size(), number);
+        emit measure(strength(), size(), number);
       }
     }
     break;
   case 'G':
     m_log->Info("Size received '%s'", s.toAscii().constData());
     setSize(s.simplified().toDouble());
-    emit sizeReceived(s.simplified().toDouble());
+    emit sizeReceived(size());
     break;
   case 'C':
     m_log->Info("NextCasseteWaiting received");
@@ -468,7 +467,7 @@ void DemoController :: run()
   }
 }
 /*----------------------------------------------------------------------------*/
-void DemoController :: setMode(int, int samples, DDAMode mode)
+void DemoController :: setMode(int mesh, int samples, DDAMode mode)
 {
   m_mode = mode;
   m_particles = samples;
@@ -504,11 +503,34 @@ void DemoController :: doSimulation()
     }
     else
     {
-      setDeviceSerial("00013");
-      emit serialReceived(deviceSerial());
+      ByteVector data;
+      data.push_back(ENQ);
+      data.push_back(0x4e);
+      data.push_back(0x8);
+      data.push_back(0x30);
+      data.push_back(0x30);
+      data.push_back(0x30);
+      data.push_back(0x31);
+      data.push_back(0x33);
+      data.push_back(0);
+      handleData(data);
     }
     break;
   case Calibrating:
+    {
+      ByteVector data;
+      data.push_back(ENQ);
+      data.push_back(0x41);
+      data.push_back(0x9);
+      data.push_back(0x30);
+      data.push_back(0x30);
+      data.push_back(0x30);
+      data.push_back(0x30);
+      data.push_back(0x30);
+      data.push_back(0x30);
+      data.push_back(0);
+      handleData(data);
+    }
     setStatus(Measuring);
     break;
   case Measuring:
@@ -525,7 +547,21 @@ void DemoController :: doSimulation()
       }
 
       setSize(234.5 + 345.6 * (double)(qrand() % 20)/10.);
-      emit sizeReceived(size());
+      {
+        char buffer[16];
+        snprintf(buffer, sizeof(buffer), "%4.0f.", size());
+        ByteVector data;
+        data.push_back(ENQ);
+        data.push_back(0x47);
+        data.push_back(0x8);
+        data.push_back(buffer[0]);
+        data.push_back(buffer[1]);
+        data.push_back(buffer[2]);
+        data.push_back(buffer[3]);
+        data.push_back(buffer[4]);
+        data.push_back(0);
+        handleData(data);
+      }
     }
 
     switch((qrand() % 4))
@@ -543,14 +579,53 @@ void DemoController :: doSimulation()
       m_strength += 1.8;
       break;
     }
+
     setStrength(m_strength);
-    emit currentStretch(strength());
+    {
+      char buffer[16];
+      snprintf(buffer, sizeof(buffer), "%6.1f", strength());
+      ByteVector data;
+      data.push_back(ENQ);
+      data.push_back(0x41);
+      data.push_back(0x9);
+      data.push_back(buffer[0]);
+      data.push_back(buffer[1]);
+      data.push_back(buffer[2]);
+      data.push_back(buffer[3]);
+      data.push_back(buffer[4]);
+      data.push_back(buffer[5]);
+      data.push_back(0);
+      handleData(data);
+    }
+
     if(m_strength > 50)
     {
       if(!(qrand() % 4)) //end of measure
       {
         setStrength(m_strength);
-        emit measure(strength(), size(), m_number);
+        {
+          char buffer[16];
+          snprintf(buffer, sizeof(buffer), "%6.1f, 1, 1", strength());
+          ByteVector data;
+          data.push_back(ENQ);
+          data.push_back(0x4d);
+          data.push_back(0xf);
+          data.push_back(buffer[0]);
+          data.push_back(buffer[1]);
+          data.push_back(buffer[2]);
+          data.push_back(buffer[3]);
+          data.push_back(buffer[4]);
+          data.push_back(buffer[5]);
+          data.push_back(buffer[6]);
+          data.push_back(buffer[7]);
+          data.push_back(buffer[8]);
+          data.push_back(buffer[9]);
+          data.push_back(buffer[10]);
+          data.push_back(buffer[11]);
+          data.push_back(0);
+          handleData(data);
+        }
+
         m_strength = 0;
 
         m_number ++;
