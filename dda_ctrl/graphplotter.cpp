@@ -44,13 +44,13 @@ void GraphPlotter :: paint(QPaintDevice *dev)
     const QPointF& point = data.at(i);
     int xi = m_rect.left() + (point.x() - x.min()) * m_x_scale;
     int yi = m_rect.bottom() - (point.y() - y.min()) * m_y_scale;
-    xi -= m_pointSIze/2;
-    yi -= m_pointSIze/2;
+    xi -= m_pointSize/2;
+    yi -= m_pointSize/2;
     if(xi < 0)
       xi = 0;
     if(yi < 0)
       yi = 0;
-    p.drawRect(xi, yi, m_pointSIze, m_pointSIze);
+    p.drawRect(xi, yi, m_pointSize, m_pointSize);
   }
   p.end();
   AxisPlotter::paint(dev);

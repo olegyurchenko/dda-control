@@ -1,4 +1,4 @@
-print("Procession Ok !!!")
+//print("Procession Ok !!!")
 //-----------------------------------------------------------------------------------
 function displayData(label, data)
 {
@@ -91,6 +91,11 @@ function modelInit(role)
   strengthHistogramm.x.text = qsTr("[N]")
   strengthHistogramm.x.decimals = 1
   strengthHistogramm.x.steps = histogrammColumns
+  if(role === DataModel.ReportRole)
+  {
+    strengthHistogramm.brush = {style : Qt.Dense3Pattern, color : "black"}
+    //strengthHistogramm.pen = {style : Qt.SolidLine, color : "black"}
+  }
   //--------------------------------
   // histSizeTable
   //--------------------------------
@@ -117,6 +122,12 @@ function modelInit(role)
   sizeHistogramm.x.text = qsTr("[um]")
   sizeHistogramm.x.decimals = 1
   sizeHistogramm.x.steps = histogrammColumns
+
+  if(role === DataModel.ReportRole)
+  {
+    sizeHistogramm.brush = {style : Qt.Dense3Pattern, color : "black"}
+    //sizeHistogramm.pen = {style : Qt.SolidLine, color : "black"}
+  }
   //--------------------------------
   // strengthCurve
   //--------------------------------
@@ -130,6 +141,11 @@ function modelInit(role)
   strengthCurve.x.text = qsTr("[N]")
   strengthCurve.x.decimals = 1
   strengthCurve.x.steps = histogrammColumns
+  if(role === DataModel.ReportRole)
+  {
+    strengthCurve.filed = false
+    strengthCurve.pen = {width : 2, color : "black"}
+  }
   //--------------------------------
   // fractStrengthGraph
   //--------------------------------
@@ -140,6 +156,11 @@ function modelInit(role)
   fractStrengthGraph.x.text = qsTr("[um]")
   fractStrengthGraph.x.steps = 5
   fractStrengthGraph.y.steps = 5
+  if(role === DataModel.ReportRole)
+  {
+    fractStrengthGraph.brush = {style : Qt.Dense3Pattern, color : "black"}
+    //fractStrengthGraph.pen = {style : Qt.SolidLine, color : "black"}
+  }
 
 }
 //-----------------------------------------------------------------------------------

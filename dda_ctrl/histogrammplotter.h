@@ -32,12 +32,7 @@ Q_DECLARE_METATYPE(QDeclarativeListProperty<double>)
 class HistogrammPlotter : public AxisPlotter
 {
   Q_OBJECT
-  Q_PROPERTY(QBrush brush READ brush WRITE setBrush)
-  Q_PROPERTY(QPen pen READ pen WRITE setPen)
   Q_PROPERTY(QVariantList data READ getData WRITE setData)
-protected:
-  QBrush m_brush;
-  QPen m_pen;
 public:
   HistogrammPlotter(QObject *parent = 0);
   virtual void paint(QPaintDevice *dev);

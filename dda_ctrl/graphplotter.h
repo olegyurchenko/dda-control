@@ -25,14 +25,10 @@
 class GraphPlotter : public AxisPlotter
 {
   Q_OBJECT
-  Q_PROPERTY(QBrush brush READ brush WRITE setBrush)
-  Q_PROPERTY(QPen pen READ pen WRITE setPen)
   Q_PROPERTY(int pointSize READ pointSize WRITE setPointSize)
 
 protected:
-  QBrush m_brush;
-  QPen m_pen;
-  int m_pointSIze;
+  int m_pointSize;
 public:
   GraphPlotter(QObject *parent = 0);
   virtual void paint(QPaintDevice *dev);
@@ -41,8 +37,8 @@ public:
   QPen& pen() {return m_pen;}
   void setBrush(const QBrush& b) {m_brush = b;}
   void setPen(const QPen& p) {m_pen = p;}
-  int pointSize() {return m_pointSIze;}
-  void setPointSize(int s) {m_pointSIze = s;}
+  int pointSize() {return m_pointSize;}
+  void setPointSize(int s) {m_pointSize = s;}
 public slots:
   void clear() {data.clear();}
   void add(QPointF d) {data.append(d);}
