@@ -1044,7 +1044,7 @@ QSqlQuery DDADatabase :: selectSessions(const SessionFilter& filter)
   QSqlQuery q(QSqlDatabase::database(m_connectionName));
   QString sql;
 
-  sql = "select s.id, s.start, d.serial, u.name, s.lot, count(m.id)\n"
+  sql = "select s.id, s.start, d.serial, u.name, s.lot\n"
       "from sessions s, devices d, users u, measures m\n"
       "where u.id = s.user\n"
       "and d.id = s.device\n"
