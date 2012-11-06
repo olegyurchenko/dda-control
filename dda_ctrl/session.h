@@ -28,6 +28,7 @@ struct DDASession
   QDateTime start;
   QDateTime end;
   QString lot;
+  QString product;
   int standard;
   int gritIndex;
   int particles;
@@ -85,11 +86,12 @@ public slots:
   void setUserId(int i);
   void setStart(const QDateTime&);
   void setEnd(const QDateTime&);
-  void setLlot(const QString&);
+  void setLot(const QString&);
   void setStandard(int i);
   void setGritIndex(int i);
   void setParticles(int i);
   void setMark(const QString&);
+  void setProduct(const QString&);
   void onEndOfMeasuring();
   void onNoParticle();
   void clear();

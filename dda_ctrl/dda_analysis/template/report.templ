@@ -6,23 +6,29 @@ doc:
 <HEAD>
   <META HTTP-EQUIV="CONTENT-TYPE" CONTENT="text/html; charset=utf-8">
   <TITLE>{title}</TITLE>
-</HEAD>
+  <style>
+   body
+   {
+    background-color: #FFFFFF; /* Цвет фона веб-страницы */
+   }
+  </style>
+  </HEAD>
 <BODY>
 {body}
 </BODY>
 </HTML>
 
 body:
-<BODY LANG="ru-RU" onload="fillData()">
+<BODY LANG="{LANG}">
   <TABLE WIDTH=80% CELLPADDING=4 CELLSPACING=0>
     <TR VALIGN=TOP>
       <TD WIDTH=40% STYLE="border: none; padding: 0in">
-	<IMG SRC="{templateDir}/title.png">
+        <IMG SRC="{templateDir}/title.png">
       </TD>
     </TR>
     <TR VALIGN=TOP>
       <TD WIDTH=40% STYLE="border-top: 1px solid #000000; border-bottom: none; border-left: none; border-right: none; padding-top: 0.04in; padding-bottom: 0.04in; padding-left: 0.04in; padding-right: 0in">
-	<H1 WIDTH=80% ALIGN=CENTER>{reportHeader}</H1>
+        <H1 WIDTH=80% ALIGN=CENTER>{reportHeader}</H1>
       </TD>
     </TR>
   </TABLE>

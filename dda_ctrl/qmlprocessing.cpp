@@ -167,6 +167,7 @@ void DDAProcessing :: update(Role role)
   data["standard"] = database->standardList()[m_session->session().standard];
   data["gritIndex"] = m_session->session().gritIndex;
   data["grit"] = database->gritList(m_session->session().standard)[m_session->session().gritIndex];
+  data["product"] = m_session->session().product;
   data["mark"] = m_session->session().mark;
 
   QVariantList lst;

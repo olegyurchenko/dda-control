@@ -22,6 +22,7 @@ AnalysWindow::AnalysWindow(QWidget *parent) :
   m_col = 0;
   m_row = 0;
 
+  connect(database, SIGNAL(dbError(QString)), this, SLOT(onDbError(QString)));
   connect(ui->selSessionBox->session(), SIGNAL(sessionChanged()), this, SLOT(onSessionChanged()));
 
   //ui->scrollArea->setWidget(ui->sessionBox);
@@ -135,5 +136,10 @@ void AnalysWindow::onHelpAbout()
 Программа является частью програмно-аппаратного комплекса для проведения испытаний статической прочности алмазного порошка.
 Анализатор производит обработку результатов испытаний и формирует отчет для печати.
 */
+}
+/*----------------------------------------------------------------------------*/
+void AnalysWindow::onDbError(const QString& err)
+{
+  QMessageBox::critical(this, tr("Database error"), err);
 }
 /*----------------------------------------------------------------------------*/

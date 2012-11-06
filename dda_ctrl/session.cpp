@@ -140,7 +140,7 @@ void DDAMeasureSession :: setEnd(const QDateTime& d)
   }
 }
 /*----------------------------------------------------------------------------*/
-void DDAMeasureSession :: setLlot(const QString& l)
+void DDAMeasureSession :: setLot(const QString& l)
 {
   if(m_session.lot != l)
   {
@@ -176,6 +176,15 @@ void DDAMeasureSession :: setMark(const QString& m)
   }
 }
 /*----------------------------------------------------------------------------*/
+void DDAMeasureSession :: setProduct(const QString& p)
+{
+  if(m_session.product != p)
+  {
+    m_session.product = p;
+    setSessionChanged();
+  }
+}
+/*----------------------------------------------------------------------------*/
 void DDAMeasureSession :: setParticles(int i)
 {
   if(m_session.particles != i)
@@ -197,6 +206,7 @@ void DDAMeasureSession :: clear()
   m_session.end = QDateTime::currentDateTime();
   m_session.lot = "";
   m_session.mark = "";
+  m_session.product = "";
   m_measureList.clear();
   setSessionChanged();
   setMeasureListChanged();

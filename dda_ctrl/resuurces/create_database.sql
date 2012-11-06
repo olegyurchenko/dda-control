@@ -47,6 +47,22 @@ txt VARCHAR(24)
 
 create table
 if not exists
+marks
+(
+id INTEGER PRIMARY KEY,
+txt VARCHAR(24)
+);
+
+create table
+if not exists
+products
+(
+id INTEGER PRIMARY KEY,
+txt VARCHAR(24)
+);
+
+create table
+if not exists
 sessions
 (
 id INTEGER PRIMARY KEY,
@@ -57,7 +73,8 @@ end DATETIME,
 lot VARCHAR(24),
 standard INTEGER,
 grit INTEGER,
-mark VARCHER(24)
+mark INTEGER,
+product INTEGER
 );
 
 create table 
@@ -71,3 +88,12 @@ strenght REAL,
 elapsed INTEGER,
 ignored INTEGER
 );
+
+insert or replace into version(id, name, vers) values(0, 'SESSIONS', 1);
+insert or replace into version(id, name, vers) values(1, 'USERS', 1);
+insert or replace into version(id, name, vers) values(2, 'DEVICES', 1);
+insert or replace into version(id, name, vers) values(3, 'STANDARDS', 1);
+insert or replace into version(id, name, vers) values(4, 'GRITS', 1);
+insert or replace into version(id, name, vers) values(5, 'MARKS', 1);
+insert or replace into version(id, name, vers) values(6, 'PRODUCTS', 1);
+insert or replace into version(id, name, vers) values(7, 'MEASURES', 1);

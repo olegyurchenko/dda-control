@@ -21,6 +21,11 @@ SessionDialog::SessionDialog(QWidget *parent, DDAMeasureSession *session) :
   onUsersChanged();
   //ui->userCombo->setCurrentIndex(0);
 
+  ui->productCombo->addItems(database->productList());
+  ui->productCombo->setEditText("");
+  ui->markCombo->addItems(database->markList());
+  ui->markCombo->setEditText("");
+
   ui->standardCombo->addItems(database->standardList());
   ui->standardCombo->setCurrentIndex(config->profile().standardIndex);
 
@@ -31,11 +36,12 @@ SessionDialog::SessionDialog(QWidget *parent, DDAMeasureSession *session) :
 
   if(m_session->session().id != InvalidId)
   {
+    ui->productCombo->setEditText(m_session->session().product);
     ui->standardCombo->setCurrentIndex(m_session->session().standard);
     ui->gritCombo->setCurrentIndex(m_session->session().gritIndex);
     ui->lotEdit->setText(m_session->session().lot);
-    ui->markEdit->setEnabled(true);
-    ui->markEdit->setText(m_session->session().mark);
+    ui->markCombo->setEnabled(true);
+    ui->markCombo->setEditText(m_session->session().mark);
   }
 }
 /*----------------------------------------------------------------------------*/
@@ -90,9 +96,10 @@ void SessionDialog::onAccepted()
   s.standard = ui->standardCombo->currentIndex();
   s.lot = ui->lotEdit->text();
   s.userId = m_userList[ui->userCombo->currentIndex()].id;
+  s.product = ui->productCombo->currentText();
   if(s.id != InvalidId)
   {
-    s.mark = ui->markEdit->text();
+    s.mark = ui->markCombo->currentText();
     database->modifySession(s);
     m_session->setSession(s);
   }

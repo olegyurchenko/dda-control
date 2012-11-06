@@ -102,8 +102,14 @@ protected:
   DDASession getSession(const QSqlQuery &q);
   DDAMeasure getMeasure(const QSqlQuery &q);
   int deviceId(const QString& serial);
+  int mark(const QString& txt);
+  int product(const QString& txt);
   QString deviceSerial(int id);
   void updateCurrentSession();
+  bool versionGet(const QString& table, int *dst);
+  bool versionSet(const QString& table, int src);
+  bool upgrade();
+  bool execSql(const QString& fileName);
 public:
   DDADatabase(QObject *parent = 0);
   DDADatabase(QObject *parent, const QString& fileName);
@@ -116,6 +122,8 @@ public:
   DDAUserList userList(bool forFilter = false);
   QList<QDate> sessionDateList();
   DDASerialList serialList(bool forFilter = false);
+  QStringList markList();
+  QStringList productList();
   void userAdd(QString name, QString passw = QString());
   void userDel(int id);
   bool checkPassword(int id, QString passw);

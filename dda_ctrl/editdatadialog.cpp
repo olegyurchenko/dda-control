@@ -16,8 +16,14 @@ EditDataDialog::EditDataDialog(QWidget *parent, DDAMeasureSession *session) :
   ui->standardCombo->setCurrentIndex(m_session->session().standard);
   ui->gritCombo->addItems(database->gritList(m_session->session().standard));
   ui->gritCombo->setCurrentIndex(m_session->session().gritIndex);
+
+  ui->productCombo->addItems(database->productList());
+  ui->productCombo->setEditText(m_session->session().product);
+
   ui->lotEdit->setText(m_session->session().lot);
-  ui->markEdit->setText(m_session->session().mark);
+
+  ui->markCombo->addItems(database->markList());
+  ui->markCombo->setEditText(m_session->session().mark);
 
   EditMeasureModel *model = new EditMeasureModel(this, &m_measureList);
   ui->tableView->setModel(model);
@@ -40,8 +46,9 @@ void EditDataDialog::onAccepted()
 
   m_session->setStandard(ui->standardCombo->currentIndex());
   m_session->setGritIndex(ui->gritCombo->currentIndex());
-  m_session->setLlot(ui->lotEdit->text());
-  m_session->setMark(ui->markEdit->text());
+  m_session->setProduct(ui->productCombo->currentText());
+  m_session->setLot(ui->lotEdit->text());
+  m_session->setMark(ui->markCombo->currentText());
   database->modifySession(m_session->session());
 
   int size = m_measureList.size();

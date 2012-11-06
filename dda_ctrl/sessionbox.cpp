@@ -41,10 +41,16 @@ void SessionBox::onSessionChanged()
   DDASession s = m_session->session();
   ui->serialLabel->setText(s.deviceSerial);
   ui->userLabel->setText(database->userName(s.userId));
+  ui->productLabel->setText(s.product);
   ui->lotLabel->setText(s.lot);
   ui->standardLabel->setText(database->standardList()[s.standard]);
   ui->gritLabel->setText(database->gritList(s.standard)[s.gritIndex]);
-  ui->particlesLabel->setText(QString::number(s.particles));
+  ui->markLabel->setText(s.mark);
+  if(m_session->measureList().empty())
+    ui->particlesLabel->setText(QString::number(s.particles));
+  else
+    ui->particlesLabel->setText(QString("%1/%2").arg(m_session->measureList().size()).arg(m_session->session().particles));
+
 }
 /*----------------------------------------------------------------------------*/
 void SessionBox::onMeasuringChanged()

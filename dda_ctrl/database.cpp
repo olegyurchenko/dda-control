@@ -61,44 +61,22 @@ bool DDADatabase :: open(const QString& dbFileName)
     return false;
   }
 
-  QFile f(":/sql/create_database.sql");
-  if(!f.open(QIODevice::ReadOnly))
-  {
-    m_isError = true;
-    m_message = tr("Error open %1").arg("create_database.sql");
+  if(!upgrade())
     return false;
-  }
-  QString sql = f.readAll();
+
+  if(!execSql(":/sql/create_database.sql"))
+    return false;
+
   QSqlQuery q(m_database);
-  //    if(!q.prepare(sql) || !q.execBatch())
-
-  sql.remove('\r');
-  sql.replace('\n', " ");
-  QStringList lst = sql.split(';', QString::SkipEmptyParts);
-  QString s;
-  QRegExp r("[A-Za-z]");
-
-  foreach(s, lst)
-  {
-    if(s.indexOf(r) == -1)
-      continue;
-
-    if(!q.exec(s))
-    {
-      error(q);
-      return false;
-    }
-  }
-
   if(!q.exec("select count(*) from standards"))
   {
     error(q);
     return false;
   }
 
+  QFile f;
   if(!q.first() || !q.value(0).toInt())
   {
-    f.close();
     f.setFileName(":/sql/standards.txt");
     if(!f.open(QIODevice::ReadOnly))
     {
@@ -277,6 +255,98 @@ bool DDADatabase :: error(const QSqlQuery &q)
   }
   m_isError = false;
   return false;
+}
+/*----------------------------------------------------------------------------*/
+bool DDADatabase :: execSql(const QString& fileName)
+{
+  QFile f(fileName);
+  if(!f.open(QIODevice::ReadOnly))
+  {
+    m_isError = true;
+    m_message = tr("Error open %1").arg(fileName);
+    return false;
+  }
+  QString sql = f.readAll();
+  QSqlQuery q(QSqlDatabase::database(m_connectionName));
+  sql.remove('\r');
+  sql.replace('\n', " ");
+  QStringList lst = sql.split(';', QString::SkipEmptyParts);
+  QString s;
+  QRegExp r("[A-Za-z]");
+
+  foreach(s, lst)
+  {
+    if(s.indexOf(r) == -1)
+      continue;
+
+    if(!q.exec(s))
+    {
+      error(q);
+      return false;
+    }
+  }
+  return true;
+}
+/*----------------------------------------------------------------------------*/
+bool DDADatabase :: versionGet(const QString& table, int *dst)
+{
+  QSqlQuery q(QSqlDatabase::database(m_connectionName));
+  q.prepare("select vers from version where name = ?");
+  q.addBindValue(table.toUpper());
+  if(!q.exec())
+  {
+    error(q);
+    return false;
+  }
+  *dst = 0;
+  if(q.first())
+    *dst = q.value(0).toInt();
+  return true;
+}
+/*----------------------------------------------------------------------------*/
+bool DDADatabase :: versionSet(const QString& table, int src)
+{
+  QSqlQuery q(QSqlDatabase::database(m_connectionName));
+  q.prepare("select id from version where name = ?");
+  q.addBindValue(table.toUpper());
+  if(!q.exec())
+  {
+    error(q);
+    return false;
+  }
+  if(q.first())
+  {
+    int id = q.value(0).toInt();
+    q.prepare("update version set vers = ? where id = ?");
+    q.addBindValue(src);
+    q.addBindValue(id);
+  }
+  else
+  {
+    q.prepare("insert into version (name, vers) values(?, ?)");
+    q.addBindValue(table.toUpper());
+    q.addBindValue(src);
+  }
+  if(!q.exec())
+  {
+    error(q);
+    return false;
+  }
+  return true;
+}
+/*----------------------------------------------------------------------------*/
+bool DDADatabase :: upgrade()
+{
+  /*Upgrade sessions #1*/
+  int v;
+  if(!versionGet("sessions", &v))
+    return true; //Database not created
+  if(v < 1)
+  {
+    if(!execSql(":/sql/upgrade1.sql"))
+      return false;
+  }
+  return true;
 }
 /*----------------------------------------------------------------------------*/
 QStringList DDADatabase :: standardList()
@@ -527,6 +597,70 @@ int DDADatabase :: deviceId(const QString& serial)
   return id;
 }
 /*----------------------------------------------------------------------------*/
+int DDADatabase :: mark(const QString& txt)
+{
+  QSqlQuery q(QSqlDatabase::database(m_connectionName));
+  q.prepare("select id from marks where txt = ?");
+  q.addBindValue(txt);
+  if(!q.exec())
+  {
+    error(q);
+    return -1;
+  }
+  if(q.first())
+    return q.value(0).toInt();
+  if(!q.exec("select max(id) from marks"))
+  {
+    error(q);
+    return -1;
+  }
+  int id = 0;
+  if(q.first())
+    id = q.value(0).toInt();
+  ++id;
+  q.prepare("insert into marks(id, txt) values(?, ?)");
+  q.addBindValue(id);
+  q.addBindValue(txt);
+  if(!q.exec())
+  {
+    error(q);
+    return -1;
+  }
+  return id;
+}
+/*----------------------------------------------------------------------------*/
+int DDADatabase :: product(const QString& txt)
+{
+  QSqlQuery q(QSqlDatabase::database(m_connectionName));
+  q.prepare("select id from products where txt = ?");
+  q.addBindValue(txt);
+  if(!q.exec())
+  {
+    error(q);
+    return -1;
+  }
+  if(q.first())
+    return q.value(0).toInt();
+  if(!q.exec("select max(id) from products"))
+  {
+    error(q);
+    return -1;
+  }
+  int id = 0;
+  if(q.first())
+    id = q.value(0).toInt();
+  ++id;
+  q.prepare("insert into products(id, txt) values(?, ?)");
+  q.addBindValue(id);
+  q.addBindValue(txt);
+  if(!q.exec())
+  {
+    error(q);
+    return -1;
+  }
+  return id;
+}
+/*----------------------------------------------------------------------------*/
 QString DDADatabase :: deviceSerial(int id)
 {
   QSqlQuery q(QSqlDatabase::database(m_connectionName));
@@ -577,6 +711,46 @@ DDASerialList DDADatabase :: serialList(bool forFilter)
   return lst;
 }
 /*----------------------------------------------------------------------------*/
+QStringList DDADatabase :: markList()
+{
+  QStringList lst;
+  QSqlQuery q(QSqlDatabase::database(m_connectionName));
+  if(!q.exec("select txt from marks where txt <> '' and txt is not NULL"))
+  {
+    error(q);
+    return lst;
+  }
+
+  if(q.first())
+  {
+    do
+    {
+      lst.append(q.value(0).toString());
+    } while(q.next());
+  }
+  return lst;
+}
+/*----------------------------------------------------------------------------*/
+QStringList DDADatabase :: productList()
+{
+  QStringList lst;
+  QSqlQuery q(QSqlDatabase::database(m_connectionName));
+  if(!q.exec("select txt from products where txt <> '' and txt is not NULL"))
+  {
+    error(q);
+    return lst;
+  }
+
+  if(q.first())
+  {
+    do
+    {
+      lst.append(q.value(0).toString());
+    } while(q.next());
+  }
+  return lst;
+}
+/*----------------------------------------------------------------------------*/
 int DDADatabase :: sessionAdd(const DDASession& session)
 {
   QSqlQuery q(QSqlDatabase::database(m_connectionName));
@@ -592,8 +766,8 @@ int DDADatabase :: sessionAdd(const DDASession& session)
     id = q.value(0).toInt();
   ++id;
   q.prepare(
-        "insert into sessions(id, user,device,start,end, lot,standard, grit, mark)\n"
-        "values(?,?,?,?,?,?,?,?,?)"
+        "insert into sessions(id, user,device,start,end, lot,standard, grit, mark, product)\n"
+        "values(?,?,?,?,?,?,?,?,?,?)"
             );
   q.addBindValue(id);
   q.addBindValue(session.userId);
@@ -603,7 +777,8 @@ int DDADatabase :: sessionAdd(const DDASession& session)
   q.addBindValue(session.lot);
   q.addBindValue(session.standard);
   q.addBindValue(session.gritIndex);
-  q.addBindValue(session.mark);
+  q.addBindValue(mark(session.mark));
+  q.addBindValue(product(session.product));
   if(!q.exec())
   {
     error(q);
@@ -629,6 +804,7 @@ DDASession DDADatabase :: getSession(const QSqlQuery &q)
   session.standard = q.value(6).toInt();
   session.gritIndex = q.value(7).toInt();
   session.mark = q.value(8).toString();
+  session.product = q.value(9).toString();
 
   return session;
 }
@@ -638,10 +814,13 @@ DDASession DDADatabase :: lastSession()
   DDASession session;
   QSqlQuery q(QSqlDatabase::database(m_connectionName));
   q.prepare(
-        "select id, user,device,start,end, lot,standard,grit,mark\n"
-        "from sessions\n"
-        "where id = (select max(id) from sessions)"
-            );
+        "select s.id, s.user,s.device,s.start,s.end,s.lot,s.standard,s.grit,m.txt, p.txt\n"
+        "from sessions s, marks m, products p\n"
+        "where (1=1)\n"
+        "and m.id = s.mark\n"
+        "and p.id = s.product\n"
+        "and s.id = (select max(id) from sessions)"
+        );
 
   if(!q.exec())
   {
@@ -663,7 +842,7 @@ void DDADatabase :: modifySession(const DDASession& session)
   QSqlQuery q(QSqlDatabase::database(m_connectionName));
   q.prepare(
         "update sessions set user = ?, device = ?, start = ?, end = ?,\n"
-        "lot = ?, standard = ?, grit = ?, mark = ?\n"
+        "lot = ?, standard = ?, grit = ?, mark = ?, product = ?\n"
         "where id = ?"
             );
   q.addBindValue(session.userId);
@@ -673,7 +852,8 @@ void DDADatabase :: modifySession(const DDASession& session)
   q.addBindValue(session.lot);
   q.addBindValue(session.standard);
   q.addBindValue(session.gritIndex);
-  q.addBindValue(session.mark);
+  q.addBindValue(mark(session.mark));
+  q.addBindValue(product(session.product));
   q.addBindValue(session.id);
   if(!q.exec())
   {
@@ -760,9 +940,12 @@ bool DDADatabase :: measureSession(int id, DDAMeasureSession *dst)
 {
   QSqlQuery q(QSqlDatabase::database(m_connectionName));
   q.prepare(
-        "select id, user,device,start,end, lot, standard, grit, mark\n"
-        "from sessions\n"
-        "where id = ?"
+        "select s.id, s.user,s.device,s.start,s.end,s.lot,s.standard,s.grit,m.txt, p.txt\n"
+        "from sessions s, marks m, products p\n"
+        "where (1=1)\n"
+        "and m.id = s.mark\n"
+        "and p.id = s.product\n"
+        "and s.id = ?"
             );
   q.addBindValue(id);
   if(!q.exec())
@@ -861,10 +1044,11 @@ QSqlQuery DDADatabase :: selectSessions(const SessionFilter& filter)
   QSqlQuery q(QSqlDatabase::database(m_connectionName));
   QString sql;
 
-  sql = "select s.id, s.start, d.serial, u.name, s.lot \n"
-      "from sessions s, devices d, users u\n"
+  sql = "select s.id, s.start, d.serial, u.name, s.lot, count(m.id)\n"
+      "from sessions s, devices d, users u, measures m\n"
       "where u.id = s.user\n"
-      "and d.id = s.device\n";
+      "and d.id = s.device\n"
+      "and m.session = s.id\n";
 
   if(filter.dateSet())
   {
@@ -878,6 +1062,7 @@ QSqlQuery DDADatabase :: selectSessions(const SessionFilter& filter)
   if(filter.serialSet())
     sql += "and s.device = ?\n";
 
+  sql += "group by s.id\n";
   sql += "order by s.id desc\n";
   if(filter.limit() > 0)
   {

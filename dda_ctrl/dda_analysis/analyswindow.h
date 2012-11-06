@@ -38,6 +38,7 @@ protected slots:
   void onGenerateReport();
   void onOptions();
   void onHelpAbout();
+  void onDbError(const QString& err);
 };
 /*----------------------------------------------------------------------------*/
 
