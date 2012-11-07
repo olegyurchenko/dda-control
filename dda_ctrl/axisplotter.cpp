@@ -16,6 +16,7 @@
 #include <QPainter>
 #include <QtDebug>
 #include <QApplication>
+#define TITLE_FONT_MUL 1.5
 /*----------------------------------------------------------------------------*/
 AxisPlotter :: AxisPlotter(QObject *parent)
   : Plotter(parent)
@@ -28,6 +29,9 @@ AxisPlotter :: AxisPlotter(QObject *parent)
 void AxisPlotter :: prepare(QPainter *p)
 {
   //qDebug() << "AxisPlotter :: prepare";
+  QFont f = p->font();
+  QFont tf = f;
+  tf.setPointSize(f.pointSize() * TITLE_FONT_MUL);
 
   m_rect.setLeft(0);
   if(y.showValues())
@@ -48,7 +52,21 @@ void AxisPlotter :: prepare(QPainter *p)
     m_rect.setBottom(p->device()->height() - m_y_border - p->fontMetrics().boundingRect("0.00").height()  - p->fontMetrics().boundingRect(x.text()).height());
   }
 
-  m_rect.setTop(m_y_border);
+  int top = m_y_border;
+  if(!title().isEmpty())
+  {
+    QString txt = title();
+    txt.remove('\r');
+    QStringList lst = txt.split('\n');
+    p->setFont(tf);
+    foreach(txt, lst)
+    {
+      top += p->fontMetrics().boundingRect(txt).height();
+    }
+    top += m_y_border;
+    p->setFont(f);
+  }
+  m_rect.setTop(top);
 
   m_x_scale = (double)m_rect.width()/(x.max() - x.min());
   m_y_scale = (double)m_rect.height()/(y.max() - y.min());
@@ -61,16 +79,33 @@ void AxisPlotter :: paint(QPaintDevice *dev)
   //qDebug() << "AxisPlotter :: paint";
   QPainter p(dev);
   prepare(&p);
+  QFont f = p.font();
+  QFont tf = f;
+  tf.setPointSize(f.pointSize() * TITLE_FONT_MUL);
+
   p.setPen(QColor(0, 0, 0));
-#if 0
-  p.drawLine(m_rect.left(), m_rect.top(), m_rect.left(), m_rect.bottom());
-  p.drawLine(m_rect.left(), m_rect.bottom(), m_rect.right(), m_rect.bottom());
-#else
   p.drawLine(m_rect.left(), m_rect.top(), m_rect.left(), m_rect.bottom());
   p.drawLine(m_rect.right(), m_rect.top(), m_rect.right(), m_rect.bottom());
   p.drawLine(m_rect.left(), m_rect.top(), m_rect.right(), m_rect.top());
   p.drawLine(m_rect.left(), m_rect.bottom(), m_rect.right(), m_rect.bottom());
-#endif
+
+  if(!title().isEmpty()) //Draw title
+  {
+    QString txt = title();
+    txt.remove('\r');
+    QStringList lst = txt.split('\n');
+    int y = 0;//m_y_border;
+    p.setFont(tf);
+    foreach(txt, lst)
+    {
+      int x = (p.device()->width() - p.fontMetrics().boundingRect(txt).width())/2;
+      y +=  p.fontMetrics().boundingRect(txt).height();
+      if(x < 0)
+        x = 0;
+      p.drawText(x, y, txt);
+    }
+    p.setFont(f);
+  }
 
   int rmargin = 0;
   for(int i = 0; i < x.steps(); i++)
@@ -123,7 +158,8 @@ void AxisPlotter :: paint(QPaintDevice *dev)
   if(!y.text().isEmpty())
   {
     int h = p.fontMetrics().boundingRect(y.text()).height();
-    p.drawText(0, h, y.text());
+    //int w = p.fontMetrics().boundingRect(y.text()).width();
+    p.drawText(m_x_border, m_rect.top() + h/2, y.text());
   }
   //qDebug() << "AxisPlotter :: paint end";
 }

@@ -25,10 +25,12 @@ class Plotter : public QObject
 {
   Q_OBJECT
   Q_PROPERTY(QString legend READ legend WRITE setLegend)
+  Q_PROPERTY(QString title READ title WRITE setTitle)
   Q_PROPERTY(QVariantMap brush READ vBrush WRITE setVBrush)
   Q_PROPERTY(QVariantMap pen READ vPen WRITE setVPen)
 protected:
   QString m_legend;
+  QString m_title;
   QBrush m_brush;
   QPen m_pen;
 public:
@@ -38,6 +40,10 @@ public:
 
   QString legend() {return m_legend;}
   void setLegend(const QString &l) {m_legend = l;}
+
+  QString title() {return m_title;}
+  void setTitle(const QString& t) {m_title = t;}
+
   /**For QML adaptors*/
   QVariantMap vPen() const;
   QVariantMap vBrush() const;

@@ -20,15 +20,16 @@ doc:
 
 body:
 <BODY LANG="{LANG}">
-  <TABLE WIDTH=80% CELLPADDING=4 CELLSPACING=0>
+  <TABLE WIDTH=135% CELLPADDING=4 CELLSPACING=0>
     <TR VALIGN=TOP>
-      <TD WIDTH=40% STYLE="border: none; padding: 0in">
+      <TD STYLE="border-bottom: none; border-top: none; border-left: none; border-right: none; padding-top: 0.04in; padding-bottom: 0.04in; padding-left: 0.04in; padding-right: 0in">
         <IMG SRC="{templateDir}/title.png">
       </TD>
-    </TR>
-    <TR VALIGN=TOP>
-      <TD WIDTH=40% STYLE="border-top: 1px solid #000000; border-bottom: none; border-left: none; border-right: none; padding-top: 0.04in; padding-bottom: 0.04in; padding-left: 0.04in; padding-right: 0in">
-        <H1 WIDTH=80% ALIGN=CENTER>{reportHeader}</H1>
+      <TD STYLE="border-bottom: none; border-top: none; border-left: none; border-right: none; padding-top: 0.04in; padding-bottom: 0.04in; padding-left: 0.04in; padding-right: 0in">
+        <H1 ALIGN=CENTER>{reportHeader}</H1>
+      </TD>
+      <TD STYLE="border-bottom: 1px solid #000000; border-top: 1px solid #000000; border-left: 1px solid #000000; border-right: 1px solid #000000; padding-top: 0.04in; padding-bottom: 0.04in; padding-left: 0.04in; padding-right: 0in; background-color: #00CCCC">
+        <P ALIGN=CENTER>{product_title.{LANG}}</P><hr><P ALIGN=CENTER><FONT SIZE=+1>{product}<FONT></P>
       </TD>
     </TR>
   </TABLE>
@@ -40,6 +41,11 @@ body:
 	</P>
   </DIV>
 </BODY>
+
+product_title.en: The mark of a diamond powder
+product_title.ru: Марка алмазного порошка
+product_title.uk: Марка алмазного порошку
+
 
 content: 
 <TABLE WIDTH=80%>

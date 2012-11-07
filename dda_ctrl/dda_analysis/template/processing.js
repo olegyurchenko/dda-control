@@ -91,6 +91,7 @@ function modelInit(role)
   strengthHistogramm.x.text = qsTr("[N]")
   strengthHistogramm.x.decimals = 1
   strengthHistogramm.x.steps = histogrammColumns
+  strengthHistogramm.title = qsTr("Distribution of the strength of grain")
   if(role === DataModel.ReportRole)
   {
     strengthHistogramm.brush = {style : Qt.Dense3Pattern, color : "black"}
@@ -122,7 +123,7 @@ function modelInit(role)
   sizeHistogramm.x.text = qsTr("[um]")
   sizeHistogramm.x.decimals = 1
   sizeHistogramm.x.steps = histogrammColumns
-
+  sizeHistogramm.title = qsTr("Distribution of the size of grain")
   if(role === DataModel.ReportRole)
   {
     sizeHistogramm.brush = {style : Qt.Dense3Pattern, color : "black"}
@@ -141,6 +142,7 @@ function modelInit(role)
   strengthCurve.x.text = qsTr("[N]")
   strengthCurve.x.decimals = 1
   strengthCurve.x.steps = histogrammColumns
+  strengthCurve.title = qsTr("The density distribution of strength")
   if(role === DataModel.ReportRole)
   {
     strengthCurve.filed = false
@@ -156,6 +158,7 @@ function modelInit(role)
   fractStrengthGraph.x.text = qsTr("[um]")
   fractStrengthGraph.x.steps = 5
   fractStrengthGraph.y.steps = 5
+  fractStrengthGraph.title = qsTr("Strength VS Size")
   if(role === DataModel.ReportRole)
   {
     fractStrengthGraph.brush = {style : Qt.Dense3Pattern, color : "black"}
@@ -170,6 +173,7 @@ function modelUpdate(session, role)
 
   model.dictionarySet("userName", session.userName)
   model.dictionarySet("reportHeader", qsTr("The static strength diamond powder test"))
+  model.dictionarySet("product", session.product)
 
   statistic(session)
   //--------------------------------

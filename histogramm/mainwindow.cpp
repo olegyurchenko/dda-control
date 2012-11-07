@@ -42,6 +42,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
   plotter1->setStyle(AxisPlotter::StrokeStyle);
   //plotter->setStyle(AxisPlotter::BarStyle);
+  plotter1->setTitle(QString::fromUtf8("Распределение по прочности"));
   ui->histogrammWidget->setPlotter(plotter1);
 
   plotter2 = new HistogrammPlotter();
@@ -72,7 +73,8 @@ MainWindow::MainWindow(QWidget *parent) :
   plotter2->data.append(13.3);
 
   plotter2->setStyle(AxisPlotter::StrokeStyle);
-
+  plotter2->setPen(QPen(Qt::SolidLine));
+  plotter2->setTitle(QString::fromUtf8("Распределение по размеру"));
   ui->histogrammWidget2->setPlotter(plotter2);
 
 
@@ -98,6 +100,7 @@ MainWindow::MainWindow(QWidget *parent) :
   plotter3->data.append(QPointF(600,1300));
   plotter3->data.append(QPointF(655,1320));
   plotter3->data.append(QPointF(730,900));
+  plotter3->setTitle(QString::fromUtf8("Прочность к размеру зерна"));
   ui->chartWidget->setPlotter(plotter3);
 
 
@@ -128,6 +131,7 @@ MainWindow::MainWindow(QWidget *parent) :
   plotter4->setFiled(false);
   plotter4->setPointSize(4);
 
+  plotter4->setTitle(QString::fromUtf8("Плотность распределения\nпо прочности"));
   ui->chartWidget2->setPlotter(plotter4);
 }
 /*----------------------------------------------------------------------------*/
