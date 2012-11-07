@@ -91,6 +91,10 @@
         <source>Ctrl+/</source>
         <translation></translation>
     </message>
+    <message>
+        <source>Database error</source>
+        <translation>Ошибка базы данных</translation>
+    </message>
 </context>
 <context>
     <name>DDAConfig</name>
@@ -204,7 +208,7 @@
     </message>
     <message>
         <source>Mark:</source>
-        <translation>Марка:</translation>
+        <translation>Марка ДСТУ:</translation>
     </message>
     <message>
         <source>Size [um]</source>
@@ -221,6 +225,10 @@
     <message>
         <source>Edit data</source>
         <translation>Редактирование данных</translation>
+    </message>
+    <message>
+        <source>Product:</source>
+        <translation>Марка порошка:</translation>
     </message>
 </context>
 <context>
@@ -755,11 +763,15 @@
     </message>
     <message>
         <source>Mark:</source>
-        <translation>Марка:</translation>
+        <translation>Марка ДСТУ:</translation>
     </message>
     <message>
         <source>GroupBox</source>
         <translation></translation>
+    </message>
+    <message>
+        <source>Product:</source>
+        <translation>Марка порошка:</translation>
     </message>
 </context>
 <context>
@@ -814,11 +826,15 @@
     </message>
     <message>
         <source>Mark:</source>
-        <translation>Марка:</translation>
+        <translation>Марка ДСТУ:</translation>
     </message>
     <message>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Select gift size from russian &lt;/p&gt;&lt;p&gt;state standard&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Выбор зернистости &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
+    </message>
+    <message>
+        <source>Product:</source>
+        <translation>Марка порошка:</translation>
     </message>
 </context>
 <context>
@@ -932,7 +948,7 @@
     </message>
     <message>
         <source>St. dev. strength [N]</source>
-        <translation>СКВ прочности [Н]</translation>
+        <translation>СКО прочности [Н]</translation>
     </message>
     <message>
         <source>Max strength [N]</source>
@@ -948,19 +964,19 @@
     </message>
     <message>
         <source>St. dev. size [um]</source>
-        <translation>СКВ размера [мкм]</translation>
+        <translation>СКО размера [мкм]</translation>
     </message>
     <message>
         <source>Avg. fract str [N/mm^2]</source>
-        <translation>Средняя удельная прочность  [Н/мм^2]</translation>
+        <translation type="obsolete">Средняя удельная прочность  [Н/мм^2]</translation>
     </message>
     <message>
         <source>St. fract str [N/mm^2]</source>
-        <translation>СКВ удельной прочности  [Н/мм^2]</translation>
+        <translation type="obsolete">СКВ удельной прочности  [Н/мм^2]</translation>
     </message>
     <message>
         <source>Set mark</source>
-        <translation>Присвоена марка</translation>
+        <translation>ДСТУ  марка</translation>
     </message>
     <message>
         <source>&gt;=</source>
@@ -992,11 +1008,31 @@
     </message>
     <message>
         <source>[N/mm^2]</source>
-        <translation>[Н/мм^2]</translation>
+        <translation type="obsolete">[Н/мм^2]</translation>
     </message>
     <message>
         <source>[um]</source>
         <translation>[мкм]</translation>
+    </message>
+    <message>
+        <source>Distribution of the strength of grain</source>
+        <translation>Распределение по прочности</translation>
+    </message>
+    <message>
+        <source>Distribution of the size of grain</source>
+        <translation>Распределение по размеру</translation>
+    </message>
+    <message>
+        <source>The density distribution of strength</source>
+        <translation>Плотность распределения по прочности</translation>
+    </message>
+    <message>
+        <source>Strength VS Size</source>
+        <translation>Прочность vs Размер</translation>
+    </message>
+    <message>
+        <source>Uniformity of grain</source>
+        <translation>Однородность зерна</translation>
     </message>
 </context>
 </TS>

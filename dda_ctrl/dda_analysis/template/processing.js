@@ -20,6 +20,7 @@ var gritRow = row ++
 var particlesRow = row ++
 var avgStretchRow = row ++
 var devStrengthRow = row ++
+var uniformityRow = row ++
 var maxStrengthRow = row ++
 var minStrengthRow = row ++
 var avgSizeRow = row ++
@@ -58,6 +59,7 @@ function modelInit(role)
   paramTable.setData(devStrengthRow, nameCol, qsTr("St. dev. strength [N]"))
   paramTable.setData(maxStrengthRow, nameCol, qsTr("Max strength [N]"))
   paramTable.setData(minStrengthRow, nameCol, qsTr("Min strength [N]"))
+  paramTable.setData(uniformityRow, nameCol, qsTr("Uniformity of grain"))
   paramTable.setData(avgSizeRow, nameCol, qsTr("Avg. size [um]"))
   paramTable.setData(devSizeRow, nameCol, qsTr("St. dev. size [um]"))
   //paramTable.setData(avgFractStrRow, nameCol, qsTr("Avg. fract str [N/mm^2]"))
@@ -187,6 +189,10 @@ function modelUpdate(session, role)
   paramTable.setData(particlesRow, valueCol, session.particles)
   paramTable.setData(avgStretchRow, valueCol, session.avgStrength.toFixed(2))
   paramTable.setData(devStrengthRow, valueCol, session.devStrength.toFixed(2))
+  if( Math.abs(session.devStrength) >= 0.005 )
+    paramTable.setData(uniformityRow, valueCol, (session.avgStrength / session.devStrength).toFixed(2))
+  else
+    paramTable.setData(uniformityRow, valueCol, "")
   paramTable.setData(maxStrengthRow, valueCol, session.maxStrength.toFixed(2))
   paramTable.setData(minStrengthRow, valueCol, session.minStrength.toFixed(2))
   paramTable.setData(avgSizeRow, valueCol, session.avgSize.toFixed(2))
