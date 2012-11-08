@@ -13,6 +13,7 @@ class OptionsDialog : public QDialog
   Q_OBJECT
 protected:
   QMap<QString, QString> langMap;
+  QMap<QString, QString> countryMap;
 public:
   explicit OptionsDialog(QWidget *parent = 0);
   ~OptionsDialog();

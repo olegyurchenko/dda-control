@@ -10,8 +10,9 @@
 #include <get_opt.h>
 #include <qmlprocessing.h>
 #include <QLibraryInfo>
-#include <QTranslator>
+#include <translator.h>
 #include <QLocale>
+#include <QDir>
 /*----------------------------------------------------------------------------*/
 int main(int argc, char *argv[])
 {
@@ -25,39 +26,49 @@ int main(int argc, char *argv[])
     QMessageBox::critical(NULL, QObject::tr("Error load config"), config->message());
   }
 
-  QTranslator trans;
+  translator = new Translator(&a);
   QString locale;
   locale = config->settings().localeName;
   if(locale.isEmpty())
     locale = QLocale::system().name();
 
-  if( locale.length() >= 2
-    && locale.left(2) != "en"
-    && !trans.load("dda-" + locale)
-    && !trans.load("dda-" + locale, QCoreApplication::applicationDirPath())
-    && !trans.load("dda-" + locale, QLibraryInfo::location(QLibraryInfo::TranslationsPath)))
+  if(!translator->load("dda-messages.xml")
+     && !translator->load("dda-messages.xml", QDir::currentPath())
+     && !translator->load("dda-messages.xml", QLibraryInfo::location(QLibraryInfo::TranslationsPath))
+     && locale != "C")
   {
-    QString error = QString("Error load language file for `%1` locale").arg(locale);
-    QMessageBox::critical(NULL, QObject::tr("Error translation"), error);
+    QString error = QString("Error load language file '%1': %2").arg("dda-messages.xml").arg(translator->errorString());
+    QMessageBox::critical(NULL, "Error translation", error);
     if(config->settings().localeName.isEmpty())
     {
       DDASettings s = config->settings();
-      s.localeName = "en";
+      s.localeName = "C";
       config->setSettings(s);
     }
   }
   else
   {
+    if(!translator->setLang(locale))
+    {
+      QString error = QString("Error set language: %1").arg(translator->errorString());
+      QMessageBox::critical(NULL, "Error translation", error);
+      if(config->settings().localeName.isEmpty())
+      {
+        DDASettings s = config->settings();
+        s.localeName = "C";
+        config->setSettings(s);
+      }
+    }
+    else
     if(config->settings().localeName.isEmpty())
     {
       DDASettings s = config->settings();
-      s.localeName = QLocale::system().name().left(2);
+      s.localeName = QLocale::system().name();
       config->setSettings(s);
     }
   }
 
-  a.installTranslator(&trans);
-  translator = &trans;
+  a.installTranslator(translator);
 
   database = new DDADatabase(&a);
   if(database->isError())

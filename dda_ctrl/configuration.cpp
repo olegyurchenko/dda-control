@@ -19,7 +19,7 @@
 #include <QCoreApplication>
 /*----------------------------------------------------------------------------*/
 DDAConfig *config = NULL;
-QTranslator *translator = NULL;
+Translator *translator = NULL;
 /*----------------------------------------------------------------------------*/
 DDAConfig :: DDAConfig(QObject *parent)
   : QObject(parent)

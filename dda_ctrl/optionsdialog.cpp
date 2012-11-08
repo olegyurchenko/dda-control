@@ -5,7 +5,7 @@
 #include <configuration.h>
 #include <QtDebug>
 #include <QMessageBox>
-#include <QTranslator>
+#include <translator.h>
 #include <QLocale>
 #include <QFileDialog>
 #include <database.h>
@@ -233,24 +233,272 @@ OptionsDialog::OptionsDialog(QWidget *parent) :
   langMap["ses"] = "KoyraboroSenni";
   langMap["ksb"] = "Shambala";
 
-  ui->localeCombo->addItem("English", "en");
-  QDir current = QDir(QCoreApplication::applicationDirPath());
-  current.setFilter(QDir::Files);
-  QStringList filters;
-  filters << "dda-*.qm";
-  current.setNameFilters(filters);
-  QStringList entries = current.entryList();
+  countryMap["AF\0"] = "Afghanistan";
+  countryMap["AL\0"] = "Albania";
+  countryMap["DZ\0"] = "Algeria";
+  countryMap["AS\0"] = "AmericanSamoa";
+  countryMap["AD\0"] = "Andorra";
+  countryMap["AO\0"] = "Angola";
+  countryMap["AI\0"] = "Anguilla";
+  countryMap["AQ\0"] = "Antarctica";
+  countryMap["AG\0"] = "AntiguaAndBarbuda";
+  countryMap["AR\0"] = "Argentina";
+  countryMap["AM\0"] = "Armenia";
+  countryMap["AW\0"] = "Aruba";
+  countryMap["AU\0"] = "Australia";
+  countryMap["AT\0"] = "Austria";
+  countryMap["AZ\0"] = "Azerbaijan";
+  countryMap["BS\0"] = "Bahamas";
+  countryMap["BH\0"] = "Bahrain";
+  countryMap["BD\0"] = "Bangladesh";
+  countryMap["BB\0"] = "Barbados";
+  countryMap["BY\0"] = "Belarus";
+  countryMap["BE\0"] = "Belgium";
+  countryMap["BZ\0"] = "Belize";
+  countryMap["BJ\0"] = "Benin";
+  countryMap["BM\0"] = "Bermuda";
+  countryMap["BT\0"] = "Bhutan";
+  countryMap["BO\0"] = "Bolivia";
+  countryMap["BA\0"] = "BosniaAndHerzegowina";
+  countryMap["BW\0"] = "Botswana";
+  countryMap["BV\0"] = "BouvetIsland";
+  countryMap["BR\0"] = "Brazil";
+  countryMap["IO\0"] = "BritishIndianOceanTerritory";
+  countryMap["BN\0"] = "BruneiDarussalam";
+  countryMap["BG\0"] = "Bulgaria";
+  countryMap["BF\0"] = "BurkinaFaso";
+  countryMap["BI\0"] = "Burundi";
+  countryMap["KH\0"] = "Cambodia";
+  countryMap["CM\0"] = "Cameroon";
+  countryMap["CA\0"] = "Canada";
+  countryMap["CV\0"] = "CapeVerde";
+  countryMap["KY\0"] = "CaymanIslands";
+  countryMap["CF\0"] = "CentralAfricanRepublic";
+  countryMap["TD\0"] = "Chad";
+  countryMap["CL\0"] = "Chile";
+  countryMap["CN\0"] = "China";
+  countryMap["CX\0"] = "ChristmasIsland";
+  countryMap["CC\0"] = "CocosIslands";
+  countryMap["CO\0"] = "Colombia";
+  countryMap["KM\0"] = "Comoros";
+  countryMap["CD\0"] = "DemocraticRepublicOfCongo";
+  countryMap["CG\0"] = "PeoplesRepublicOfCongo";
+  countryMap["CK\0"] = "CookIslands";
+  countryMap["CR\0"] = "CostaRica";
+  countryMap["CI\0"] = "IvoryCoast";
+  countryMap["HR\0"] = "Croatia";
+  countryMap["CU\0"] = "Cuba";
+  countryMap["CY\0"] = "Cyprus";
+  countryMap["CZ\0"] = "CzechRepublic";
+  countryMap["DK\0"] = "Denmark";
+  countryMap["DJ\0"] = "Djibouti";
+  countryMap["DM\0"] = "Dominica";
+  countryMap["DO\0"] = "DominicanRepublic";
+  countryMap["TL\0"] = "EastTimor";
+  countryMap["EC\0"] = "Ecuador";
+  countryMap["EG\0"] = "Egypt";
+  countryMap["SV\0"] = "ElSalvador";
+  countryMap["GQ\0"] = "EquatorialGuinea";
+  countryMap["ER\0"] = "Eritrea";
+  countryMap["EE\0"] = "Estonia";
+  countryMap["ET\0"] = "Ethiopia";
+  countryMap["FK\0"] = "FalklandIslands";
+  countryMap["FO\0"] = "FaroeIslands";
+  countryMap["FJ\0"] = "Fiji";
+  countryMap["FI\0"] = "Finland";
+  countryMap["FR\0"] = "France";
+  countryMap["FX\0"] = "MetropolitanFrance";
+  countryMap["GF\0"] = "FrenchGuiana";
+  countryMap["PF\0"] = "FrenchPolynesia";
+  countryMap["TF\0"] = "FrenchSouthernTerritories";
+  countryMap["GA\0"] = "Gabon";
+  countryMap["GM\0"] = "Gambia";
+  countryMap["GE\0"] = "Georgia";
+  countryMap["DE\0"] = "Germany";
+  countryMap["GH\0"] = "Ghana";
+  countryMap["GI\0"] = "Gibraltar";
+  countryMap["GR\0"] = "Greece";
+  countryMap["GL\0"] = "Greenland";
+  countryMap["GD\0"] = "Grenada";
+  countryMap["GP\0"] = "Guadeloupe";
+  countryMap["GU\0"] = "Guam";
+  countryMap["GT\0"] = "Guatemala";
+  countryMap["GN\0"] = "Guinea";
+  countryMap["GW\0"] = "GuineaBissau";
+  countryMap["GY\0"] = "Guyana";
+  countryMap["HT\0"] = "Haiti";
+  countryMap["HM\0"] = "HeardAndMcDonaldIslands";
+  countryMap["HN\0"] = "Honduras";
+  countryMap["HK\0"] = "HongKong";
+  countryMap["HU\0"] = "Hungary";
+  countryMap["IS\0"] = "Iceland";
+  countryMap["IN\0"] = "India";
+  countryMap["ID\0"] = "Indonesia";
+  countryMap["IR\0"] = "Iran";
+  countryMap["IQ\0"] = "Iraq";
+  countryMap["IE\0"] = "Ireland";
+  countryMap["IL\0"] = "Israel";
+  countryMap["IT\0"] = "Italy";
+  countryMap["JM\0"] = "Jamaica";
+  countryMap["JP\0"] = "Japan";
+  countryMap["JO\0"] = "Jordan";
+  countryMap["KZ\0"] = "Kazakhstan";
+  countryMap["KE\0"] = "Kenya";
+  countryMap["KI\0"] = "Kiribati";
+  countryMap["KP\0"] = "DemocraticRepublicOfKorea";
+  countryMap["KR\0"] = "RepublicOfKorea";
+  countryMap["KW\0"] = "Kuwait";
+  countryMap["KG\0"] = "Kyrgyzstan";
+  countryMap["LA\0"] = "Lao";
+  countryMap["LV\0"] = "Latvia";
+  countryMap["LB\0"] = "Lebanon";
+  countryMap["LS\0"] = "Lesotho";
+  countryMap["LR\0"] = "Liberia";
+  countryMap["LY\0"] = "LibyanArabJamahiriya";
+  countryMap["LI\0"] = "Liechtenstein";
+  countryMap["LT\0"] = "Lithuania";
+  countryMap["LU\0"] = "Luxembourg";
+  countryMap["MO\0"] = "Macau";
+  countryMap["MK\0"] = "Macedonia";
+  countryMap["MG\0"] = "Madagascar";
+  countryMap["MW\0"] = "Malawi";
+  countryMap["MY\0"] = "Malaysia";
+  countryMap["MV\0"] = "Maldives";
+  countryMap["ML\0"] = "Mali";
+  countryMap["MT\0"] = "Malta";
+  countryMap["MH\0"] = "MarshallIslands";
+  countryMap["MQ\0"] = "Martinique";
+  countryMap["MR\0"] = "Mauritania";
+  countryMap["MU\0"] = "Mauritius";
+  countryMap["YT\0"] = "Mayotte";
+  countryMap["MX\0"] = "Mexico";
+  countryMap["FM\0"] = "Micronesia";
+  countryMap["MD\0"] = "Moldova";
+  countryMap["MC\0"] = "Monaco";
+  countryMap["MN\0"] = "Mongolia";
+  countryMap["MS\0"] = "Montserrat";
+  countryMap["MA\0"] = "Morocco";
+  countryMap["MZ\0"] = "Mozambique";
+  countryMap["MM\0"] = "Myanmar";
+  countryMap["NA\0"] = "Namibia";
+  countryMap["NR\0"] = "Nauru";
+  countryMap["NP\0"] = "Nepal";
+  countryMap["NL\0"] = "Netherlands";
+  countryMap["AN\0"] = "NetherlandsAntilles";
+  countryMap["NC\0"] = "NewCaledonia";
+  countryMap["NZ\0"] = "NewZealand";
+  countryMap["NI\0"] = "Nicaragua";
+  countryMap["NE\0"] = "Niger";
+  countryMap["NG\0"] = "Nigeria";
+  countryMap["NU\0"] = "Niue";
+  countryMap["NF\0"] = "NorfolkIsland";
+  countryMap["MP\0"] = "NorthernMarianaIslands";
+  countryMap["NO\0"] = "Norway";
+  countryMap["OM\0"] = "Oman";
+  countryMap["PK\0"] = "Pakistan";
+  countryMap["PW\0"] = "Palau";
+  countryMap["PS\0"] = "PalestinianTerritory";
+  countryMap["PA\0"] = "Panama";
+  countryMap["PG\0"] = "PapuaNewGuinea";
+  countryMap["PY\0"] = "Paraguay";
+  countryMap["PE\0"] = "Peru";
+  countryMap["PH\0"] = "Philippines";
+  countryMap["PN\0"] = "Pitcairn";
+  countryMap["PL\0"] = "Poland";
+  countryMap["PT\0"] = "Portugal";
+  countryMap["PR\0"] = "PuertoRico";
+  countryMap["QA\0"] = "Qatar";
+  countryMap["RE\0"] = "Reunion";
+  countryMap["RO\0"] = "Romania";
+  countryMap["RU\0"] = "RussianFederation";
+  countryMap["RW\0"] = "Rwanda";
+  countryMap["KN\0"] = "SaintKittsAndNevis";
+  countryMap["LC\0"] = "StLucia";
+  countryMap["VC\0"] = "StVincentAndTheGrenadines";
+  countryMap["WS\0"] = "Samoa";
+  countryMap["SM\0"] = "SanMarino";
+  countryMap["ST\0"] = "SaoTomeAndPrincipe";
+  countryMap["SA\0"] = "SaudiArabia";
+  countryMap["SN\0"] = "Senegal";
+  countryMap["SC\0"] = "Seychelles";
+  countryMap["SL\0"] = "SierraLeone";
+  countryMap["SG\0"] = "Singapore";
+  countryMap["SK\0"] = "Slovakia";
+  countryMap["SI\0"] = "Slovenia";
+  countryMap["SB\0"] = "SolomonIslands";
+  countryMap["SO\0"] = "Somalia";
+  countryMap["ZA\0"] = "SouthAfrica";
+  countryMap["GS\0"] = "SouthGeorgiaAndTheSouthSandwichIslands";
+  countryMap["ES\0"] = "Spain";
+  countryMap["LK\0"] = "SriLanka";
+  countryMap["SH\0"] = "StHelena";
+  countryMap["PM\0"] = "StPierreAndMiquelon";
+  countryMap["SD\0"] = "Sudan";
+  countryMap["SR\0"] = "Suriname";
+  countryMap["SJ\0"] = "SvalbardAndJanMayenIslands";
+  countryMap["SZ\0"] = "Swaziland";
+  countryMap["SE\0"] = "Sweden";
+  countryMap["CH\0"] = "Switzerland";
+  countryMap["SY\0"] = "SyrianArabRepublic";
+  countryMap["TW\0"] = "Taiwan";
+  countryMap["TJ\0"] = "Tajikistan";
+  countryMap["TZ\0"] = "Tanzania";
+  countryMap["TH\0"] = "Thailand";
+  countryMap["TG\0"] = "Togo";
+  countryMap["TK\0"] = "Tokelau";
+  countryMap["TO\0"] = "Tonga";
+  countryMap["TT\0"] = "TrinidadAndTobago";
+  countryMap["TN\0"] = "Tunisia";
+  countryMap["TR\0"] = "Turkey";
+  countryMap["TM\0"] = "Turkmenistan";
+  countryMap["TC\0"] = "TurksAndCaicosIslands";
+  countryMap["TV\0"] = "Tuvalu";
+  countryMap["UG\0"] = "Uganda";
+  countryMap["UA\0"] = "Ukraine";
+  countryMap["AE\0"] = "UnitedArabEmirates";
+  countryMap["GB\0"] = "UnitedKingdom";
+  countryMap["US\0"] = "UnitedStates";
+  countryMap["UM\0"] = "UnitedStatesMinorOutlyingIslands";
+  countryMap["UY\0"] = "Uruguay";
+  countryMap["UZ\0"] = "Uzbekistan";
+  countryMap["VU\0"] = "Vanuatu";
+  countryMap["VA\0"] = "VaticanCityState";
+  countryMap["VE\0"] = "Venezuela";
+  countryMap["VN\0"] = "VietNam";
+  countryMap["VG\0"] = "BritishVirginIslands";
+  countryMap["VI\0"] = "USVirginIslands";
+  countryMap["WF\0"] = "WallisAndFutunaIslands";
+  countryMap["EH\0"] = "WesternSahara";
+  countryMap["YE\0"] = "Yemen";
+  countryMap["YU\0"] = "Yugoslavia";
+  countryMap["ZM\0"] = "Zambia";
+  countryMap["ZW\0"] = "Zimbabwe";
+  countryMap["CS\0"] = "SerbiaAndMontenegro";
+  countryMap["ME\0"] = "Montenegro";
+  countryMap["RS\0"] = "Serbia";
+  countryMap["BL\0"] = "SaintBarthelemy";
+  countryMap["MF\0"] = "SaintMartin";
+  countryMap["419"] = "LatinAmericaAndTheCaribbean";
+
+  ui->localeCombo->addItem("No translate", "C");
+
+  QStringList langs = translator->languages();
+  qDebug() << langs;
+
   int currentIndex = 0;
-  int size = entries.size();
+  int size = langs.size();
   for(int i = 0; i < size; i++)
   {
-    QString file = entries[i];
-    int p1 = file.indexOf('-');
-    int p2 = file.indexOf('.');
-    QString lang = file.mid(p1 + 1, p2 - p1 - 1);
-    //qDebug() << file << p1 << p2 << lang;
-    ui->localeCombo->addItem(langMap[lang], lang);
-    if(settings.localeName == lang)
+    QString txt = langs[i];
+    int p = txt.indexOf('_');
+    QString lang = txt.left(p);
+    QString country = txt.mid(p + 1);
+
+    qDebug() << lang << country;
+    QString descr = QString("%1 - %2").arg(tr(langMap[lang].toUtf8().constData())).arg(tr(countryMap[country].toUtf8().constData()));
+
+    ui->localeCombo->addItem(descr, txt);
+    if(settings.localeName == txt || settings.localeName == lang)
       currentIndex = i + 1;
   }
   ui->localeCombo->setCurrentIndex(currentIndex);
@@ -280,9 +528,9 @@ void OptionsDialog::onAccept()
   DDASettings settings = config->settings();
   DDASettings oldSettings = settings;
   int langIndex = ui->localeCombo->currentIndex();
-  QString lang = ui->localeCombo->model()->data( ui->localeCombo->model()->index(langIndex, 0), Qt::UserRole).toString();
+  QString locale = ui->localeCombo->model()->data( ui->localeCombo->model()->index(langIndex, 0), Qt::UserRole).toString();
 
-  settings.localeName = lang;
+  settings.localeName = locale;
   settings.databaseFileName = ui->databaseEdit->text();
 
   DDADatabase *db = NULL;
@@ -300,23 +548,12 @@ void OptionsDialog::onAccept()
 
   if(settings.localeName != oldSettings.localeName)
   {
-    QTranslator *trans = new QTranslator(qApp);
-    if(settings.localeName != "en")
+    if(!translator->setLang(settings.localeName))
     {
-      if(!trans->load("dda-" + settings.localeName)
-        && !trans->load("dda-" + settings.localeName, QCoreApplication::applicationDirPath()))
-      {
-        QString error = QString("Error load language file for `%1` locale").arg(settings.localeName);
-        QMessageBox::critical(NULL, QObject::tr("Error translation"), error);
-        delete trans;
-        return;
-      }
+      QString error = QString("Error sel language: %1").arg(translator->errorString());
+      QMessageBox::critical(NULL, "Error translation", error);
+      return;
     }
-
-    if(translator != NULL)
-      QCoreApplication::removeTranslator(translator);
-    QCoreApplication::installTranslator(trans);
-    translator = trans;
   }
 
   if(db != NULL)

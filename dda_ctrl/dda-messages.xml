@@ -1,0 +1,1193 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<translator>
+ <languages>
+  <language>uk_UA</language>
+  <language>ru_RU</language>
+  <language>en_US</language>
+ </languages>
+ <message>
+  <source>Date</source>
+  <uk_UA>Дата</uk_UA>
+  <ru_RU>Дата</ru_RU>
+  <en_US>Date</en_US>
+ </message>
+ <message>
+  <source>Alt+A</source>
+  <uk_UA></uk_UA>
+  <ru_RU></ru_RU>
+  <en_US>Alt+A</en_US>
+ </message>
+ <message>
+  <source>Device serial combo box</source>
+  <uk_UA>Вибір серійного номеру</uk_UA>
+  <ru_RU>Выбор серийного номера</ru_RU>
+  <en_US>Device serial combo box</en_US>
+ </message>
+ <message>
+  <source>true</source>
+  <uk_UA>так</uk_UA>
+  <ru_RU>да</ru_RU>
+  <en_US>true</en_US>
+ </message>
+ <message>
+  <source>Ins</source>
+  <uk_UA>Ins</uk_UA>
+  <ru_RU></ru_RU>
+  <en_US>Ins</en_US>
+ </message>
+ <message>
+  <source>Alt+C</source>
+  <uk_UA></uk_UA>
+  <ru_RU></ru_RU>
+  <en_US>Alt+C</en_US>
+ </message>
+ <message>
+  <source>[um]</source>
+  <uk_UA>[мкм]</uk_UA>
+  <ru_RU>[мкм]</ru_RU>
+  <en_US>[um]</en_US>
+ </message>
+ <message>
+  <source>DDA serial</source>
+  <uk_UA>Серійний номер</uk_UA>
+  <ru_RU>Серийный номер</ru_RU>
+  <en_US>DDA serial</en_US>
+ </message>
+ <message>
+  <source>&amp;filter</source>
+  <uk_UA>&amp;Фільтр</uk_UA>
+  <ru_RU>&amp;Фильтр</ru_RU>
+  <en_US>&amp;filter</en_US>
+ </message>
+ <message>
+  <source>The static strength diamond powder test</source>
+  <uk_UA>ПРОТОКОЛ ВИПРБОВУВАНЬ АЛМАЗНОГО ПОРОШКУ НА СТАТИЧНУ МІЦНІСТЬ</uk_UA>
+  <ru_RU>ПРОТОКОЛ ИСПЫТАНИЙ АЛМАЗНОГО ПОРОШКА НА СТАТИЧЕСКУЮ ПРОЧНОСТЬ</ru_RU>
+  <en_US>The static strength diamond powder test</en_US>
+ </message>
+ <message>
+  <source>Ctrl+D</source>
+  <uk_UA>Ctrl+D</uk_UA>
+  <ru_RU></ru_RU>
+  <en_US>Ctrl+D</en_US>
+ </message>
+ <message>
+  <source>Ctrl+E</source>
+  <uk_UA></uk_UA>
+  <ru_RU></ru_RU>
+  <en_US>Ctrl+E</en_US>
+ </message>
+ <message>
+  <source>Save File</source>
+  <uk_UA>Зберегти файл</uk_UA>
+  <ru_RU>Сохранить файл</ru_RU>
+  <en_US>Save File</en_US>
+ </message>
+ <message>
+  <source>Ctrl+F</source>
+  <uk_UA></uk_UA>
+  <ru_RU></ru_RU>
+  <en_US>Ctrl+F</en_US>
+ </message>
+ <message>
+  <source>Alt+P</source>
+  <uk_UA></uk_UA>
+  <ru_RU></ru_RU>
+  <en_US>Alt+P</en_US>
+ </message>
+ <message>
+  <source>Lot</source>
+  <uk_UA>Партія</uk_UA>
+  <ru_RU>Партия</ru_RU>
+  <en_US>Lot</en_US>
+ </message>
+ <message>
+  <source>Are you shure to delte user '%1' ?</source>
+  <uk_UA>Ви впевнені у вилученні оператора  '%1' ?</uk_UA>
+  <ru_RU>Вы уверены в том, что хотите удалить оператора %1 ?</ru_RU>
+  <en_US>Are you shure to delte user '%1' ?</en_US>
+ </message>
+ <message>
+  <source>Alt+S</source>
+  <uk_UA></uk_UA>
+  <ru_RU></ru_RU>
+  <en_US>Alt+S</en_US>
+ </message>
+ <message>
+  <source>Error</source>
+  <uk_UA>Помилка</uk_UA>
+  <ru_RU>Ошибка</ru_RU>
+  <en_US>Error</en_US>
+ </message>
+ <message>
+  <source>Password check error</source>
+  <uk_UA>Помилка перевірки пароля</uk_UA>
+  <ru_RU>Ошибка проверки пароля</ru_RU>
+  <en_US>Password check error</en_US>
+ </message>
+ <message>
+  <source>Data processing</source>
+  <uk_UA>Обробка даних</uk_UA>
+  <ru_RU>Обработка данных</ru_RU>
+  <en_US>Data processing</en_US>
+ </message>
+ <message>
+  <source>Delete user button</source>
+  <uk_UA>Кнопка вилучитання оператора</uk_UA>
+  <ru_RU>Кнопка удаления оператора</ru_RU>
+  <en_US>Delete user button</en_US>
+ </message>
+ <message>
+  <source>Ctrl+P</source>
+  <uk_UA>Ctrl+P</uk_UA>
+  <ru_RU></ru_RU>
+  <en_US>Ctrl+P</en_US>
+ </message>
+ <message>
+  <source>>=</source>
+  <uk_UA>>=</uk_UA>
+  <ru_RU>>=</ru_RU>
+  <en_US>>=</en_US>
+ </message>
+ <message>
+  <source>Particles</source>
+  <uk_UA>Замірів</uk_UA>
+  <ru_RU>Замеров</ru_RU>
+  <en_US>Particles</en_US>
+ </message>
+ <message>
+  <source>About dda_analys</source>
+  <uk_UA>Про програму dda_analys</uk_UA>
+  <ru_RU>О программе dda_analys</ru_RU>
+  <en_US>About dda_analys</en_US>
+ </message>
+ <message>
+  <source>Default profile</source>
+  <uk_UA>Профіль</uk_UA>
+  <ru_RU>Профиль по умолчанию</ru_RU>
+  <en_US>Default profile</en_US>
+ </message>
+ <message>
+  <source>Ctrl+R</source>
+  <uk_UA></uk_UA>
+  <ru_RU></ru_RU>
+  <en_US>Ctrl+R</en_US>
+ </message>
+ <message>
+  <source>Database file</source>
+  <uk_UA>Файл бази даних</uk_UA>
+  <ru_RU>Файл базы данных</ru_RU>
+  <en_US>Database file</en_US>
+ </message>
+ <message>
+  <source>Add user button</source>
+  <uk_UA>Кнопка додатку оператора</uk_UA>
+  <ru_RU>Кнопка добавления оператора</ru_RU>
+  <en_US>Add user button</en_US>
+ </message>
+ <message>
+  <source>Ctrl+S</source>
+  <uk_UA></uk_UA>
+  <ru_RU></ru_RU>
+  <en_US>Ctrl+S</en_US>
+ </message>
+ <message>
+  <source>Print</source>
+  <uk_UA>Друк</uk_UA>
+  <ru_RU>Печать</ru_RU>
+  <en_US>Print</en_US>
+ </message>
+ <message>
+  <source>Ctrl+U</source>
+  <uk_UA></uk_UA>
+  <ru_RU></ru_RU>
+  <en_US>Ctrl+U</en_US>
+ </message>
+ <message>
+  <source>Session</source>
+  <uk_UA>Проба</uk_UA>
+  <ru_RU>Проба</ru_RU>
+  <en_US>Session</en_US>
+ </message>
+ <message>
+  <source>Language</source>
+  <uk_UA>Мова</uk_UA>
+  <ru_RU>Язык</ru_RU>
+  <en_US>Language</en_US>
+ </message>
+ <message>
+  <source>Ctrl+V</source>
+  <uk_UA></uk_UA>
+  <ru_RU></ru_RU>
+  <en_US>Ctrl+V</en_US>
+ </message>
+ <message>
+  <source>Manage users</source>
+  <uk_UA>Управління операторами</uk_UA>
+  <ru_RU>Управление операторами</ru_RU>
+  <en_US>Manage users</en_US>
+ </message>
+ <message>
+  <source>Select user</source>
+  <uk_UA>Вибір оператора</uk_UA>
+  <ru_RU>Выбор оператора</ru_RU>
+  <en_US>Select user</en_US>
+ </message>
+ <message>
+  <source>Grit</source>
+  <uk_UA>Зернистість</uk_UA>
+  <ru_RU>Зернистость</ru_RU>
+  <en_US>Grit</en_US>
+ </message>
+ <message>
+  <source>Ctrl+X</source>
+  <uk_UA>Ctrl+X</uk_UA>
+  <ru_RU></ru_RU>
+  <en_US>Ctrl+X</en_US>
+ </message>
+ <message>
+  <source>Delete</source>
+  <uk_UA>Видалити</uk_UA>
+  <ru_RU>Удалить</ru_RU>
+  <en_US>Delete</en_US>
+ </message>
+ <message>
+  <source>UnitedStates</source>
+  <uk_UA>UnitedStates</uk_UA>
+  <ru_RU>Соединенный Штаты</ru_RU>
+  <en_US>UnitedStates</en_US>
+ </message>
+ <message>
+  <source>Avg. fract str [N/mm^2]</source>
+  <uk_UA>Середн. питома міцн.  [Н/мм^2]</uk_UA>
+  <ru_RU>Средняя удельная прочность  [Н/мм^2]</ru_RU>
+  <en_US>Avg. fract str [N/mm^2]</en_US>
+ </message>
+ <message>
+  <source>Set user password</source>
+  <uk_UA>Встановити пароль</uk_UA>
+  <ru_RU>Установить пароль</ru_RU>
+  <en_US>Set user password</en_US>
+ </message>
+ <message>
+  <source>Undefined user</source>
+  <uk_UA>Невiдомий оператор</uk_UA>
+  <ru_RU>Неизвестный оператор</ru_RU>
+  <en_US>Undefined user</en_US>
+ </message>
+ <message>
+  <source>English</source>
+  <en_US>English</en_US>
+ </message>
+ <message>
+  <source>[s]</source>
+  <uk_UA>[с]</uk_UA>
+  <ru_RU>[с]</ru_RU>
+  <en_US>[s]</en_US>
+ </message>
+ <message>
+  <source>Refresh button</source>
+  <uk_UA>Кнопка оновлення</uk_UA>
+  <ru_RU>Кнопка "обновить"</ru_RU>
+  <en_US>Refresh button</en_US>
+ </message>
+ <message>
+  <source>Generate report</source>
+  <uk_UA>Формування звіту</uk_UA>
+  <ru_RU>Формирование отчета</ru_RU>
+  <en_US>Generate report</en_US>
+ </message>
+ <message>
+  <source>end of measuring</source>
+  <uk_UA>кінець вимірювань</uk_UA>
+  <ru_RU>конец измерений</ru_RU>
+  <en_US>end of measuring</en_US>
+ </message>
+ <message>
+  <source>The density distribution of strength</source>
+  <uk_UA>Щільність розподілу по міцності</uk_UA>
+  <ru_RU>Плотность распределения по прочности</ru_RU>
+  <en_US>The density distribution of strength</en_US>
+ </message>
+ <message>
+  <source>Options...</source>
+  <uk_UA>Параметри...</uk_UA>
+  <ru_RU>Параметры...</ru_RU>
+  <en_US>Options...</en_US>
+ </message>
+ <message>
+  <source>Pdf files (*.pdf)</source>
+  <uk_UA>Файли PDF (*.pdf)</uk_UA>
+  <ru_RU>Файлы PDF</ru_RU>
+  <en_US>Pdf files (*.pdf)</en_US>
+ </message>
+ <message>
+  <source>idle</source>
+  <uk_UA>вільний</uk_UA>
+  <ru_RU>свободен</ru_RU>
+  <en_US>idle</en_US>
+ </message>
+ <message>
+  <source>Current value:</source>
+  <uk_UA>Поточне значення:</uk_UA>
+  <ru_RU>Текущее значение:</ru_RU>
+  <en_US>Current value:</en_US>
+ </message>
+ <message>
+  <source>Report error</source>
+  <uk_UA>Помилка звіту</uk_UA>
+  <ru_RU>Ошибка отчета</ru_RU>
+  <en_US>Report error</en_US>
+ </message>
+ <message>
+  <source>Particles:</source>
+  <uk_UA>Замірів:</uk_UA>
+  <ru_RU>Замеров:</ru_RU>
+  <en_US>Particles:</en_US>
+ </message>
+ <message>
+  <source>Grit:</source>
+  <uk_UA>Зернистість:</uk_UA>
+  <ru_RU>Зернистость:</ru_RU>
+  <en_US>Grit:</en_US>
+ </message>
+ <message>
+  <source>Add user to database</source>
+  <uk_UA>Додати оператора до бази даних</uk_UA>
+  <ru_RU>Добавить оператора в базу данных</ru_RU>
+  <en_US>Add user to database</en_US>
+ </message>
+ <message>
+  <source>Alt+Return</source>
+  <uk_UA></uk_UA>
+  <ru_RU></ru_RU>
+  <en_US>Alt+Return</en_US>
+ </message>
+ <message>
+  <source>Exit</source>
+  <uk_UA>Вихід</uk_UA>
+  <ru_RU>Выход</ru_RU>
+  <en_US>Exit</en_US>
+ </message>
+ <message>
+  <source>offline</source>
+  <uk_UA>відключений</uk_UA>
+  <ru_RU>отключен</ru_RU>
+  <en_US>offline</en_US>
+ </message>
+ <message>
+  <source>Product:</source>
+  <uk_UA>Марка порошку:</uk_UA>
+  <ru_RU>Марка порошка:</ru_RU>
+  <en_US>Product:</en_US>
+ </message>
+ <message>
+  <source>&lt;</source>
+  <uk_UA>&lt;</uk_UA>
+  <ru_RU>&lt;</ru_RU>
+  <en_US>&lt;</en_US>
+ </message>
+ <message>
+  <source>&lt;p>Experimenter from device receive test data and stores them in a database for later analysis.&lt;/p></source>
+  <uk_UA>&lt;p>Experimenter одержує від приладу дані випробувань і записує їх у базу даних для подальшого аналізу.&lt;/p></uk_UA>
+  <ru_RU>&lt;p>Экспериментатор получает от прибора данные испытаний и записывает их в базу данных для последующего анализа.&lt;/p></ru_RU>
+  <en_US>&lt;p>Experimenter from device receive test data and stores them in a database for later analysis.&lt;/p></en_US>
+ </message>
+ <message>
+  <source>Standard:</source>
+  <uk_UA>Стандарт:</uk_UA>
+  <ru_RU>Стандарт:</ru_RU>
+  <en_US>Standard:</en_US>
+ </message>
+ <message>
+  <source>&lt;p>The &lt;b>experimenter&lt;/b> is part of a software-hardware system for testing the static strength of diamond powder.&lt;/p></source>
+  <uk_UA>&lt;p>Програма &lt;b>experimenter&lt;/b> є частиною програмно-апаратного комплексу для проведення випробовування статичної міцності алмазного порошку.&lt;/p></uk_UA>
+  <ru_RU>&lt;p>Программа &lt;b>experimenter&lt;/b> является частью програмно-аппаратного комплекса для проведения испытаний статической прочности алмазного порошка.&lt;/p></ru_RU>
+  <en_US>&lt;p>The &lt;b>experimenter&lt;/b> is part of a software-hardware system for testing the static strength of diamond powder.&lt;/p></en_US>
+ </message>
+ <message>
+  <source>Profile</source>
+  <uk_UA>Профіль</uk_UA>
+  <ru_RU>Профиль</ru_RU>
+  <en_US>Profile</en_US>
+ </message>
+ <message>
+  <source>Device serial:</source>
+  <uk_UA>Серійний номер:</uk_UA>
+  <ru_RU>Серийный номер:</ru_RU>
+  <en_US>Device serial:</en_US>
+ </message>
+ <message>
+  <source>Unkown user</source>
+  <uk_UA>Невідомий оператор</uk_UA>
+  <ru_RU>Неизвестный оператор</ru_RU>
+  <en_US>Unkown user</en_US>
+ </message>
+ <message>
+  <source>Help</source>
+  <uk_UA>Довідка</uk_UA>
+  <ru_RU>Справка</ru_RU>
+  <en_US>Help</en_US>
+ </message>
+ <message>
+  <source>Lot:</source>
+  <uk_UA>Партія:</uk_UA>
+  <ru_RU>Партия:</ru_RU>
+  <en_US>Lot:</en_US>
+ </message>
+ <message>
+  <source>calibrating</source>
+  <uk_UA>калібровка</uk_UA>
+  <ru_RU>калибровка</ru_RU>
+  <en_US>calibrating</en_US>
+ </message>
+ <message>
+  <source>User password</source>
+  <uk_UA>Пароль</uk_UA>
+  <ru_RU>Устанвить пароль</ru_RU>
+  <en_US>User password</en_US>
+ </message>
+ <message>
+  <source>Edit</source>
+  <uk_UA>Правка</uk_UA>
+  <ru_RU>Правка</ru_RU>
+  <en_US>Edit</en_US>
+ </message>
+ <message>
+  <source>Start measure session</source>
+  <uk_UA>Старт заміру проби</uk_UA>
+  <ru_RU>Старт измерения пробы</ru_RU>
+  <en_US>Start measure session</en_US>
+ </message>
+ <message>
+  <source>User name</source>
+  <uk_UA>Оператор</uk_UA>
+  <ru_RU>Оператор</ru_RU>
+  <en_US>User name</en_US>
+ </message>
+ <message>
+  <source>Grit size</source>
+  <uk_UA>Зернистість</uk_UA>
+  <ru_RU>Зернистость</ru_RU>
+  <en_US>Grit size</en_US>
+ </message>
+ <message>
+  <source>User %1 password:</source>
+  <uk_UA>Пароль %1:</uk_UA>
+  <ru_RU>Пароль пользователя %1:</ru_RU>
+  <en_US>User %1 password:</en_US>
+ </message>
+ <message>
+  <source>% of grain</source>
+  <uk_UA>% зерен</uk_UA>
+  <ru_RU>% зерен</ru_RU>
+  <en_US>% of grain</en_US>
+ </message>
+ <message>
+  <source>Current size [um]:</source>
+  <uk_UA>Поточний розмір [мкм]:</uk_UA>
+  <ru_RU>Текущий размер [мкм]:</ru_RU>
+  <en_US>Current size [um]:</en_US>
+ </message>
+ <message>
+  <source>Set user password button</source>
+  <uk_UA>Кнопка встановлення пароля</uk_UA>
+  <ru_RU>Кнопка установки пароля оператора</ru_RU>
+  <en_US>Set user password button</en_US>
+ </message>
+ <message>
+  <source>&lt;p>The &lt;b>dda_analys&lt;/b> is part of a software-hardware system for testing the static strength of diamond powder.&lt;/p></source>
+  <uk_UA>&lt;p>Програма &lt;b>dda_analys&lt;/b> є частиною програмно-апаратного комплексу для проведення випробовування статичної міцності алмазного порошку.&lt;/p></uk_UA>
+  <ru_RU>&lt;p>Программа &lt;b>dda_analys&lt;/b> является частью програмно-аппаратного комплекса для проведения испытаний статической прочности алмазного порошка.&lt;/p></ru_RU>
+  <en_US>&lt;p>The &lt;b>dda_analys&lt;/b> is part of a software-hardware system for testing the static strength of diamond powder.&lt;/p></en_US>
+ </message>
+ <message>
+  <source>File</source>
+  <uk_UA>Файл</uk_UA>
+  <ru_RU>Файл</ru_RU>
+  <en_US>File</en_US>
+ </message>
+ <message>
+  <source>Min strength [N]</source>
+  <uk_UA>Мін. міцність  [Н]</uk_UA>
+  <ru_RU>Мин. прочность [Н]</ru_RU>
+  <en_US>Min strength [N]</en_US>
+ </message>
+ <message>
+  <source>Auto mode</source>
+  <uk_UA>Автоматичний режим</uk_UA>
+  <ru_RU>Автоматический режим</ru_RU>
+  <en_US>Auto mode</en_US>
+ </message>
+ <message>
+  <source>&lt;html>&lt;head/>&lt;body>&lt;p>Select user name&lt;/p>&lt;/body>&lt;/html></source>
+  <uk_UA>&lt;html>&lt;head/>&lt;body>&lt;p>Вибір оператора&lt;/p>&lt;/body>&lt;/html></uk_UA>
+  <ru_RU>&lt;html>&lt;head/>&lt;body>&lt;p>Выбор оператора&lt;/p>&lt;/body>&lt;/html></ru_RU>
+  <en_US>&lt;html>&lt;head/>&lt;body>&lt;p>Select user name&lt;/p>&lt;/body>&lt;/html></en_US>
+ </message>
+ <message>
+  <source>measuring</source>
+  <uk_UA>вимірювання</uk_UA>
+  <ru_RU>измерение</ru_RU>
+  <en_US>measuring</en_US>
+ </message>
+ <message>
+  <source>Histogramm</source>
+  <uk_UA>Гістограма</uk_UA>
+  <ru_RU>Гистограмма</ru_RU>
+  <en_US>Histogramm</en_US>
+ </message>
+ <message>
+  <source>Options</source>
+  <uk_UA>Параметри</uk_UA>
+  <ru_RU>Параметры</ru_RU>
+  <en_US>Options</en_US>
+ </message>
+ <message>
+  <source>Refresh</source>
+  <uk_UA>Оновити</uk_UA>
+  <ru_RU>Обновить</ru_RU>
+  <en_US>Refresh</en_US>
+ </message>
+ <message>
+  <source>Settings</source>
+  <uk_UA>Налаштування</uk_UA>
+  <ru_RU>Настройки</ru_RU>
+  <en_US>Settings</en_US>
+ </message>
+ <message>
+  <source>Database error</source>
+  <uk_UA>Помилка бази даних</uk_UA>
+  <ru_RU>Ошибка базы данных</ru_RU>
+  <en_US>Database error</en_US>
+ </message>
+ <message>
+  <source>Manage profiles</source>
+  <uk_UA>Управління профілями</uk_UA>
+  <ru_RU>Управление профилями</ru_RU>
+  <en_US>Manage profiles</en_US>
+ </message>
+ <message>
+  <source>[us]</source>
+  <ru_RU>[мкс]</ru_RU>
+  <en_US>[us]</en_US>
+ </message>
+ <message>
+  <source>Measure date</source>
+  <uk_UA>Дата вимірюваннь</uk_UA>
+  <ru_RU>Дата измерений</ru_RU>
+  <en_US>Measure date</en_US>
+ </message>
+ <message>
+  <source>Invalid profile index</source>
+  <uk_UA>Помилковий індекс профіля</uk_UA>
+  <ru_RU>Ошибка индекса профиля</ru_RU>
+  <en_US>Invalid profile index</en_US>
+ </message>
+ <message>
+  <source>Error open database</source>
+  <uk_UA>Помилка відкриття бази данних</uk_UA>
+  <ru_RU>Ошибка открытия базы данных</ru_RU>
+  <en_US>Error open database</en_US>
+ </message>
+ <message>
+  <source>E&amp;xit</source>
+  <uk_UA>Ви&amp;хід</uk_UA>
+  <ru_RU>Вы&amp;ход</ru_RU>
+  <en_US>E&amp;xit</en_US>
+ </message>
+ <message>
+  <source>New password</source>
+  <uk_UA>Новий пароль</uk_UA>
+  <ru_RU>Новый пароль</ru_RU>
+  <en_US>New password</en_US>
+ </message>
+ <message>
+  <source>Device</source>
+  <uk_UA>Прилад</uk_UA>
+  <ru_RU>Прибор</ru_RU>
+  <en_US>Device</en_US>
+ </message>
+ <message>
+  <source>About experimenter</source>
+  <uk_UA>Про програму experimenter</uk_UA>
+  <ru_RU>О программе experimenter</ru_RU>
+  <en_US>About experimenter</en_US>
+ </message>
+ <message>
+  <source>&lt;html>&lt;head/>&lt;body>&lt;p>Select gift size from russian &lt;/p>&lt;p>state standard&lt;/p>&lt;/body>&lt;/html></source>
+  <uk_UA>&lt;html>&lt;head/>&lt;body>&lt;p>Вибір зерна з стандарту&lt;/p>&lt;/body>&lt;/html></uk_UA>
+  <ru_RU>&lt;html>&lt;head/>&lt;body>&lt;p>Выбор зернистости &lt;/p>&lt;/body>&lt;/html></ru_RU>
+  <en_US>&lt;html>&lt;head/>&lt;body>&lt;p>Select gift size from russian &lt;/p>&lt;p>state standard&lt;/p>&lt;/body>&lt;/html></en_US>
+ </message>
+ <message>
+  <source>Del</source>
+  <uk_UA>Del</uk_UA>
+  <ru_RU></ru_RU>
+  <en_US>Del</en_US>
+ </message>
+ <message>
+  <source>User add</source>
+  <uk_UA>Додати оператора</uk_UA>
+  <ru_RU>Добавить оператора</ru_RU>
+  <en_US>User add</en_US>
+ </message>
+ <message>
+  <source>About</source>
+  <uk_UA>Про програму</uk_UA>
+  <ru_RU>О программе</ru_RU>
+  <en_US>About</en_US>
+ </message>
+ <message>
+  <source>Edit current session</source>
+  <uk_UA>Редагувати поточну пробу</uk_UA>
+  <ru_RU>Редактировать текущую пробу</ru_RU>
+  <en_US>Edit current session</en_US>
+ </message>
+ <message>
+  <source>no particle</source>
+  <uk_UA>нема зарна</uk_UA>
+  <ru_RU>нет зерна</ru_RU>
+  <en_US>no particle</en_US>
+ </message>
+ <message>
+  <source>&lt;html>&lt;head/>&lt;body>&lt;p>Set lot&lt;/p>&lt;/body>&lt;/html></source>
+  <uk_UA>&lt;html>&lt;head/>&lt;body>&lt;p>Вибір партії&lt;/p>&lt;/body>&lt;/html></uk_UA>
+  <ru_RU>&lt;html>&lt;head/>&lt;body>&lt;p>Ввод партии&lt;/p>&lt;/body>&lt;/html></ru_RU>
+  <en_US>&lt;html>&lt;head/>&lt;body>&lt;p>Set lot&lt;/p>&lt;/body>&lt;/html></en_US>
+ </message>
+ <message>
+  <source>User name:</source>
+  <uk_UA>Оператор:</uk_UA>
+  <ru_RU>Оператор:</ru_RU>
+  <en_US>User name:</en_US>
+ </message>
+ <message>
+  <source>Serial:%1 Baud:%2</source>
+  <uk_UA>Порт:%1 Швидкість:%2</uk_UA>
+  <ru_RU>Порт %1 Скорость %2</ru_RU>
+  <en_US>Serial:%1 Baud:%2</en_US>
+ </message>
+ <message>
+  <source>Avg. strength [N]</source>
+  <uk_UA>Сер. міцність  [Н]</uk_UA>
+  <ru_RU>Средняя прочность [Н]</ru_RU>
+  <en_US>Avg. strength [N]</en_US>
+ </message>
+ <message>
+  <source>about:blank</source>
+  <uk_UA></uk_UA>
+  <ru_RU></ru_RU>
+  <en_US>about:blank</en_US>
+ </message>
+ <message>
+  <source>User id=%1 not found</source>
+  <uk_UA>Не знайдено оператора %1</uk_UA>
+  <ru_RU>Оператор %1 не найден</ru_RU>
+  <en_US>User id=%1 not found</en_US>
+ </message>
+ <message>
+  <source>false</source>
+  <uk_UA>ні</uk_UA>
+  <ru_RU>нет</ru_RU>
+  <en_US>false</en_US>
+ </message>
+ <message>
+  <source>Dialog</source>
+  <uk_UA>Діалог</uk_UA>
+  <ru_RU>Диалог</ru_RU>
+  <en_US>Dialog</en_US>
+ </message>
+ <message>
+  <source>Max strength [N]</source>
+  <uk_UA>Макс.. міцність  [Н]</uk_UA>
+  <ru_RU>Макс. прочность [Н]</ru_RU>
+  <en_US>Max strength [N]</en_US>
+ </message>
+ <message>
+  <source>All settings will changed after application restart</source>
+  <uk_UA>Всі налаштування набудуть чинності після перезапуску програми</uk_UA>
+  <ru_RU>Все настройки вступят в силу только после перезагрузки программы</ru_RU>
+  <en_US>All settings will changed after application restart</en_US>
+ </message>
+ <message>
+  <source>&amp;File</source>
+  <uk_UA>&amp;Файл</uk_UA>
+  <ru_RU>&amp;Файл</ru_RU>
+  <en_US>&amp;File</en_US>
+ </message>
+ <message>
+  <source>Ukraine</source>
+  <uk_UA>Ukraine</uk_UA>
+  <ru_RU>Украина</ru_RU>
+  <en_US>Ukraine</en_US>
+ </message>
+ <message>
+  <source>St. dev. size [um]</source>
+  <uk_UA>СКВ розміру  [мкм]</uk_UA>
+  <ru_RU>СКО размера [мкм]</ru_RU>
+  <en_US>St. dev. size [um]</en_US>
+ </message>
+ <message>
+  <source>Serial</source>
+  <uk_UA>Серійний номер</uk_UA>
+  <ru_RU>Порт</ru_RU>
+  <en_US>Serial</en_US>
+ </message>
+ <message>
+  <source>Select user combo box</source>
+  <uk_UA>Панель вибору оператора</uk_UA>
+  <ru_RU>Панель выбора оператора</ru_RU>
+  <en_US>Select user combo box</en_US>
+ </message>
+ <message>
+  <source>Set user management password</source>
+  <uk_UA>Встановити пароль управління операторами</uk_UA>
+  <ru_RU>Установить пароль управления операторами</ru_RU>
+  <en_US>Set user management password</en_US>
+ </message>
+ <message>
+  <source>Avg. size [um]</source>
+  <uk_UA>Середній розмір  [мкм]</uk_UA>
+  <ru_RU>Средний размер [мкм]</ru_RU>
+  <en_US>Avg. size [um]</en_US>
+ </message>
+ <message>
+  <source>Value</source>
+  <uk_UA>Значення</uk_UA>
+  <ru_RU>Значение</ru_RU>
+  <en_US>Value</en_US>
+ </message>
+ <message>
+  <source>Create</source>
+  <uk_UA>Створити</uk_UA>
+  <ru_RU>Создать</ru_RU>
+  <en_US>Create</en_US>
+ </message>
+ <message>
+  <source>F5</source>
+  <uk_UA>F5</uk_UA>
+  <ru_RU></ru_RU>
+  <en_US>F5</en_US>
+ </message>
+ <message>
+  <source>Uniformity of grain</source>
+  <uk_UA>Однорідність зерна</uk_UA>
+  <ru_RU>Однородность зерна</ru_RU>
+  <en_US>Uniformity of grain</en_US>
+ </message>
+ <message>
+  <source>Error load config</source>
+  <uk_UA>Помилка завантаження конфігурації</uk_UA>
+  <ru_RU>Ошибка загрузки конфигурации</ru_RU>
+  <en_US>Error load config</en_US>
+ </message>
+ <message>
+  <source>Distribution of the size of grain</source>
+  <uk_UA>Розподіл за розміром</uk_UA>
+  <ru_RU>Распределение по размеру</ru_RU>
+  <en_US>Distribution of the size of grain</en_US>
+ </message>
+ <message>
+  <source>Select database file</source>
+  <uk_UA>Вибір файла бази даних</uk_UA>
+  <ru_RU>Выбор фала базы данных</ru_RU>
+  <en_US>Select database file</en_US>
+ </message>
+ <message>
+  <source>Ernter new password:</source>
+  <uk_UA>Введіть новий пароль:</uk_UA>
+  <ru_RU>Введите новый пароль:</ru_RU>
+  <en_US>Ernter new password:</en_US>
+ </message>
+ <message>
+  <source>Standard</source>
+  <uk_UA>Стандарт</uk_UA>
+  <ru_RU>Стандарт</ru_RU>
+  <en_US>Standard</en_US>
+ </message>
+ <message>
+  <source>DDA control system</source>
+  <uk_UA>Система випробовувань</uk_UA>
+  <ru_RU>Система испытанй</ru_RU>
+  <en_US>DDA control system</en_US>
+ </message>
+ <message>
+  <source>actionUserAdd</source>
+  <uk_UA></uk_UA>
+  <ru_RU></ru_RU>
+  <en_US>actionUserAdd</en_US>
+ </message>
+ <message>
+  <source>Ignored</source>
+  <uk_UA>відкинуто</uk_UA>
+  <ru_RU>отброшен</ru_RU>
+  <en_US>Ignored</en_US>
+ </message>
+ <message>
+  <source>Error translation</source>
+  <uk_UA>Помилка перекладу</uk_UA>
+  <ru_RU>Ошибка перевода</ru_RU>
+  <en_US>Error translation</en_US>
+ </message>
+ <message>
+  <source>[N/mm^2]</source>
+  <uk_UA>[Н/мм^2]</uk_UA>
+  <ru_RU>[Н/мм^2]</ru_RU>
+  <en_US>[N/mm^2]</en_US>
+ </message>
+ <message>
+  <source>Print preview</source>
+  <uk_UA>Попередній перегляд</uk_UA>
+  <ru_RU>Предварительный просмотр</ru_RU>
+  <en_US>Print preview</en_US>
+ </message>
+ <message>
+  <source>Enter user name</source>
+  <uk_UA>Ввод імені оператора</uk_UA>
+  <ru_RU>Ввод имени оператора</ru_RU>
+  <en_US>Enter user name</en_US>
+ </message>
+ <message>
+  <source>Stretch [N]</source>
+  <uk_UA>Міцність [Н]</uk_UA>
+  <ru_RU>Прочность [Н]</ru_RU>
+  <en_US>Stretch [N]</en_US>
+ </message>
+ <message>
+  <source>Edit current profile</source>
+  <uk_UA>Редагувати поточний профіль</uk_UA>
+  <ru_RU>Редактировать текущий профиль</ru_RU>
+  <en_US>Edit current profile</en_US>
+ </message>
+ <message>
+  <source>Options changed</source>
+  <uk_UA>Налаштування змінені</uk_UA>
+  <ru_RU>Настройки изменены</ru_RU>
+  <en_US>Options changed</en_US>
+ </message>
+ <message>
+  <source>Profile name</source>
+  <uk_UA>Назва профіля</uk_UA>
+  <ru_RU>Имя профиля</ru_RU>
+  <en_US>Profile name</en_US>
+ </message>
+ <message>
+  <source>Mark:</source>
+  <uk_UA>Марка ДСТУ:</uk_UA>
+  <ru_RU>Марка ДСТУ:</ru_RU>
+  <en_US>Mark:</en_US>
+ </message>
+ <message>
+  <source>&lt;html>&lt;head/>&lt;body>&lt;p>Manage users&lt;/p>&lt;/body>&lt;/html></source>
+  <uk_UA>&lt;html>&lt;head/>&lt;body>&lt;p>Управління операторами&lt;/p>&lt;/body>&lt;/html></uk_UA>
+  <ru_RU>&lt;html>&lt;head/>&lt;body>&lt;p>Управление операторами&lt;/p>&lt;/body>&lt;/html></ru_RU>
+  <en_US>&lt;html>&lt;head/>&lt;body>&lt;p>Manage users&lt;/p>&lt;/body>&lt;/html></en_US>
+ </message>
+ <message>
+  <source>Enter password</source>
+  <uk_UA>Введіть пароль</uk_UA>
+  <ru_RU>Введите пароль</ru_RU>
+  <en_US>Enter password</en_US>
+ </message>
+ <message>
+  <source>Ctrl+Return</source>
+  <uk_UA></uk_UA>
+  <ru_RU></ru_RU>
+  <en_US>Ctrl+Return</en_US>
+ </message>
+ <message>
+  <source>Data handling</source>
+  <uk_UA>Обробка даних</uk_UA>
+  <ru_RU>Обработка данных</ru_RU>
+  <en_US>Data handling</en_US>
+ </message>
+ <message>
+  <source>Select device serial</source>
+  <uk_UA>Вибір серійного номеру</uk_UA>
+  <ru_RU>Выбор серийного номера</ru_RU>
+  <en_US>Select device serial</en_US>
+ </message>
+ <message>
+  <source>Add user</source>
+  <uk_UA>Додати</uk_UA>
+  <ru_RU>Добавить</ru_RU>
+  <en_US>Add user</en_US>
+ </message>
+ <message>
+  <source>Ukrainian</source>
+  <uk_UA>Ukrainian</uk_UA>
+  <ru_RU>Украинский</ru_RU>
+  <en_US>Ukrainian</en_US>
+ </message>
+ <message>
+  <source>Databases (*.db);;All files (*)</source>
+  <uk_UA>Бази даних (*.db);;Усі файли (*)</uk_UA>
+  <ru_RU>Базы данных (*.db);;Все файлы (*)</ru_RU>
+  <en_US>Databases (*.db);;All files (*)</en_US>
+ </message>
+ <message>
+  <source>Remove user from database</source>
+  <uk_UA>Виличити оператора з бази даних</uk_UA>
+  <ru_RU>Удалить оператора из базы данных</ru_RU>
+  <en_US>Remove user from database</en_US>
+ </message>
+ <message>
+  <source>Device DDA-33</source>
+  <uk_UA>Прилад DDA-33 </uk_UA>
+  <ru_RU>Прибор  DDA-33 </ru_RU>
+  <en_US>Device DDA-33</en_US>
+ </message>
+ <message>
+  <source>Error open %1</source>
+  <uk_UA>Помилка відкриття %1</uk_UA>
+  <ru_RU>Ошибка открытия  %1</ru_RU>
+  <en_US>Error open %1</en_US>
+ </message>
+ <message>
+  <source>Current strength [N]:</source>
+  <uk_UA>Поточне зусилля [Н]:</uk_UA>
+  <ru_RU>Текущее усилие [Н]:</ru_RU>
+  <en_US>Current strength [N]:</en_US>
+ </message>
+ <message>
+  <source>Error open serial port</source>
+  <uk_UA>Помилка відкриття порту</uk_UA>
+  <ru_RU>Ошибка открытия порта</ru_RU>
+  <en_US>Error open serial port</en_US>
+ </message>
+ <message>
+  <source>Strength VS Size</source>
+  <uk_UA>Міцність vs Розмір</uk_UA>
+  <ru_RU>Прочность vs Размер</ru_RU>
+  <en_US>Strength VS Size</en_US>
+ </message>
+ <message>
+  <source>Method '%1' not found</source>
+  <uk_UA>Метод %1 не знайдено</uk_UA>
+  <ru_RU>Метод %1 не найден</ru_RU>
+  <en_US>Method '%1' not found</en_US>
+ </message>
+ <message>
+  <source>GroupBox</source>
+  <uk_UA></uk_UA>
+  <ru_RU></ru_RU>
+  <en_US>GroupBox</en_US>
+ </message>
+ <message>
+  <source>Distribution of the strength of grain</source>
+  <uk_UA>Розподіл по міцності</uk_UA>
+  <ru_RU>Распределение по прочности</ru_RU>
+  <en_US>Distribution of the strength of grain</en_US>
+ </message>
+ <message>
+  <source>Delete user</source>
+  <uk_UA>Вилучити</uk_UA>
+  <ru_RU>Удалить</ru_RU>
+  <en_US>Delete user</en_US>
+ </message>
+ <message>
+  <source>&lt;html>&lt;head/>&lt;body>&lt;p>Edit profile&lt;/p>&lt;/body>&lt;/html></source>
+  <uk_UA>&lt;html>&lt;head/>&lt;body>&lt;p>Редагування профіля&lt;/p>&lt;/body>&lt;/html></uk_UA>
+  <ru_RU>&lt;html>&lt;head/>&lt;body>&lt;p>Редактирование профиля&lt;/p>&lt;/body>&lt;/html></ru_RU>
+  <en_US>&lt;html>&lt;head/>&lt;body>&lt;p>Edit profile&lt;/p>&lt;/body>&lt;/html></en_US>
+ </message>
+ <message>
+  <source>RussianFederation</source>
+  <uk_UA>Россiйська федерацiя</uk_UA>
+  <ru_RU>Российская федерация</ru_RU>
+  <en_US>Russian Federation</en_US>
+ </message>
+ <message>
+  <source>&lt;p>The analyzer processes the test results and generates a report for printing.&lt;/p></source>
+  <uk_UA>&lt;p>Аналізатор обробляє результати випробувань і формує звіт для друку.&lt;/p></uk_UA>
+  <ru_RU>&lt;p>Анализатор производит обработку результатов испытаний и формирует отчет для печати.&lt;/p></ru_RU>
+  <en_US>&lt;p>The analyzer processes the test results and generates a report for printing.&lt;/p></en_US>
+ </message>
+ <message>
+  <source>Single step mode</source>
+  <uk_UA>Покроковий режим</uk_UA>
+  <ru_RU>Пошаговый режим</ru_RU>
+  <en_US>Single step mode</en_US>
+ </message>
+ <message>
+  <source>Set mark</source>
+  <uk_UA>ДСТУ марка</uk_UA>
+  <ru_RU>ДСТУ  марка</ru_RU>
+  <en_US>Set mark</en_US>
+ </message>
+ <message>
+  <source>Error execute JavaScript</source>
+  <uk_UA>Помилка виконяння JavaScript</uk_UA>
+  <ru_RU>Ошибка выполнения JavaScript</ru_RU>
+  <en_US>Error execute JavaScript</en_US>
+ </message>
+ <message>
+  <source>Edit profile</source>
+  <uk_UA>Редагування профіля</uk_UA>
+  <ru_RU>Редактировать профиль</ru_RU>
+  <en_US>Edit profile</en_US>
+ </message>
+ <message>
+  <source>St. dev. strength [N]</source>
+  <uk_UA>СКВ міцності  [Н]</uk_UA>
+  <ru_RU>СКО прочности [Н]</ru_RU>
+  <en_US>St. dev. strength [N]</en_US>
+ </message>
+ <message>
+  <source>Profile_%1</source>
+  <uk_UA>Профіль_%1</uk_UA>
+  <ru_RU>Профиль_%1</ru_RU>
+  <en_US>Profile_%1</en_US>
+ </message>
+ <message>
+  <source>yyyy-MM-dd hh:mm</source>
+  <uk_UA>dd.MM.yyyy hh:mm</uk_UA>
+  <ru_RU>dd.MM.yyyy hh:mm</ru_RU>
+  <en_US>yyyy-MM-dd hh:mm</en_US>
+ </message>
+ <message>
+  <source>[N]</source>
+  <uk_UA>[Н]</uk_UA>
+  <ru_RU>[Н]</ru_RU>
+  <en_US>[N]</en_US>
+ </message>
+ <message>
+  <source>...</source>
+  <uk_UA>...</uk_UA>
+  <ru_RU>...</ru_RU>
+  <en_US>...</en_US>
+ </message>
+ <message>
+  <source>Device status:</source>
+  <uk_UA>Стан приладу:</uk_UA>
+  <ru_RU>Статус прибора:</ru_RU>
+  <en_US>Device status:</en_US>
+ </message>
+ <message>
+  <source>User management</source>
+  <uk_UA>Управління операторами</uk_UA>
+  <ru_RU>Управление операторами</ru_RU>
+  <en_US>User management</en_US>
+ </message>
+ <message>
+  <source>Size [um]</source>
+  <uk_UA>Розмір [мкм]</uk_UA>
+  <ru_RU>Размер [мкм]</ru_RU>
+  <en_US>Size [um]</en_US>
+ </message>
+ <message>
+  <source>&lt;html>&lt;head/>&lt;body>&lt;p>Select mesh&lt;/p>&lt;/body>&lt;/html></source>
+  <uk_UA>&lt;html>&lt;head/>&lt;body>&lt;p>Вибір сита&lt;/p>&lt;/body>&lt;/html></uk_UA>
+  <ru_RU>&lt;html>&lt;head/>&lt;body>&lt;p>Выбор сита&lt;/p>&lt;/body>&lt;/html></ru_RU>
+  <en_US>&lt;html>&lt;head/>&lt;body>&lt;p>Select mesh&lt;/p>&lt;/body>&lt;/html></en_US>
+ </message>
+ <message>
+  <source>Retype new password:</source>
+  <uk_UA>Введіть пароль вдруге:</uk_UA>
+  <ru_RU>Повторите пароль:</ru_RU>
+  <en_US>Retype new password:</en_US>
+ </message>
+ <message>
+  <source>St. fract str [N/mm^2]</source>
+  <uk_UA>СКВ пит. міцн  [Н/мм^2]</uk_UA>
+  <ru_RU>СКВ удельной прочности  [Н/мм^2]</ru_RU>
+  <en_US>St. fract str [N/mm^2]</en_US>
+ </message>
+ <message>
+  <source>Baud rate</source>
+  <uk_UA>Швидкість</uk_UA>
+  <ru_RU>Скорость</ru_RU>
+  <en_US>Baud rate</en_US>
+ </message>
+ <message>
+  <source>Edit data</source>
+  <uk_UA>Редагування даних</uk_UA>
+  <ru_RU>Редактирование данных</ru_RU>
+  <en_US>Edit data</en_US>
+ </message>
+ <message>
+  <source>yyyy-MM-dd</source>
+  <uk_UA>dd.MM.yyyy</uk_UA>
+  <ru_RU>dd.MM.yyyy</ru_RU>
+  <en_US>yyyy-MM-dd</en_US>
+ </message>
+ <message>
+  <source>Serial:1 Baud: 9600</source>
+  <uk_UA>Порт 1 Швидкість 9600</uk_UA>
+  <ru_RU></ru_RU>
+  <en_US>Serial:1 Baud: 9600</en_US>
+ </message>
+ <message>
+  <source>Export to pdf</source>
+  <uk_UA>Експорт у  pdf</uk_UA>
+  <ru_RU>Экспорт в PDF</ru_RU>
+  <en_US>Export to pdf</en_US>
+ </message>
+ <message>
+  <source>Name</source>
+  <uk_UA>Назва</uk_UA>
+  <ru_RU>Название</ru_RU>
+  <en_US>Name</en_US>
+ </message>
+ <message>
+  <source>Plot</source>
+  <uk_UA>Графік</uk_UA>
+  <ru_RU>График</ru_RU>
+  <en_US>Plot</en_US>
+ </message>
+ <message>
+  <source>Ctrl+/</source>
+  <uk_UA></uk_UA>
+  <ru_RU></ru_RU>
+  <en_US>Ctrl+/</en_US>
+ </message>
+ <message>
+  <source>&lt;html>&lt;head/>&lt;body>&lt;p>Select profile&lt;/p>&lt;/body>&lt;/html></source>
+  <uk_UA>&lt;html>&lt;head/>&lt;body>&lt;p>Вибір профіля&lt;/p>&lt;/body>&lt;/html></uk_UA>
+  <ru_RU>&lt;html>&lt;head/>&lt;body>&lt;p>Выбор профиля&lt;/p>&lt;/body>&lt;/html></ru_RU>
+  <en_US>&lt;html>&lt;head/>&lt;body>&lt;p>Select profile&lt;/p>&lt;/body>&lt;/html></en_US>
+ </message>
+ <message>
+  <source>Invalid password</source>
+  <uk_UA>Невірний пароль</uk_UA>
+  <ru_RU>Не правильный пароль</ru_RU>
+  <en_US>Invalid password</en_US>
+ </message>
+ <message>
+  <source>Resume measuring</source>
+  <uk_UA>Продовжити вимірювання</uk_UA>
+  <ru_RU>Запуск измерения</ru_RU>
+  <en_US>Resume measuring</en_US>
+ </message>
+ <message>
+  <source>Data</source>
+  <uk_UA>Данні</uk_UA>
+  <ru_RU>Дата</ru_RU>
+  <en_US>Data</en_US>
+ </message>
+ <message>
+  <source>next cassete waiting</source>
+  <uk_UA>очікування зміни касети</uk_UA>
+  <ru_RU>ожидание смены кассеты</ru_RU>
+  <en_US>next cassete waiting</en_US>
+ </message>
+ <message>
+  <source>User</source>
+  <uk_UA>Оператор</uk_UA>
+  <ru_RU>Оператор</ru_RU>
+  <en_US>User</en_US>
+ </message>
+ <message>
+  <source>Russian</source>
+  <uk_UA>Russian</uk_UA>
+  <ru_RU>Russian</ru_RU>
+  <en_US>Russian</en_US>
+ </message>
+ <message>
+  <source>Sessions</source>
+  <uk_UA>Проби</uk_UA>
+  <ru_RU>Пробы</ru_RU>
+  <en_US>Sessions</en_US>
+ </message>
+</translator>

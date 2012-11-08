@@ -69,7 +69,14 @@ DDAProcessing :: DDAProcessing(QObject *parent)
 /*----------------------------------------------------------------------------*/
 void DDAProcessing :: updateDictionary()
 {
-  dictionarySet("LANG", config->settings().localeName);
+  QString locale = config->settings().localeName;
+  int p = locale.indexOf('_');
+  QString lang = locale.left(p);
+  QString country = locale.mid(p + 1);
+
+  dictionarySet("LANG", lang);
+  dictionarySet("COUNTRY", country);
+  dictionarySet("LOCALE", locale);
 }
 /*----------------------------------------------------------------------------*/
 bool DDAProcessing :: open(DDAMeasureSession *session, Role role)
