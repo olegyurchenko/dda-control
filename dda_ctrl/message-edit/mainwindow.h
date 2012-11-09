@@ -38,6 +38,19 @@ protected slots:
   void onSearchTextChanged(QString);
   void updateMessages();
   void onSourceListDblClick();
+  void onSourceSearchDown();
+  void onSourceSearchUp();
+  void onNewLanguage();
+  void onCopyLanguage();
+  void onDelLanguage();
+  void onNextSource();
+  void onPrevSource();
+  void onNextLanguage();
+  void onPrevLanguage();
+  void onNewSource();
+  void onDelSource();
+
+
 
 };
 /*----------------------------------------------------------------------------*/

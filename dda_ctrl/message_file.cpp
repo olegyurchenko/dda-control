@@ -684,3 +684,93 @@ QString MessageFile :: message(const QString& source, const QString& l)
   return QString();
 }
 /*----------------------------------------------------------------------------*/
+void MessageFile :: deleteSource(const QString& source)
+{
+  MessageHash::Iterator mi = m_messageHash.find(source);
+  if(mi != m_messageHash.end())
+    m_messageHash.erase(mi);
+}
+/*----------------------------------------------------------------------------*/
+void MessageFile :: addSource(const QString& source)
+{
+  MessageHash::Iterator mi = m_messageHash.find(source);
+  if(mi == m_messageHash.end())
+  {
+    StringHash strings;
+    m_messageHash[source] = strings;
+  }
+}
+/*----------------------------------------------------------------------------*/
+void MessageFile :: deleteLang(const QString& lang)
+{
+  MessageHash::Iterator mi = m_messageHash.begin();
+  while(mi != m_messageHash.end())
+  {
+    StringHash &strings = mi.value();
+    StringHash::Iterator it = strings.find(lang);
+    if(it != strings.end())
+      strings.erase(it);
+    ++ mi;
+  }
+  int index = m_langList.indexOf(lang);
+  if(index >= 0)
+    m_langList.erase(m_langList.begin() + index);
+}
+/*----------------------------------------------------------------------------*/
+QStringList MessageFile :: langsList()
+{
+  QStringList lst;
+  StringHash::Iterator end = langHash.end();
+  for(StringHash::Iterator it = langHash.begin(); it != end; ++it)
+    lst.append(it.value());
+  return lst;
+}
+/*----------------------------------------------------------------------------*/
+QStringList MessageFile :: countryList()
+{
+  QStringList lst;
+  StringHash::Iterator end = countryHash.end();
+  for(StringHash::Iterator it = countryHash.begin(); it != end; ++it)
+    lst.append(it.value());
+  return lst;
+}
+/*----------------------------------------------------------------------------*/
+QString MessageFile :: mkLocale(int langIndex, int countryIndex)
+{
+  QString lang, country;
+  StringHash::Iterator end = langHash.end();
+  int index = 0;
+  for(StringHash::Iterator it = langHash.begin(); it != end; ++it, index ++)
+    if(index == langIndex)
+    {
+      lang = it.key();
+      break;
+    }
+
+  end = countryHash.end();
+  index = 0;
+  for(StringHash::Iterator it = countryHash.begin(); it != end; ++it, index ++)
+    if(index == countryIndex)
+    {
+      country = it.key();
+      break;
+    }
+
+  if(country.isEmpty())
+    return lang;
+  return QString("%1_%2").arg(lang).arg(country);
+}
+/*----------------------------------------------------------------------------*/
+QString MessageFile :: locale(QString txt)
+{
+  int p = txt.indexOf('_');
+  QString lang = txt.left(p);
+  QString country = txt.mid(p + 1);
+
+  if(country.isEmpty())
+    return langHash[lang];
+  if(lang.isEmpty())
+    return countryHash[country];
+  return QString("%1 - %2").arg(langHash[lang]).arg(countryHash[country]);
+}
+/*----------------------------------------------------------------------------*/

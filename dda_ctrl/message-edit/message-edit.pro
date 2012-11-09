@@ -12,12 +12,15 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    ../message_file.cpp
+    ../message_file.cpp \
+    languagedialog.cpp
 
 HEADERS  += mainwindow.h \
-    ../message_file.h
+    ../message_file.h \
+    languagedialog.h
 
-FORMS    += mainwindow.ui
+FORMS    += mainwindow.ui \
+    languagedialog.ui
 
 RESOURCES += \
     resource.qrc

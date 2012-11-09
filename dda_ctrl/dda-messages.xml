@@ -36,12 +36,6 @@
   <en_US>Ins</en_US>
  </message>
  <message>
-  <source>Alt+C</source>
-  <uk_UA></uk_UA>
-  <ru_RU></ru_RU>
-  <en_US>Alt+C</en_US>
- </message>
- <message>
   <source>[um]</source>
   <uk_UA>[мкм]</uk_UA>
   <ru_RU>[мкм]</ru_RU>
@@ -72,28 +66,10 @@
   <en_US>Ctrl+D</en_US>
  </message>
  <message>
-  <source>Ctrl+E</source>
-  <uk_UA></uk_UA>
-  <ru_RU></ru_RU>
-  <en_US>Ctrl+E</en_US>
- </message>
- <message>
   <source>Save File</source>
   <uk_UA>Зберегти файл</uk_UA>
   <ru_RU>Сохранить файл</ru_RU>
   <en_US>Save File</en_US>
- </message>
- <message>
-  <source>Ctrl+F</source>
-  <uk_UA></uk_UA>
-  <ru_RU></ru_RU>
-  <en_US>Ctrl+F</en_US>
- </message>
- <message>
-  <source>Alt+P</source>
-  <uk_UA></uk_UA>
-  <ru_RU></ru_RU>
-  <en_US>Alt+P</en_US>
  </message>
  <message>
   <source>Lot</source>
@@ -106,12 +82,6 @@
   <uk_UA>Ви впевнені у вилученні оператора  '%1' ?</uk_UA>
   <ru_RU>Вы уверены в том, что хотите удалить оператора %1 ?</ru_RU>
   <en_US>Are you shure to delte user '%1' ?</en_US>
- </message>
- <message>
-  <source>Alt+S</source>
-  <uk_UA></uk_UA>
-  <ru_RU></ru_RU>
-  <en_US>Alt+S</en_US>
  </message>
  <message>
   <source>Error</source>
@@ -138,12 +108,6 @@
   <en_US>Delete user button</en_US>
  </message>
  <message>
-  <source>Ctrl+P</source>
-  <uk_UA>Ctrl+P</uk_UA>
-  <ru_RU></ru_RU>
-  <en_US>Ctrl+P</en_US>
- </message>
- <message>
   <source>>=</source>
   <uk_UA>>=</uk_UA>
   <ru_RU>>=</ru_RU>
@@ -168,12 +132,6 @@
   <en_US>Default profile</en_US>
  </message>
  <message>
-  <source>Ctrl+R</source>
-  <uk_UA></uk_UA>
-  <ru_RU></ru_RU>
-  <en_US>Ctrl+R</en_US>
- </message>
- <message>
   <source>Database file</source>
   <uk_UA>Файл бази даних</uk_UA>
   <ru_RU>Файл базы данных</ru_RU>
@@ -186,22 +144,10 @@
   <en_US>Add user button</en_US>
  </message>
  <message>
-  <source>Ctrl+S</source>
-  <uk_UA></uk_UA>
-  <ru_RU></ru_RU>
-  <en_US>Ctrl+S</en_US>
- </message>
- <message>
   <source>Print</source>
   <uk_UA>Друк</uk_UA>
   <ru_RU>Печать</ru_RU>
   <en_US>Print</en_US>
- </message>
- <message>
-  <source>Ctrl+U</source>
-  <uk_UA></uk_UA>
-  <ru_RU></ru_RU>
-  <en_US>Ctrl+U</en_US>
  </message>
  <message>
   <source>Session</source>
@@ -214,12 +160,6 @@
   <uk_UA>Мова</uk_UA>
   <ru_RU>Язык</ru_RU>
   <en_US>Language</en_US>
- </message>
- <message>
-  <source>Ctrl+V</source>
-  <uk_UA></uk_UA>
-  <ru_RU></ru_RU>
-  <en_US>Ctrl+V</en_US>
  </message>
  <message>
   <source>Manage users</source>
@@ -238,12 +178,6 @@
   <uk_UA>Зернистість</uk_UA>
   <ru_RU>Зернистость</ru_RU>
   <en_US>Grit</en_US>
- </message>
- <message>
-  <source>Ctrl+X</source>
-  <uk_UA>Ctrl+X</uk_UA>
-  <ru_RU></ru_RU>
-  <en_US>Ctrl+X</en_US>
  </message>
  <message>
   <source>Delete</source>
@@ -277,6 +211,8 @@
  </message>
  <message>
   <source>English</source>
+  <uk_UA>Англiйська</uk_UA>
+  <ru_RU>Английский</ru_RU>
   <en_US>English</en_US>
  </message>
  <message>
@@ -318,7 +254,7 @@
  <message>
   <source>Pdf files (*.pdf)</source>
   <uk_UA>Файли PDF (*.pdf)</uk_UA>
-  <ru_RU>Файлы PDF</ru_RU>
+  <ru_RU>Файлы PDF (*.pdf)</ru_RU>
   <en_US>Pdf files (*.pdf)</en_US>
  </message>
  <message>
@@ -969,12 +905,6 @@
   <en_US>Method '%1' not found</en_US>
  </message>
  <message>
-  <source>GroupBox</source>
-  <uk_UA></uk_UA>
-  <ru_RU></ru_RU>
-  <en_US>GroupBox</en_US>
- </message>
- <message>
   <source>Distribution of the strength of grain</source>
   <uk_UA>Розподіл по міцності</uk_UA>
   <ru_RU>Распределение по прочности</ru_RU>
@@ -1051,12 +981,6 @@
   <uk_UA>[Н]</uk_UA>
   <ru_RU>[Н]</ru_RU>
   <en_US>[N]</en_US>
- </message>
- <message>
-  <source>...</source>
-  <uk_UA>...</uk_UA>
-  <ru_RU>...</ru_RU>
-  <en_US>...</en_US>
  </message>
  <message>
   <source>Device status:</source>
@@ -1137,12 +1061,6 @@
   <en_US>Plot</en_US>
  </message>
  <message>
-  <source>Ctrl+/</source>
-  <uk_UA></uk_UA>
-  <ru_RU></ru_RU>
-  <en_US>Ctrl+/</en_US>
- </message>
- <message>
   <source>&lt;html>&lt;head/>&lt;body>&lt;p>Select profile&lt;/p>&lt;/body>&lt;/html></source>
   <uk_UA>&lt;html>&lt;head/>&lt;body>&lt;p>Вибір профіля&lt;/p>&lt;/body>&lt;/html></uk_UA>
   <ru_RU>&lt;html>&lt;head/>&lt;body>&lt;p>Выбор профиля&lt;/p>&lt;/body>&lt;/html></ru_RU>
@@ -1180,8 +1098,8 @@
  </message>
  <message>
   <source>Russian</source>
-  <uk_UA>Russian</uk_UA>
-  <ru_RU>Russian</ru_RU>
+  <uk_UA>Росiйський</uk_UA>
+  <ru_RU>Русский</ru_RU>
   <en_US>Russian</en_US>
  </message>
  <message>

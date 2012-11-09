@@ -34,7 +34,6 @@ protected:
   QString m_lang;
   QString m_errorString;
 
-  void addLang(const QString& lang);
 
 public:
   MessageFile();
@@ -48,6 +47,17 @@ public:
   QStringList langList() {return m_langList;}
   QStringList sourceList();
   QString message(const QString& source, const QString& lang = QString());
+  void deleteSource(const QString& source);
+  void addSource(const QString& source);
+
+  void deleteLang(const QString& lang);
+  void addLang(const QString& lang);
+
+  QStringList countryList();
+  QStringList langsList();
+  QString mkLocale(int langIndex, int countryIndex);
+  QString locale(QString lang);
+
 };
 /*----------------------------------------------------------------------------*/
 #endif /*MESSAGE_FILE_H_1352380226*/
