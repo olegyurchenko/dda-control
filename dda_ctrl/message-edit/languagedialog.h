@@ -29,6 +29,7 @@ private:
 protected slots:
   void onLangChanged(int);
   void onCountryChanged(int);
+  void onLocaleChanged(QString);
 };
 /*----------------------------------------------------------------------------*/
 

@@ -63,7 +63,7 @@
      <item row="5" column="1">
       <widget class="QLineEdit" name="localeEdit">
        <property name="readOnly">
-        <bool>true</bool>
+        <bool>false</bool>
        </property>
       </widget>
      </item>
@@ -97,8 +97,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>222</x>
-     <y>141</y>
+     <x>226</x>
+     <y>210</y>
     </hint>
     <hint type="destinationlabel">
      <x>157</x>
@@ -113,8 +113,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>290</x>
-     <y>147</y>
+     <x>294</x>
+     <y>210</y>
     </hint>
     <hint type="destinationlabel">
      <x>286</x>
@@ -129,8 +129,8 @@
    <slot>onLangChanged(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>169</x>
-     <y>16</y>
+     <x>323</x>
+     <y>40</y>
     </hint>
     <hint type="destinationlabel">
      <x>29</x>
@@ -145,8 +145,8 @@
    <slot>onCountryChanged(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>179</x>
-     <y>57</y>
+     <x>333</x>
+     <y>83</y>
     </hint>
     <hint type="destinationlabel">
      <x>47</x>
@@ -154,9 +154,26 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>localeEdit</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>LanguageDialog</receiver>
+   <slot>onLocaleChanged(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>177</x>
+     <y>111</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>38</x>
+     <y>130</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>onLangChanged(int)</slot>
   <slot>onCountryChanged(int)</slot>
+  <slot>onLocaleChanged(QString)</slot>
  </slots>
 </ui>

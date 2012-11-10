@@ -5,6 +5,7 @@
 #include <message_file.h>
 #include <languagedialog.h>
 #include <QInputDialog>
+#include <QCloseEvent>
 /*----------------------------------------------------------------------------*/
 MainWindow::MainWindow(QWidget *parent) :
   QMainWindow(parent),
@@ -12,12 +13,49 @@ MainWindow::MainWindow(QWidget *parent) :
 {
   ui->setupUi(this);
   m_messageFile = new MessageFile;
+  m_dataModified = false;
 }
 /*----------------------------------------------------------------------------*/
 MainWindow::~MainWindow()
 {
   delete ui;
   delete m_messageFile;
+}
+/*----------------------------------------------------------------------------*/
+bool MainWindow::midifiedQuestion()
+{
+  if(m_dataModified)
+  {
+    switch(QMessageBox::question(this,
+                                  tr("Data modified"),
+                                  tr("Data was modified. Do you whant to save message file ?"),
+                                  QMessageBox::Save | QMessageBox::Cancel | QMessageBox::Discard,
+                                  QMessageBox::Cancel))
+    {
+    case QMessageBox::Save:
+      onFileSave();
+      return !m_dataModified;
+    case QMessageBox::Discard:
+      m_dataModified = false;
+      return true;
+    case QMessageBox::Cancel:
+    default:
+      return false;
+    }
+    return false;
+  }
+  return true;
+}
+/*----------------------------------------------------------------------------*/
+void MainWindow::closeEvent(QCloseEvent *e)
+{
+  if(!midifiedQuestion())
+  {
+    e->ignore();
+    return;
+  }
+  m_dataModified = false;
+  QMainWindow::closeEvent(e);
 }
 /*----------------------------------------------------------------------------*/
 void MainWindow::updateMessages()
@@ -38,10 +76,13 @@ void MainWindow::updateMessages()
   ui->actionCopyLanguage->setEnabled(!m_langList.empty());
   ui->actionDeleteLanguage->setEnabled(!m_langList.empty());
   ui->actionDeleteSource->setEnabled(!m_sourceList.empty());
+  m_dataModified = false;
 }
 /*----------------------------------------------------------------------------*/
 void MainWindow::onFileNew()
 {
+  if(!midifiedQuestion())
+    return;
   delete m_messageFile;
   m_messageFile = new MessageFile;
   m_fileName.clear();
@@ -50,6 +91,8 @@ void MainWindow::onFileNew()
 /*----------------------------------------------------------------------------*/
 void MainWindow::onFileOpen()
 {
+  if(!midifiedQuestion())
+    return;
   QString fileName = QFileDialog::getOpenFileName(this,
        tr("Open File"), "", tr("XML Files (*.xml);;All files (*)"));
   if(fileName.isEmpty())
@@ -82,6 +125,7 @@ void MainWindow::onFileSave()
     QMessageBox::critical(this, tr("Error save file"), tr("Error save file '%1': %2").arg(m_fileName).arg(m_messageFile->errorString()));
     return;
   }
+  m_dataModified = false;
 }
 /*----------------------------------------------------------------------------*/
 void MainWindow::onFileSaveAs()
@@ -97,7 +141,7 @@ void MainWindow::onFileExit()
 /*----------------------------------------------------------------------------*/
 void MainWindow::onLangChanged(int)
 {
-  if(ui->sourceList->currentRow() >= 0)
+  if(ui->sourceList->currentRow() >= 0 && ui->langCombo->currentIndex() >= 0)
   {
     QString source = m_sourceList[ui->sourceList->currentRow()];
     QString lang = m_langList[ui->langCombo->currentIndex()];
@@ -107,17 +151,22 @@ void MainWindow::onLangChanged(int)
 /*----------------------------------------------------------------------------*/
 void MainWindow::onTranslateChanged(QString txt)
 {
-  if(ui->sourceList->currentRow() >= 0)
+  if(ui->sourceList->currentRow() >= 0 && ui->langCombo->currentIndex() >= 0)
   {
     QString source = m_sourceList[ui->sourceList->currentRow()];
     QString lang = m_langList[ui->langCombo->currentIndex()];
-    m_messageFile->setMessage(source, txt, lang);
+    if(ui->translateEdit->isModified())
+    {
+      m_messageFile->setMessage(source, txt, lang);
+      m_dataModified = true;
+      ui->translateEdit->setModified(false);
+    }
   }
 }
 /*----------------------------------------------------------------------------*/
 void MainWindow::onSourceChanged(int)
 {
-  if(ui->sourceList->currentRow() >= 0)
+  if(ui->sourceList->currentRow() >= 0 && ui->langCombo->currentIndex() >= 0)
   {
     QString source = m_sourceList[ui->sourceList->currentRow()];
     QString lang = m_langList[ui->langCombo->currentIndex()];
@@ -212,6 +261,7 @@ void MainWindow::onNewLanguage()
   {
     m_messageFile->addLang(dlg.lang());
     updateMessages();
+    m_dataModified = true;
   }
 }
 /*----------------------------------------------------------------------------*/
@@ -230,6 +280,7 @@ void MainWindow::onCopyLanguage()
       m_messageFile->setMessage(m_sourceList[i], s, lang);
     }
     updateMessages();
+    m_dataModified = true;
   }
 }
 /*----------------------------------------------------------------------------*/
@@ -238,6 +289,7 @@ void MainWindow::onDelLanguage()
   QString lang = m_langList[ui->langCombo->currentIndex()];
   m_messageFile->deleteLang(lang);
   updateMessages();
+  m_dataModified = true;
 }
 /*----------------------------------------------------------------------------*/
 void MainWindow::onNextSource()
@@ -285,6 +337,8 @@ void MainWindow::onNewSource()
     m_messageFile->addSource(text);
     m_sourceList.append(text);
     ui->sourceList->addItem(text);
+    ui->actionDeleteSource->setEnabled(!m_sourceList.empty());
+    m_dataModified = true;
   }
 }
 /*----------------------------------------------------------------------------*/
@@ -296,6 +350,8 @@ void MainWindow::onDelSource()
     m_messageFile->deleteSource(m_sourceList[index]);
     ui->sourceList->model()->removeRow(index);
     m_sourceList.erase(m_sourceList.begin() + index);
+    ui->actionDeleteSource->setEnabled(!m_sourceList.empty());
+    m_dataModified = true;
   }
 }
 /*----------------------------------------------------------------------------*/

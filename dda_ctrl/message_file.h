@@ -56,7 +56,9 @@ public:
   QStringList countryList();
   QStringList langsList();
   QString mkLocale(int langIndex, int countryIndex);
-  QString locale(QString lang);
+  QString locale(const QString& lang);
+  QString language(const QString& l);
+  QString country(const QString& c);
 
 };
 /*----------------------------------------------------------------------------*/

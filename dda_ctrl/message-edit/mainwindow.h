@@ -19,6 +19,9 @@ protected:
   MessageFile *m_messageFile;
   QStringList m_langList;
   QStringList m_sourceList;
+  bool m_dataModified;
+  bool midifiedQuestion();
+  virtual void closeEvent(QCloseEvent *e);
 public:
   explicit MainWindow(QWidget *parent = 0);
   ~MainWindow();

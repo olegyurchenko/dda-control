@@ -761,16 +761,32 @@ QString MessageFile :: mkLocale(int langIndex, int countryIndex)
   return QString("%1_%2").arg(lang).arg(country);
 }
 /*----------------------------------------------------------------------------*/
-QString MessageFile :: locale(QString txt)
+QString MessageFile :: locale(const QString& txt)
 {
   int p = txt.indexOf('_');
   QString lang = txt.left(p);
-  QString country = txt.mid(p + 1);
+  QString cntr = txt.mid(p + 1);
 
-  if(country.isEmpty())
-    return langHash[lang];
+  if(cntr.isEmpty())
+    return language(lang);
   if(lang.isEmpty())
-    return countryHash[country];
-  return QString("%1 - %2").arg(langHash[lang]).arg(countryHash[country]);
+    return country(cntr);
+  return QString("%1 - %2").arg(language(lang)).arg(country(cntr));
+}
+/*----------------------------------------------------------------------------*/
+QString MessageFile :: language(const QString& l)
+{
+  StringHash::Iterator it = langHash.find(l);
+  if(it != langHash.end())
+    return it.value();
+  return "";
+}
+/*----------------------------------------------------------------------------*/
+QString MessageFile :: country(const QString& c)
+{
+  StringHash::Iterator it = countryHash.find(c);
+  if(it != countryHash.end())
+    return it.value();
+  return "";
 }
 /*----------------------------------------------------------------------------*/
