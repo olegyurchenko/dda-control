@@ -482,6 +482,8 @@ MessageFile :: MessageFile()
   countryHash["BL\0"] = "SaintBarthelemy";
   countryHash["MF\0"] = "SaintMartin";
   countryHash["419"] = "LatinAmericaAndTheCaribbean";
+
+  m_modified = false;
 }
 /*----------------------------------------------------------------------------*/
 void MessageFile :: addLang(const QString& locale)
@@ -542,6 +544,7 @@ bool MessageFile :: load(const QString& fileName)
     }
   }
 
+  m_modified = false;
   return true;
 }
 /*----------------------------------------------------------------------------*/
@@ -602,6 +605,7 @@ bool MessageFile :: save(const QString& fileName)
     m_errorString = confFile.errorString();
     return false;
   }
+  m_modified = false;
   return true;
 }
 /*----------------------------------------------------------------------------*/
@@ -622,13 +626,24 @@ void MessageFile :: setMessage(const QString& source, const QString& msg, const 
   if(mi != m_messageHash.end())
   {
     StringHash &strings = mi.value();
-    strings[lang] = msg;
+    StringHash::Iterator it = strings.find(lang);
+    if(it == strings.end())
+    {
+      strings.insert(lang, msg);
+      m_modified = true;
+    }
+    else
+    {
+      m_modified = m_modified || it.value() != msg;
+      it.value() = msg;
+    }
   }
   else
   {
     StringHash strings;
     strings[lang] = msg;
     m_messageHash[source] = strings;
+    m_modified = true;
   }
 }
 /*----------------------------------------------------------------------------*/
@@ -645,13 +660,17 @@ void MessageFile :: addMessage(const QString& source, const QString& msg, const 
     StringHash &strings = mi.value();
     StringHash::Iterator it = strings.find(lang);
     if(it == strings.end())
+    {
       strings.insert(lang, msg);
+      m_modified = true;
+    }
   }
   else
   {
     StringHash strings;
     strings[lang] = msg;
     m_messageHash[source] = strings;
+    m_modified = true;
   }
 }
 /*----------------------------------------------------------------------------*/
@@ -688,7 +707,10 @@ void MessageFile :: deleteSource(const QString& source)
 {
   MessageHash::Iterator mi = m_messageHash.find(source);
   if(mi != m_messageHash.end())
+  {
     m_messageHash.erase(mi);
+    m_modified = true;
+  }
 }
 /*----------------------------------------------------------------------------*/
 void MessageFile :: addSource(const QString& source)
@@ -698,6 +720,7 @@ void MessageFile :: addSource(const QString& source)
   {
     StringHash strings;
     m_messageHash[source] = strings;
+    m_modified = true;
   }
 }
 /*----------------------------------------------------------------------------*/
@@ -709,7 +732,10 @@ void MessageFile :: deleteLang(const QString& lang)
     StringHash &strings = mi.value();
     StringHash::Iterator it = strings.find(lang);
     if(it != strings.end())
+    {
       strings.erase(it);
+      m_modified = true;
+    }
     ++ mi;
   }
   int index = m_langList.indexOf(lang);

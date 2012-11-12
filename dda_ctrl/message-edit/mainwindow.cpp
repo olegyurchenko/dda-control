@@ -13,7 +13,6 @@ MainWindow::MainWindow(QWidget *parent) :
 {
   ui->setupUi(this);
   m_messageFile = new MessageFile;
-  m_dataModified = false;
 }
 /*----------------------------------------------------------------------------*/
 MainWindow::~MainWindow()
@@ -24,7 +23,7 @@ MainWindow::~MainWindow()
 /*----------------------------------------------------------------------------*/
 bool MainWindow::midifiedQuestion()
 {
-  if(m_dataModified)
+  if(m_messageFile->isModified())
   {
     switch(QMessageBox::question(this,
                                   tr("Data modified"),
@@ -34,9 +33,9 @@ bool MainWindow::midifiedQuestion()
     {
     case QMessageBox::Save:
       onFileSave();
-      return !m_dataModified;
+      return !m_messageFile->isModified();
     case QMessageBox::Discard:
-      m_dataModified = false;
+      m_messageFile->setModified(false);
       return true;
     case QMessageBox::Cancel:
     default:
@@ -54,7 +53,7 @@ void MainWindow::closeEvent(QCloseEvent *e)
     e->ignore();
     return;
   }
-  m_dataModified = false;
+  m_messageFile->setModified(false);
   QMainWindow::closeEvent(e);
 }
 /*----------------------------------------------------------------------------*/
@@ -76,7 +75,6 @@ void MainWindow::updateMessages()
   ui->actionCopyLanguage->setEnabled(!m_langList.empty());
   ui->actionDeleteLanguage->setEnabled(!m_langList.empty());
   ui->actionDeleteSource->setEnabled(!m_sourceList.empty());
-  m_dataModified = false;
 }
 /*----------------------------------------------------------------------------*/
 void MainWindow::onFileNew()
@@ -125,7 +123,6 @@ void MainWindow::onFileSave()
     QMessageBox::critical(this, tr("Error save file"), tr("Error save file '%1': %2").arg(m_fileName).arg(m_messageFile->errorString()));
     return;
   }
-  m_dataModified = false;
 }
 /*----------------------------------------------------------------------------*/
 void MainWindow::onFileSaveAs()
@@ -158,7 +155,6 @@ void MainWindow::onTranslateChanged(QString txt)
     if(ui->translateEdit->isModified())
     {
       m_messageFile->setMessage(source, txt, lang);
-      m_dataModified = true;
       ui->translateEdit->setModified(false);
     }
   }
@@ -261,7 +257,7 @@ void MainWindow::onNewLanguage()
   {
     m_messageFile->addLang(dlg.lang());
     updateMessages();
-    m_dataModified = true;
+    m_messageFile->setModified(true);
   }
 }
 /*----------------------------------------------------------------------------*/
@@ -280,7 +276,6 @@ void MainWindow::onCopyLanguage()
       m_messageFile->setMessage(m_sourceList[i], s, lang);
     }
     updateMessages();
-    m_dataModified = true;
   }
 }
 /*----------------------------------------------------------------------------*/
@@ -289,7 +284,7 @@ void MainWindow::onDelLanguage()
   QString lang = m_langList[ui->langCombo->currentIndex()];
   m_messageFile->deleteLang(lang);
   updateMessages();
-  m_dataModified = true;
+  m_messageFile->setModified(false);
 }
 /*----------------------------------------------------------------------------*/
 void MainWindow::onNextSource()
@@ -338,7 +333,7 @@ void MainWindow::onNewSource()
     m_sourceList.append(text);
     ui->sourceList->addItem(text);
     ui->actionDeleteSource->setEnabled(!m_sourceList.empty());
-    m_dataModified = true;
+    m_messageFile->setModified(true);
   }
 }
 /*----------------------------------------------------------------------------*/
@@ -351,7 +346,126 @@ void MainWindow::onDelSource()
     ui->sourceList->model()->removeRow(index);
     m_sourceList.erase(m_sourceList.begin() + index);
     ui->actionDeleteSource->setEnabled(!m_sourceList.empty());
-    m_dataModified = true;
+    m_messageFile->setModified(true);
+  }
+}
+/*----------------------------------------------------------------------------*/
+void MainWindow::onSearchTranslatedChanged(QString txt)
+{
+  if(ui->sourceList->currentRow() < 0 || ui->langCombo->currentIndex() < 0)
+    return;
+
+  if(txt.isEmpty())
+  {
+    ui->actionSearchNextTranslation->setEnabled(false);
+    ui->actionSearchPreviosTranslation->setEnabled(false);
+    return;
+  }
+  else
+  {
+    ui->actionSearchNextTranslation->setEnabled(true);
+    ui->actionSearchPreviosTranslation->setEnabled(true);
+  }
+
+  int index = ui->sourceList->currentRow();
+  int size = m_sourceList.size();
+  for(int i = index; i < size; i++)
+  {
+    QString trans = m_messageFile->message(m_sourceList[i], m_langList[ui->langCombo->currentIndex()]);
+    if(trans.indexOf(txt, 0, Qt::CaseInsensitive) != -1)
+    {
+      ui->sourceList->setCurrentRow(i);
+      break;
+    }
+  }
+}
+/*----------------------------------------------------------------------------*/
+void MainWindow::onTranslatedSearchDown()
+{
+  if(ui->sourceList->currentRow() < 0 || ui->langCombo->currentIndex() < 0)
+    return;
+
+  int index = ui->sourceList->currentRow();
+  int size = m_sourceList.size();
+  if(index >= size - 1)
+    index = -1;
+
+  QString txt = ui->translateSearchEdit->text();
+  for(int i = index + 1; i < size; i++)
+  {
+    QString trans = m_messageFile->message(m_sourceList[i], m_langList[ui->langCombo->currentIndex()]);
+    if(trans.indexOf(txt, 0, Qt::CaseInsensitive) != -1)
+    {
+      ui->sourceList->setCurrentRow(i);
+      break;
+    }
+  }
+}
+/*----------------------------------------------------------------------------*/
+void MainWindow::onTranslatedSearchUp()
+{
+  if(ui->sourceList->currentRow() < 0 || ui->langCombo->currentIndex() < 0)
+    return;
+
+  int index = ui->sourceList->currentRow();
+  int size = m_sourceList.size();
+
+  if(index == 0)
+    index = size;
+
+  QString txt = ui->translateSearchEdit->text();
+  for(int i = index - 1; i >= 0; i--)
+  {
+    QString trans = m_messageFile->message(m_sourceList[i], m_langList[ui->langCombo->currentIndex()]);
+    if(trans.indexOf(txt, 0, Qt::CaseInsensitive) != -1)
+    {
+      ui->sourceList->setCurrentRow(i);
+      break;
+    }
+  }
+}
+/*----------------------------------------------------------------------------*/
+void MainWindow::onNextUntranslated()
+{
+  if(ui->sourceList->currentRow() < 0 || ui->langCombo->currentIndex() < 0)
+    return;
+
+  int index = ui->sourceList->currentRow();
+  int size = m_sourceList.size();
+  if(index >= size - 1)
+    index = -1;
+
+  for(int i = index + 1; i < size; i++)
+  {
+    QString trans = m_messageFile->message(m_sourceList[i], m_langList[ui->langCombo->currentIndex()]);
+    if(trans.isEmpty())
+    {
+      ui->sourceList->setCurrentRow(i);
+      break;
+    }
+  }
+}
+/*----------------------------------------------------------------------------*/
+void MainWindow::onPreviosUntranslated()
+{
+  if(ui->sourceList->currentRow() < 0 || ui->langCombo->currentIndex() < 0)
+    return;
+
+  int index = ui->sourceList->currentRow();
+  int size = m_sourceList.size();
+
+  if(index == 0)
+    index = size;
+
+  QString txt = ui->translateSearchEdit->text();
+  for(int i = index - 1; i >= 0; i--)
+  {
+    QString trans = m_messageFile->message(m_sourceList[i], m_langList[ui->langCombo->currentIndex()]);
+    if(trans.isEmpty())
+    {
+      ui->sourceList->setCurrentRow(i);
+      break;
+    }
   }
 }
 /*----------------------------------------------------------------------------*/

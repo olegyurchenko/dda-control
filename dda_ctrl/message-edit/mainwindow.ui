@@ -76,6 +76,26 @@
       </property>
       <layout class="QVBoxLayout" name="verticalLayout_2">
        <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_5">
+         <item>
+          <widget class="QLineEdit" name="translateSearchEdit">
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Search translated text&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QToolBar" name="translateToolBar_2">
+           <property name="windowTitle">
+            <string>toolBar</string>
+           </property>
+           <addaction name="actionSearchNextTranslation"/>
+           <addaction name="actionSearchPreviosTranslation"/>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
         <layout class="QHBoxLayout" name="horizontalLayout_2">
          <item>
           <widget class="QComboBox" name="langCombo">
@@ -117,7 +137,7 @@
      <x>0</x>
      <y>0</y>
      <width>657</width>
-     <height>21</height>
+     <height>24</height>
     </rect>
    </property>
    <widget class="QMenu" name="menu_File">
@@ -139,6 +159,9 @@
     </property>
     <addaction name="actionNextSource"/>
     <addaction name="actionPrevios_source"/>
+    <addaction name="separator"/>
+    <addaction name="actionNextUntranslated"/>
+    <addaction name="actionPreviosUntranslated"/>
     <addaction name="separator"/>
     <addaction name="actionNewSource"/>
     <addaction name="separator"/>
@@ -357,6 +380,52 @@
     <string>Ctrl+Del</string>
    </property>
   </action>
+  <action name="actionSearchNextTranslation">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/go-down.png</normaloff>:/go-down.png</iconset>
+   </property>
+   <property name="text">
+    <string>Search next translation</string>
+   </property>
+   <property name="toolTip">
+    <string>Search next translation</string>
+   </property>
+  </action>
+  <action name="actionSearchPreviosTranslation">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/go-up.png</normaloff>:/go-up.png</iconset>
+   </property>
+   <property name="text">
+    <string>Search previos translation</string>
+   </property>
+   <property name="toolTip">
+    <string>Search previos translated text</string>
+   </property>
+  </action>
+  <action name="actionNextUntranslated">
+   <property name="text">
+    <string>Next untranslated text</string>
+   </property>
+   <property name="toolTip">
+    <string>Next untranslated text</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Return</string>
+   </property>
+  </action>
+  <action name="actionPreviosUntranslated">
+   <property name="text">
+    <string>Previos untranslated</string>
+   </property>
+   <property name="toolTip">
+    <string>Previos untranslated</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+Return</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <resources>
@@ -370,8 +439,8 @@
    <slot>onLangChanged(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>368</x>
-     <y>104</y>
+     <x>485</x>
+     <y>155</y>
     </hint>
     <hint type="destinationlabel">
      <x>460</x>
@@ -594,8 +663,8 @@
    <slot>onTranslateChanged(QString)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>487</x>
-     <y>129</y>
+     <x>645</x>
+     <y>188</y>
     </hint>
     <hint type="destinationlabel">
      <x>635</x>
@@ -699,6 +768,86 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>translateSearchEdit</sender>
+   <signal>textChanged(QString)</signal>
+   <receiver>MainWindow</receiver>
+   <slot>onSearchTranslatedChanged(QString)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>417</x>
+     <y>113</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>276</x>
+     <y>78</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionSearchNextTranslation</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>onTranslatedSearchDown()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>328</x>
+     <y>266</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionSearchPreviosTranslation</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>onTranslatedSearchUp()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>328</x>
+     <y>266</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionNextUntranslated</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>onNextUntranslated()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>328</x>
+     <y>266</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>actionPreviosUntranslated</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>onPreviosUntranslated()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>328</x>
+     <y>266</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>onFileNew()</slot>
@@ -722,5 +871,10 @@
   <slot>onPrevLanguage()</slot>
   <slot>onNewSource()</slot>
   <slot>onDelSource()</slot>
+  <slot>onSearchTranslatedChanged(QString)</slot>
+  <slot>onTranslatedSearchDown()</slot>
+  <slot>onTranslatedSearchUp()</slot>
+  <slot>onNextUntranslated()</slot>
+  <slot>onPreviosUntranslated()</slot>
  </slots>
 </ui>

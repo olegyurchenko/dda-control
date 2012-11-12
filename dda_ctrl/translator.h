@@ -19,16 +19,16 @@
 #include <QTranslator>
 #include <QHash>
 
-class QDomDocument;
+class MessageFile;
 class Translator : public QTranslator
 {
 protected:
-  QDomDocument *root;
-  typedef QHash<unsigned, QString> MessageTable;
-  MessageTable m_messageTable;
-  QString m_lang;
+  MessageFile *m_messageFile;
   QString m_errorString;
-  static unsigned hash(const char *text);
+  QString m_lang;
+  QString m_directory;
+  QString m_fileName;
+  void saveModified();
 public:
   Translator(QObject *parent = 0);
   virtual ~Translator();

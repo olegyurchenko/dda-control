@@ -14,35 +14,48 @@
 */
 /*----------------------------------------------------------------------------*/
 #include "translator.h"
-#include <QDomDocument>
-#include <QFile>
 #include <QDir>
 #include <QCoreApplication>
+#include <message_file.h>
 
-static unsigned crc32(const unsigned char *buffer, int len);
 /*----------------------------------------------------------------------------*/
 Translator :: Translator(QObject *parent)
   : QTranslator(parent)
 {
-  root = new QDomDocument;
+  m_messageFile = new MessageFile;
   m_lang = "C";
 }
 /*----------------------------------------------------------------------------*/
 Translator :: ~Translator()
 {
-  delete root;
+  saveModified();
+  delete m_messageFile;
+}
+/*----------------------------------------------------------------------------*/
+void Translator :: saveModified()
+{
+  if(m_messageFile->isModified())
+  {
+    int p = m_fileName.indexOf('.');
+    if(p < 0)
+      return;
+    QString fileName = QString("%1.%2.%3").arg(m_fileName.left(p), "new", m_fileName.mid(p + 1));
+    QDir dir;
+    dir.setPath(m_directory);
+    m_messageFile->save(dir.filePath(fileName));
+  }
 }
 /*----------------------------------------------------------------------------*/
 QString Translator :: translate(const char *, const char *sourceText, const char *) const
 {
+  QString src = QString::fromUtf8(sourceText);
   if(m_lang == "C")
-    return QString::fromUtf8(sourceText);
+    return src;
 
-  unsigned h = hash(sourceText);
-  MessageTable::ConstIterator it = m_messageTable.find(h);
-  if(it != m_messageTable.end())
-    return it.value();
-  return QString();
+  QString result = m_messageFile->message(src, m_lang);
+  if(result.isEmpty())
+    m_messageFile->addMessage(src, "", m_lang);
+  return result;
 }
 /*----------------------------------------------------------------------------*/
 bool Translator :: load(const QString& filename, const QString& directory)
@@ -54,40 +67,20 @@ bool Translator :: load(const QString& filename, const QString& directory)
   else
     dir.setPath(directory);
 
-  QFile confFile(dir.filePath(filename));
-
-  if(!confFile.open(QIODevice::ReadOnly))
+  if(!m_messageFile->load(dir.filePath(filename)))
   {
-    m_errorString = confFile.errorString();
+    m_errorString = m_messageFile->errorString();
     return false;
   }
 
-  QString errMsg;
-  int errorLine, errorColumn;
-  if(!root->setContent(&confFile, &errMsg, &errorLine, &errorColumn))
-  {
-    m_errorString = QString("Error %1:%2:%3: %4").arg(confFile.fileName()).arg(errorLine).arg(errorColumn).arg(errMsg);
-    return false;
-  }
+  m_fileName = filename;
+  m_directory = dir.path();
   return true;
 }
 /*----------------------------------------------------------------------------*/
 QStringList Translator :: languages()
 {
-  QStringList lst;
-  QDomElement el = root->firstChildElement("translator");
-  for(QDomNode n = el.firstChild(); !n.isNull(); n = n.nextSibling())
-  {
-    if(n.nodeName() == "languages")
-    {
-      for(QDomNode nn = n.firstChild(); !nn.isNull(); nn = nn.nextSibling())
-      {
-        if(nn.nodeName() == "language")
-          lst.append(nn.toElement().text());
-      }
-    }
-  }
-  return lst;
+  return m_messageFile->langList();
 }
 /*----------------------------------------------------------------------------*/
 bool Translator :: setLang(const QString &lang)
@@ -121,76 +114,7 @@ bool Translator :: setLang(const QString &lang)
   }
 
   m_lang = langs[index];
-  m_messageTable.clear();
 
-  QDomElement el = root->firstChildElement("translator");
-  for(QDomNode n = el.firstChild(); !n.isNull(); n = n.nextSibling())
-  {
-    if(n.nodeName() == "message")
-    {
-      unsigned h = 0;
-      for(QDomNode nn = n.firstChild(); !nn.isNull(); nn = nn.nextSibling())
-      {
-        if(nn.nodeName() == "source")
-        {
-          h = hash(nn.toElement().text().toUtf8().constData());
-        }
-        else
-        if(nn.nodeName() == m_lang)
-        {
-          m_messageTable[h] = nn.toElement().text();
-          break;
-        }
-      }
-    }
-  }
   return true;
-}
-/*----------------------------------------------------------------------------*/
-/*----------------------------------------------------------------------------*/
-static unsigned reflect(unsigned ref, char ch)
-{
-  // Used only by init table.
-  unsigned value = 0;
-  int i;
-
-  // Swap bit 0 for bit 7
-  // bit 1 for bit 6, etc.
-  for(i = 1; i < (ch + 1); i++)
-  {
-    if(ref & 1)
-      value |= 1 << (ch - i);
-    ref >>= 1;
-  }
-  return value;
-}
-/*----------------------------------------------------------------------------*/
-/*CRC32 algorithm*/
-unsigned Translator :: hash(const char *text)
-{
-  static unsigned *crc_table = NULL;
-  unsigned  crc = 0xffffffff;
-
-  if(crc_table == NULL)
-  {
-    static const unsigned polynomial = 0x04c11db7;
-    int i,j;
-
-    crc_table = new unsigned [256];
-
-    // 256 values representing ASCII character codes.
-    for(i = 0; i < 256; i++)
-    {
-      crc_table[i] = reflect((unsigned)i, 8) << 24;
-      for (j = 0; j < 8; j++)
-        crc_table[i] = (crc_table[i] << 1) ^ (crc_table[i] & (1 << 31) ? polynomial : 0);
-      crc_table[i] = reflect(crc_table[i], 32);
-    }
-  }
-
-  while(*text)
-    crc = (crc >> 8) ^ crc_table[(crc & 0xFF) ^ *text++];
-  // Exclusive OR the result with the beginning value.
-  return crc ^ 0xffffffff;
 }
 /*----------------------------------------------------------------------------*/

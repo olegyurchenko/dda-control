@@ -35,7 +35,8 @@ SOURCES += main.cpp\
     ../logfile.cpp \
     ../optionsdialog.cpp \
     ../version.cpp \
-    ../translator.cpp
+    ../translator.cpp \
+    ../message_file.cpp
 
 HEADERS  += measurewindow.h \
     ../configuration.h \
@@ -61,7 +62,8 @@ HEADERS  += measurewindow.h \
     ../logfile.h \
     ../optionsdialog.h \
     ../version.h \
-    ../translator.h
+    ../translator.h \
+    ../message_file.h
 
 FORMS    += measurewindow.ui \
     ../profileselectdialog.ui \

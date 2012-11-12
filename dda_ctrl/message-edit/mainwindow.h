@@ -19,7 +19,6 @@ protected:
   MessageFile *m_messageFile;
   QStringList m_langList;
   QStringList m_sourceList;
-  bool m_dataModified;
   bool midifiedQuestion();
   virtual void closeEvent(QCloseEvent *e);
 public:
@@ -52,6 +51,11 @@ protected slots:
   void onPrevLanguage();
   void onNewSource();
   void onDelSource();
+  void onSearchTranslatedChanged(QString);
+  void onTranslatedSearchDown();
+  void onTranslatedSearchUp();
+  void onNextUntranslated();
+  void onPreviosUntranslated();
 
 
 

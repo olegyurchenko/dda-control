@@ -33,6 +33,7 @@ protected:
 
   QString m_lang;
   QString m_errorString;
+  bool m_modified;
 
 
 public:
@@ -60,6 +61,8 @@ public:
   QString language(const QString& l);
   QString country(const QString& c);
 
+  bool isModified() {return m_modified;}
+  void setModified(bool m) {m_modified = m;}
 };
 /*----------------------------------------------------------------------------*/
 #endif /*MESSAGE_FILE_H_1352380226*/
