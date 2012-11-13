@@ -15,11 +15,11 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp \
-    get_opts.cpp \
+    ../get_opts.cpp \
     ../message_file.cpp
 
 HEADERS += \
-    get_opts.h \
+    ../get_opts.h \
     ../message_file.h
 
 INCLUDEPATH += \
