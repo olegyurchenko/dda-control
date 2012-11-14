@@ -3,6 +3,7 @@
 #include <get_opts.h>
 #include <pc_serial.h>
 #include <boot_protocol.h>
+#include <string.h>
 
 #define PRODUCT "DDA code load utility"
 #define VERSION "0.0.1"
@@ -20,6 +21,8 @@ int main(int argc, char **argv)
   args.add("help", 'h', "This help");
   args.add("version", 'V', "Type version and exit");
   args.add("verbose", 'v', "Verbose mode");
+  args.add("check", 'c', "Check after write");
+  args.add("check-only", 'C', "Check only (do not write)");
   args.add("port", 'p', "1", "Serial port");
   args.add("baud", 'b', "57600", "Serail baud");
 
@@ -42,14 +45,12 @@ int main(int argc, char **argv)
     return 0;
   }
 
-  /*
   if(args.non_options.empty() || args.non_options.size() > 1)
   {
     //fprintf( stderr, "Invalid filename cpecification\n" );
     help(argv[0], &args);
     return 1;
   }
-  */
 
   if(args.empty())
   {
@@ -69,12 +70,83 @@ int main(int argc, char **argv)
     return 2;
   }
 
+  str = args.non_options[0];
+  FILE *f = fopen(str.c_str(), "rb");
+  if(f == NULL)
+  {
+    fprintf(stderr, "Error open file'%s'\n", str.c_str());
+    return 2;
+  }
+
   protocol.setVerbose(args.get("verbose"));
   if(!protocol.getVersionAndAllowedCmd())
   {
     fprintf(stderr, "Get command error: %s\n", protocol.errorString().c_str());
     return 3;
   }
+
+  unsigned char buffer[256];
+  unsigned addr = 0x8000000;
+  if(!args.get("check-only"))
+  {
+    while(!feof(f))
+    {
+      int sz = fread(buffer, 1, 256, f);
+      if(ferror(f))
+      {
+        fprintf(stderr, "Error read file'%s'\n", str.c_str());
+        return 2;
+      }
+
+      if(!protocol.writeMemory(addr, sz, buffer))
+      {
+        fprintf(stderr, "Write memory error: %s\n", protocol.errorString().c_str());
+        return 3;
+      }
+      if(protocol.verbose())
+        printf("Write %d bytes Ok\n", sz);
+      addr += sz;
+    }
+    printf("Writed %ld bytes Ok\n", ftell(f));
+  }
+
+  if(args.get("check-only") || args.get("check"))
+  {
+    unsigned char rBuffer[256];
+    fseek(f, 0, SEEK_SET);
+    addr = 0x8000000;
+    while(!feof(f))
+    {
+      int sz = fread(buffer, 1, 256, f);
+      if(ferror(f))
+      {
+        fprintf(stderr, "Error read file'%s'\n", str.c_str());
+        return 2;
+      }
+
+      if(!protocol.readMemory(addr, sz, rBuffer))
+      {
+        fprintf(stderr, "Write memory error: %s\n", protocol.errorString().c_str());
+        return 3;
+      }
+
+      if(protocol.verbose())
+        printf("Read %d bytes Ok\n", sz);
+
+      if(memcmp(buffer, rBuffer, sz))
+      {
+        fprintf(stderr, "Compare memory error at addr %08x\n", addr);
+        return 3;
+      }
+
+      addr += sz;
+    }
+    printf("Verified %ld bytes Ok\n", ftell(f));
+  }
+
+
+  fclose(f);
+
   return 0;
 }
 //---------------------------------------------------------------------------

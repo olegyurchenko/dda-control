@@ -47,6 +47,9 @@ public:
   const ByteVector& allowedCmd() {return m_allowedCmd;}
 
   bool getVersionAndAllowedCmd();
+  bool readMemory(unsigned addr, unsigned short size, unsigned char *dst);
+  bool writeMemory(unsigned addr, unsigned short size, const unsigned char *src);
+
 
 };
 

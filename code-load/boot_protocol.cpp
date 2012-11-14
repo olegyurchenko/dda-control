@@ -150,4 +150,84 @@ bool BootLoaderProtocol :: getVersionAndAllowedCmd()
   return true;
 }
 /*----------------------------------------------------------------------------*/
+bool BootLoaderProtocol :: readMemory(unsigned addr, unsigned short size, unsigned char *dst)
+{
+  if(size == 0 || size > 256)
+  {
+    m_errorString = "Size must be 4...256";
+    return false;
+  }
+
+  if(!sendComplement(0x11) || !waitAck())
+    return false;
+
+  unsigned char buf[5];
+  buf[0] = (unsigned char) (addr >> 24);
+  buf[1] = (unsigned char) (addr >> 16);
+  buf[2] = (unsigned char) (addr >> 8);
+  buf[3] = (unsigned char) (addr);
+  buf[4] = buf[0] ^ buf[1] ^ buf[2] ^ buf[3];
+  serial_write(m_serial, buf, 5);
+  if(!waitAck())
+    return false;
+
+  if(!sendComplement(size - 1) || !waitAck())
+    return false;
+
+  int index = 0;
+  while(size)
+  {
+    int sz;
+    sz = serial_read(m_serial, &dst[index], size, 1000);
+    if(sz <= 0)
+    {
+      m_errorString ="Data timeout";
+      return false;
+    }
+
+    if(verbose())
+    {
+      for(int i = 0; i < sz; i++)
+        printf("Data %02xh\n", (unsigned) dst[index + i] & 0xff);
+    }
+    size -= sz;
+    index += sz;
+  }
+  return true;
+}
+/*----------------------------------------------------------------------------*/
+bool BootLoaderProtocol :: writeMemory(unsigned addr, unsigned short size, const unsigned char *src)
+{
+  if(size == 0 || size > 256)
+  {
+    m_errorString = "Size must be 4...256";
+    return false;
+  }
+
+  if(!sendComplement(0x31) || !waitAck())
+    return false;
+
+  unsigned char buf[5];
+  buf[0] = (unsigned char) (addr >> 24);
+  buf[1] = (unsigned char) (addr >> 16);
+  buf[2] = (unsigned char) (addr >> 8);
+  buf[3] = (unsigned char) (addr);
+  buf[4] = buf[0] ^ buf[1] ^ buf[2] ^ buf[3];
+  serial_write(m_serial, buf, 5);
+  if(!waitAck())
+    return false;
+  unsigned char cs = 0;
+  cs ^= size - 1;
+  serial_write(m_serial, &cs, 1);
+  for(unsigned short i = 0; i < size; i++)
+  {
+    serial_write(m_serial, (void  *) &src[i], 1);
+    cs ^= src[i];
+  }
+  serial_write(m_serial, &cs, 1);
+  if(!waitAck())
+    return false;
+  return true;
+}
+/*----------------------------------------------------------------------------*/
 
