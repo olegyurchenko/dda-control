@@ -170,7 +170,7 @@ void DDAProcessing :: update(Role role)
   data["start"] = m_session->session().start;
   data["end"] = m_session->session().end;
   data["lot"] = m_session->session().lot;
-  data["statndardIndex"] = m_session->session().standard;
+  data["standardIndex"] = m_session->session().standard;
   data["standard"] = database->standardList()[m_session->session().standard];
   data["gritIndex"] = m_session->session().gritIndex;
   data["grit"] = database->gritList(m_session->session().standard)[m_session->session().gritIndex];
@@ -263,6 +263,9 @@ QVariant TableModel :: data(const QModelIndex &index, int role) const
   if(row < 0 || row >= m_rowCount || col < 0 || col >= m_columnCount)
     return QVariant();
 
+  if(role == Qt::ToolTipRole)
+    role = Qt::DisplayRole;
+
   QString key = QString("data.row(%1).col(%2).role(%3)").arg(row).arg(col).arg(role);
   QVariantMap::const_iterator it = m_data.find(key);
   if(it != m_data.end())
@@ -278,7 +281,7 @@ Qt::ItemFlags TableModel :: flags(const QModelIndex &) const
 /*----------------------------------------------------------------------------*/
 QVariant TableModel :: headerData(int section, Qt::Orientation orientation, int role) const
 {
-  if(role == Qt::DisplayRole)
+  if(role == Qt::DisplayRole || role == Qt::ToolTipRole)
  {
     QString key = QString("header(%1, %2)").arg(orientation).arg(section);
     QVariantMap::const_iterator it = m_data.find(key);

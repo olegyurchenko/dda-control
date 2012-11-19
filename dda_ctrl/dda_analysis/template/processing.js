@@ -35,10 +35,76 @@ var histSizeTable = null
 var strengthHistogramm = null
 var sizeHistogramm = null
 //-----------------------------------------------------------------------------------
-var strengthCurve = null
-var fractStrengthGraph = null
+var densityStrengthCurve = null
+var sizeStrengthGraph = null
 //-----------------------------------------------------------------------------------
 var histogrammColumns = 10
+//-----------------------------------------------------------------------------------
+var gritTable =
+[
+    [ //ASTM
+        {max:45, min:38},
+        {max:55, min:45},
+        {max:63, min:53},
+        {max:75, min:63},
+        {max:90, min:75},
+        {max:106, min:80},
+        {max:125, min:106},
+        {max:150, min:125},
+        {max:180, min:150},
+        {max:212, min:180},
+        {max:250, min:212},
+        {max:300, min:250},
+        {max:355, min:300},
+        {max:425, min:355},
+        {max:500, min:425},
+        {max:595, min:500},
+        {max:710, min:595},
+        {max:850, min:710},
+        {max:1000, min:850},
+        {max:1180, min:1000},
+        {max:1400, min:1180}
+      ],
+      [ //GOST
+        {max:50, min:40},
+        {max:63, min:50},
+        {max:80, min:63},
+        {max:100, min:80},
+        {max:125, min:100},
+        {max:160, min:125},
+        {max:200, min:160},
+        {max:250, min:200},
+        {max:315, min:250},
+        {max:400, min:315},
+        {max:500, min:400},
+        {max:630, min:500},
+        {max:800, min:630},
+        {max:1000, min:800},
+        {max:1250, min:1000},
+        {max:1600, min:1250},
+        {max:2000, min:1600}
+      ],
+      [ //DSTU
+        {max:50, min:40},
+        {max:63, min:50},
+        {max:80, min:63},
+        {max:100, min:80},
+        {max:125, min:100},
+        {max:160, min:125},
+        {max:200, min:160},
+        {max:250, min:200},
+        {max:315, min:250},
+        {max:400, min:315},
+        {max:500, min:400},
+        {max:630, min:500},
+        {max:800, min:630},
+        {max:1000, min:800},
+        {max:1250, min:1000},
+        {max:1600, min:1250},
+        {max:2000, min:1600}
+      ]
+]
+
 //-----------------------------------------------------------------------------------
 function modelInit(role)
 {
@@ -132,39 +198,39 @@ function modelInit(role)
     //sizeHistogramm.pen = {style : Qt.SolidLine, color : "black"}
   }
   //--------------------------------
-  // strengthCurve
+  // densityStrengthCurve
   //--------------------------------
-  strengthCurve = model.newCurveModel()
-  strengthCurve.y.min = 0
-  strengthCurve.y.max = 100
-  strengthCurve.y.text = "[%]"
-  strengthCurve.y.decimals = 0
-  strengthCurve.y.steps = 4
+  densityStrengthCurve = model.newCurveModel()
+  densityStrengthCurve.y.min = 0
+  densityStrengthCurve.y.max = 100
+  densityStrengthCurve.y.text = "[%]"
+  densityStrengthCurve.y.decimals = 0
+  densityStrengthCurve.y.steps = 4
 
-  strengthCurve.x.text = qsTr("[N]")
-  strengthCurve.x.decimals = 1
-  strengthCurve.x.steps = histogrammColumns
-  strengthCurve.title = qsTr("The density distribution of strength")
+  densityStrengthCurve.x.text = qsTr("[N]")
+  densityStrengthCurve.x.decimals = 1
+  densityStrengthCurve.x.steps = histogrammColumns
+  densityStrengthCurve.title = qsTr("The density distribution of strength")
   if(role === DataModel.ReportRole)
   {
-    strengthCurve.filed = false
-    strengthCurve.pen = {width : 2, color : "black"}
+    densityStrengthCurve.filed = false
+    densityStrengthCurve.pen = {width : 2, color : "black"}
   }
   //--------------------------------
-  // fractStrengthGraph
+  // sizeStrengthGraph
   //--------------------------------
-  fractStrengthGraph = model.newGraphModel()
-  fractStrengthGraph.y.decimals = 1
-  fractStrengthGraph.x.decimals = 1
-  fractStrengthGraph.y.text = qsTr("[N]")
-  fractStrengthGraph.x.text = qsTr("[um]")
-  fractStrengthGraph.x.steps = 5
-  fractStrengthGraph.y.steps = 5
-  fractStrengthGraph.title = qsTr("Strength VS Size")
+  sizeStrengthGraph = model.newGraphModel()
+  sizeStrengthGraph.y.decimals = 1
+  sizeStrengthGraph.x.decimals = 1
+  sizeStrengthGraph.y.text = qsTr("[N]")
+  sizeStrengthGraph.x.text = qsTr("[um]")
+  sizeStrengthGraph.x.steps = 5
+  sizeStrengthGraph.y.steps = 5
+  sizeStrengthGraph.title = qsTr("Strength VS Size")
   if(role === DataModel.ReportRole)
   {
-    fractStrengthGraph.brush = {style : Qt.Dense3Pattern, color : "black"}
-    //fractStrengthGraph.pen = {style : Qt.SolidLine, color : "black"}
+    sizeStrengthGraph.brush = {style : Qt.Dense3Pattern, color : "black"}
+    //sizeStrengthGraph.pen = {style : Qt.SolidLine, color : "black"}
   }
 
 }
@@ -211,15 +277,26 @@ function modelUpdate(session, role)
   //--------------------------------
   // sizeHistogramm
   //--------------------------------
-  sizeHistogramm.x.min = session.minSize
-  sizeHistogramm.x.max = session.maxSize
+  var sizeTbl = gritTable[session.standardIndex]
+  var minSize = 0
+  var maxSize = sizeTbl[sizeTbl.length - 1].max
+
+  if(session.gritIndex >= 3)
+    minSize = sizeTbl[session.gritIndex - 3].min
+  if(session.gritIndex < sizeTbl.length - 1)
+    maxSize = sizeTbl[session.gritIndex + 1].max
+
+  //sizeHistogramm.x.min = session.minSize
+  //sizeHistogramm.x.max = session.maxSize
+  sizeHistogramm.x.min = minSize
+  sizeHistogramm.x.max = maxSize
 
   //--------------------------------
-  // strengthCurve
+  // densityStrengthCurve
   //--------------------------------
-  strengthCurve.x.min = session.minStrength
-  strengthCurve.x.max = session.maxStrength
-  strengthCurve.clear()
+  densityStrengthCurve.x.min = session.minStrength
+  densityStrengthCurve.x.max = session.maxStrength
+  densityStrengthCurve.clear()
 
   //fill histogramm
   var hStrength = []
@@ -232,7 +309,8 @@ function modelUpdate(session, role)
   }
 
   var strengthStep = (session.maxStrength - session.minStrength) / histogrammColumns
-  var sizeStep = (session.maxSize - session.minSize) / histogrammColumns
+  //var sizeStep = (session.maxSize - session.minSize) / histogrammColumns
+  var sizeStep = (maxSize - minSize) / histogrammColumns
 
   for(i = 0; i < session.measures.length; i++)
   {
@@ -244,11 +322,11 @@ function modelUpdate(session, role)
     if(col >= histogrammColumns)
       col = histogrammColumns - 1
     hStrength[col] += 1
-    v = m.size - session.minSize
+    //v = m.size - session.minSize
+    v = m.size - minSize
     col = Math.round(v / sizeStep)
-    if(col >= histogrammColumns)
-      col = histogrammColumns - 1
-    hSize[col] += 1
+    if(col < histogrammColumns)
+      hSize[col] += 1
   }
 
   var percSum = 0
@@ -259,29 +337,33 @@ function modelUpdate(session, role)
     histStrengthTable.setData(i, 2, hStrength[i])
     histStrengthTable.setData(i, 3, (hStrength[i] * 100. / session.particles).toFixed(2))
 
-    histSizeTable.setData(i, 0, (session.minSize + i * sizeStep).toFixed(2))
-    histSizeTable.setData(i, 1, (session.minSize + (1 + i) * sizeStep).toFixed(2))
+    //histSizeTable.setData(i, 0, (session.minSize + i * sizeStep).toFixed(2))
+    //histSizeTable.setData(i, 1, (session.minSize + (1 + i) * sizeStep).toFixed(2))
+    histSizeTable.setData(i, 0, (minSize + i * sizeStep).toFixed(2))
+    histSizeTable.setData(i, 1, (minSize + (1 + i) * sizeStep).toFixed(2))
     histSizeTable.setData(i, 2, hSize[i])
     histSizeTable.setData(i, 3, (hSize[i] * 100. / session.particles).toFixed(2))
 
     percSum += hStrength[i] * 100. / session.particles
-    strengthCurve.add(session.minStrength + i * strengthStep, percSum)
+    densityStrengthCurve.add(session.minStrength + i * strengthStep, percSum)
 
     hStrength[i] *= 100. / session.particles
     hSize[i] *= 100. / session.particles
   }
   strengthHistogramm.data = hStrength
   sizeHistogramm.data = hSize
-  //strengthCurve.add(session.minStrength + i * strengthStep, 0)
+  //densityStrengthCurve.add(session.minStrength + i * strengthStep, 0)
 
   //--------------------------------
-  // fractStrengthGraph
+  // sizeStrengthGraph
   //--------------------------------
-  fractStrengthGraph.y.min = session.minStrength
-  fractStrengthGraph.y.max = session.maxStrength
-  fractStrengthGraph.x.min = session.minSize
-  fractStrengthGraph.x.max = session.maxSize
-  fractStrengthGraph.clear()
+  sizeStrengthGraph.y.min = session.minStrength
+  sizeStrengthGraph.y.max = session.maxStrength
+  //sizeStrengthGraph.x.min = session.minSize
+  //sizeStrengthGraph.x.max = session.maxSize
+  sizeStrengthGraph.x.min = minSize
+  sizeStrengthGraph.x.max = maxSize
+  sizeStrengthGraph.clear()
   for(i = 0; i < session.measures.length; i++)
   {
     m = session.measures[i]
@@ -289,7 +371,7 @@ function modelUpdate(session, role)
       continue
     var x = m.size
     var y = m.strength//fractalStrength(m.strength, m.size)
-    fractStrengthGraph.add(x, y)
+    sizeStrengthGraph.add(x, y)
     //print(i, x, y)
   }
 }
