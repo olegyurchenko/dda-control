@@ -108,24 +108,55 @@ void AxisPlotter :: paint(QPaintDevice *dev)
   }
 
   int rmargin = 0;
-  for(int i = 0; i < x.steps(); i++)
+  if(x.markList().empty())
   {
-    int xi = m_rect.left() + i * x.step() * m_x_scale;
-    if(m_style == BarStyle)
-      p.drawLine(xi, m_rect.top(), xi, m_rect.bottom() + 1);
-    else
-    if(m_style == StrokeStyle)
-      p.drawLine(xi, m_rect.bottom() - m_y_border, xi, m_rect.bottom() + 1);
-
-    if(x.showValues())
+    for(int i = 0; i < x.steps(); i++)
     {
-      QString value = QString::number(x.min() + i * x.step(), 'f', x.decimals());
-      int w = p.fontMetrics().boundingRect(value).width();
-      int h = p.fontMetrics().boundingRect(value).height();
-      if(xi - w/2 - rmargin > m_x_border)
+      int xi = m_rect.left() + i * x.step() * m_x_scale;
+      if(m_style == BarStyle)
+        p.drawLine(xi, m_rect.top(), xi, m_rect.bottom() + 1);
+      else
+        if(m_style == StrokeStyle)
+          p.drawLine(xi, m_rect.bottom() - m_y_border, xi, m_rect.bottom() + 1);
+
+      if(x.showValues())
       {
-        p.drawText(xi - w/2, m_rect.bottom() + h, value);
-        rmargin = xi + w/2;
+        QString value = QString::number(x.min() + i * x.step(), 'f', x.decimals());
+        int w = p.fontMetrics().boundingRect(value).width();
+        int h = p.fontMetrics().boundingRect(value).height();
+        if(xi - w/2 - rmargin > m_x_border)
+        {
+          p.drawText(xi - w/2, m_rect.bottom() + h, value);
+          rmargin = xi + w/2;
+        }
+      }
+    }
+  }
+  else
+  {
+    QList<double>& markList = x.markList();
+    double val;
+    foreach(val, markList)
+    {
+      int xi = m_rect.left() + (val - x.min()) * m_x_scale;
+      if(xi >= m_rect.right() || xi < m_rect.left())
+        continue;
+      if(m_style == BarStyle)
+        p.drawLine(xi, m_rect.top(), xi, m_rect.bottom() + 1);
+      else
+        if(m_style == StrokeStyle)
+          p.drawLine(xi, m_rect.bottom() - m_y_border, xi, m_rect.bottom() + 1);
+
+      if(x.showValues())
+      {
+        QString value = QString::number(val, 'f', x.decimals());
+        int w = p.fontMetrics().boundingRect(value).width();
+        int h = p.fontMetrics().boundingRect(value).height();
+        if(xi - w/2 - rmargin > m_x_border)
+        {
+          p.drawText(xi - w/2, m_rect.bottom() + h, value);
+          rmargin = xi + w/2;
+        }
       }
     }
   }
@@ -137,21 +168,49 @@ void AxisPlotter :: paint(QPaintDevice *dev)
     p.drawText(m_rect.right() - w - m_x_border, dev->height() - m_y_border, x.text());
   }
 
-  for(int i = 0; i < y.steps(); i++)
+  if(y.markList().empty())
   {
-    int yi = m_rect.bottom() - i * y.step() * m_y_scale;
-    if(m_style == BarStyle)
-      p.drawLine(m_rect.left() - 1, yi, m_rect.right(), yi);
-    else
-    if(m_style == StrokeStyle)
-      p.drawLine(m_rect.left() - 1, yi, m_rect.left() + m_x_border, yi);
-
-    if(y.showValues() && i)
+    for(int i = 0; i < y.steps(); i++)
     {
-      QString value = QString::number(y.min() + i * y.step(), 'f', y.decimals());
-      int w = p.fontMetrics().boundingRect(value).width();
-      int h = p.fontMetrics().boundingRect(value).height();
-      p.drawText(m_rect.left() - w - m_x_border, yi + h/2, value);
+      int yi = m_rect.bottom() - i * y.step() * m_y_scale;
+      if(m_style == BarStyle)
+        p.drawLine(m_rect.left() - 1, yi, m_rect.right(), yi);
+      else
+        if(m_style == StrokeStyle)
+          p.drawLine(m_rect.left() - 1, yi, m_rect.left() + m_x_border, yi);
+
+      if(y.showValues() && i)
+      {
+        QString value = QString::number(y.min() + i * y.step(), 'f', y.decimals());
+        int w = p.fontMetrics().boundingRect(value).width();
+        int h = p.fontMetrics().boundingRect(value).height();
+        p.drawText(m_rect.left() - w - m_x_border, yi + h/2, value);
+      }
+    }
+  }
+  else
+  {
+    QList<double>& markList = x.markList();
+    double val;
+    foreach(val, markList)
+    {
+      int yi = m_rect.bottom() - (val - y.min()) * m_y_scale;
+      if(yi >= m_rect.bottom() || yi < m_rect.top())
+        continue;
+
+      if(m_style == BarStyle)
+        p.drawLine(m_rect.left() - 1, yi, m_rect.right(), yi);
+      else
+        if(m_style == StrokeStyle)
+          p.drawLine(m_rect.left() - 1, yi, m_rect.left() + m_x_border, yi);
+
+      if(y.showValues())
+      {
+        QString value = QString::number(val, 'f', y.decimals());
+        int w = p.fontMetrics().boundingRect(value).width();
+        int h = p.fontMetrics().boundingRect(value).height();
+        p.drawText(m_rect.left() - w - m_x_border, yi + h/2, value);
+      }
     }
   }
 

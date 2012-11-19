@@ -43,66 +43,79 @@ var histogrammColumns = 10
 var gritTable =
 [
     [ //ASTM
-        {max:45, min:38},
-        {max:55, min:45},
-        {max:63, min:53},
-        {max:75, min:63},
-        {max:90, min:75},
-        {max:106, min:80},
-        {max:125, min:106},
-        {max:150, min:125},
-        {max:180, min:150},
-        {max:212, min:180},
-        {max:250, min:212},
-        {max:300, min:250},
-        {max:355, min:300},
-        {max:425, min:355},
-        {max:500, min:425},
-        {max:595, min:500},
-        {max:710, min:595},
-        {max:850, min:710},
-        {max:1000, min:850},
-        {max:1180, min:1000},
-        {max:1400, min:1180}
-      ],
-      [ //GOST
-        {max:50, min:40},
-        {max:63, min:50},
-        {max:80, min:63},
-        {max:100, min:80},
-        {max:125, min:100},
-        {max:160, min:125},
-        {max:200, min:160},
-        {max:250, min:200},
-        {max:315, min:250},
-        {max:400, min:315},
-        {max:500, min:400},
-        {max:630, min:500},
-        {max:800, min:630},
-        {max:1000, min:800},
-        {max:1250, min:1000},
-        {max:1600, min:1250},
-        {max:2000, min:1600}
-      ],
-      [ //DSTU
-        {max:50, min:40},
-        {max:63, min:50},
-        {max:80, min:63},
-        {max:100, min:80},
-        {max:125, min:100},
-        {max:160, min:125},
-        {max:200, min:160},
-        {max:250, min:200},
-        {max:315, min:250},
-        {max:400, min:315},
-        {max:500, min:400},
-        {max:630, min:500},
-        {max:800, min:630},
-        {max:1000, min:800},
-        {max:1250, min:1000},
-        {max:1600, min:1250},
-        {max:2000, min:1600}
-      ]
+
+     {max:25, min:20},
+     {max:31, min:25},
+     {max:38, min:31},
+     {max:45, min:38}, //DDA - 0
+     {max:55, min:45},
+     {max:63, min:53},
+     {max:75, min:63},
+     {max:90, min:75},
+     {max:106, min:80},
+     {max:125, min:106},
+     {max:150, min:125},
+     {max:180, min:150},
+     {max:212, min:180},
+     {max:250, min:212},
+     {max:300, min:250},
+     {max:355, min:300},
+     {max:425, min:355},
+     {max:500, min:425},
+     {max:595, min:500},
+     {max:710, min:595},
+     {max:850, min:710},
+     {max:1000, min:850},
+     {max:1180, min:1000},
+     {max:1400, min:1180}, //DDA - MAX
+     {max:1700, min:1400}
+    ],
+    [ //GOST
+     {max:20, min:14},
+     {max:28, min:20},
+     {max:40, min:28},
+     {max:50, min:40}, //DDA - 0
+     {max:63, min:50},
+     {max:80, min:63},
+     {max:100, min:80},
+     {max:125, min:100},
+     {max:160, min:125},
+     {max:200, min:160},
+     {max:250, min:200},
+     {max:315, min:250},
+     {max:400, min:315},
+     {max:500, min:400},
+     {max:630, min:500},
+     {max:800, min:630},
+     {max:1000, min:800},
+     {max:1250, min:1000},
+     {max:1600, min:1250},
+     {max:2000, min:1600}, //DDA - MAX
+     {max:2500, min:2000}
+    ],
+    [ //DSTU
+     {max:20, min:14},
+     {max:28, min:20},
+     {max:40, min:28},
+     {max:50, min:40}, //DDA - 0
+     {max:63, min:50},
+     {max:80, min:63},
+     {max:100, min:80},
+     {max:125, min:100},
+     {max:160, min:125},
+     {max:200, min:160},
+     {max:250, min:200},
+     {max:315, min:250},
+     {max:400, min:315},
+     {max:500, min:400},
+     {max:630, min:500},
+     {max:800, min:630},
+     {max:1000, min:800},
+     {max:1250, min:1000},
+     {max:1600, min:1250},
+     {max:2000, min:1600}, //DDA - MAX
+     {max:2500, min:2000}
+    ]
 ]
 
 //-----------------------------------------------------------------------------------
@@ -189,7 +202,7 @@ function modelInit(role)
   sizeHistogramm.y.steps = 4
 
   sizeHistogramm.x.text = qsTr("[um]")
-  sizeHistogramm.x.decimals = 1
+  sizeHistogramm.x.decimals = 0
   sizeHistogramm.x.steps = histogrammColumns
   sizeHistogramm.title = qsTr("Distribution of the size of grain")
   if(role === DataModel.ReportRole)
@@ -221,7 +234,7 @@ function modelInit(role)
   //--------------------------------
   sizeStrengthGraph = model.newGraphModel()
   sizeStrengthGraph.y.decimals = 1
-  sizeStrengthGraph.x.decimals = 1
+  sizeStrengthGraph.x.decimals = 0
   sizeStrengthGraph.y.text = qsTr("[N]")
   sizeStrengthGraph.x.text = qsTr("[um]")
   sizeStrengthGraph.x.steps = 5
@@ -249,7 +262,6 @@ function modelUpdate(session, role)
   //--------------------------------
   paramTable.setData(serialRow, valueCol, session.deviceSerial)
   paramTable.setData(dateRow, valueCol, Qt.formatDate(session.start, qsTr("yyyy-MM-dd")))
-  //paramTable.setData(userRow, valueCol, session.userName)
   paramTable.setData(lotRow, valueCol, session.lot)
   paramTable.setData(gritRow, valueCol, session.grit)
   paramTable.setData(particlesRow, valueCol, session.particles)
@@ -263,8 +275,6 @@ function modelUpdate(session, role)
   paramTable.setData(minStrengthRow, valueCol, session.minStrength.toFixed(2))
   paramTable.setData(avgSizeRow, valueCol, session.avgSize.toFixed(2))
   paramTable.setData(devSizeRow, valueCol, session.devSize.toFixed(2))
-  //paramTable.setData(avgFractStrRow, valueCol, session.avgFractStr.toFixed(2))
-  //paramTable.setData(devFractStrRow, valueCol, session.devFractStr.toFixed(2))
   paramTable.setData(markRow, valueCol, session.mark)
 
 
@@ -278,13 +288,20 @@ function modelUpdate(session, role)
   // sizeHistogramm
   //--------------------------------
   var sizeTbl = gritTable[session.standardIndex]
-  var minSize = 0
-  var maxSize = sizeTbl[sizeTbl.length - 1].max
 
-  if(session.gritIndex >= 3)
-    minSize = sizeTbl[session.gritIndex - 3].min
-  if(session.gritIndex < sizeTbl.length - 1)
-    maxSize = sizeTbl[session.gritIndex + 1].max
+  var gritIndex = session.gritIndex + 3 //Таблица в js сдвинута на 3
+  var minSize = sizeTbl[gritIndex - 3].min
+  var maxSize = sizeTbl[gritIndex + 1].max
+
+
+  var sizeMark = [];
+  sizeMark[0] = minSize
+  sizeMark[1] = sizeTbl[gritIndex - 2].min
+  sizeMark[2] = sizeTbl[gritIndex - 1].min
+  sizeMark[3] = sizeTbl[gritIndex].min
+  sizeMark[4] = sizeTbl[gritIndex].max
+  sizeMark[5] = sizeTbl[gritIndex + 1].max
+
 
   //sizeHistogramm.x.min = session.minSize
   //sizeHistogramm.x.max = session.maxSize
@@ -363,6 +380,7 @@ function modelUpdate(session, role)
   //sizeStrengthGraph.x.max = session.maxSize
   sizeStrengthGraph.x.min = minSize
   sizeStrengthGraph.x.max = maxSize
+  sizeStrengthGraph.x.marks = sizeMark
   sizeStrengthGraph.clear()
   for(i = 0; i < session.measures.length; i++)
   {

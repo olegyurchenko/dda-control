@@ -18,6 +18,8 @@
 #include <plotter.h>
 #include <QString>
 #include <QPainter>
+#include <QList>
+#include <QVariantList>
 /*----------------------------------------------------------------------------*/
 class Axis : public QObject
 {
@@ -29,6 +31,7 @@ class Axis : public QObject
   Q_PROPERTY(qreal step READ step)
   Q_PROPERTY(bool showValues READ showValues WRITE setShowValues)
   Q_PROPERTY(QString text READ text WRITE setText)
+  Q_PROPERTY(QVariantList marks READ vMarkList WRITE setVMarkList)
 
 protected:
   bool m_modified;
@@ -38,6 +41,7 @@ protected:
   int m_decimals;
   bool m_showValues;
   QString m_text;
+  QList<double> m_markList;
 public:
   Axis(QObject *parent = 0)
     : QObject(parent)
@@ -108,6 +112,26 @@ public:
 
   bool modified() const {return m_modified;}
   void setModified(bool m) {m_modified = m;}
+  QList<double>& markList() {return m_markList;}
+  void setMarkList(const QList<double>& l) {m_markList = l; qSort(m_markList);}
+
+  QVariantList vMarkList()
+  {
+    QVariantList lst;
+    double v;
+    foreach(v, m_markList)
+      lst.append(v);
+    return lst;
+  }
+
+  void setVMarkList(const QVariantList& l)
+  {
+    QList<double> lst;
+    QVariant v;
+    foreach(v, l)
+      lst.append(v.toDouble());
+    setMarkList(lst);
+  }
 };
 /*----------------------------------------------------------------------------*/
 class AxisPlotter : public Plotter
