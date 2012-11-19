@@ -28,6 +28,9 @@ protected:
   DDAUserList m_users;
   DDASerialList m_serials;
   QList<QDate> m_dates;
+  QStringList m_marks;
+  QStringList m_products;
+  DDAGritList m_grits;
   SelSessionModel *sessionModel;
   SessionFilter m_filter;
   bool m_manualMode;
@@ -49,6 +52,9 @@ protected slots:
   void onUserChanged(int);
   void onSerialChanged(int);
   void onRefresh();
+  void onProductChanged(int);
+  void onMarkChanged(int);
+  void onGritChanged(int);
 };
 /*----------------------------------------------------------------------------*/
 

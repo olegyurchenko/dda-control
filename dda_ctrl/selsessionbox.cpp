@@ -10,6 +10,20 @@
 static QString timeFormat = "yyyy-MM-dd hh:mm";
 static QString dateFormat = "yyyy-MM-dd";
 /*----------------------------------------------------------------------------*/
+enum Columns
+{
+  IdCol = 0,
+  StartCol,
+  //SerialCol,
+  UserCol,
+  ProductCol,
+  LotCol,
+  GritCol,
+  MarkCol,
+  ColCount
+
+};
+/*----------------------------------------------------------------------------*/
 SelSessionBox::SelSessionBox(QWidget *parent) :
   QGroupBox(parent),
   ui(new Ui::SelSessionBox)
@@ -27,6 +41,12 @@ SelSessionBox::SelSessionBox(QWidget *parent) :
   connect(ui->filterCheck, SIGNAL(toggled(bool)), ui->serialCombo, SLOT(setEnabled(bool)));
   connect(ui->filterCheck, SIGNAL(toggled(bool)), ui->userLabel, SLOT(setEnabled(bool)));
   connect(ui->filterCheck, SIGNAL(toggled(bool)), ui->userCombo, SLOT(setEnabled(bool)));
+  connect(ui->filterCheck, SIGNAL(toggled(bool)), ui->productLabel, SLOT(setEnabled(bool)));
+  connect(ui->filterCheck, SIGNAL(toggled(bool)), ui->productCombo, SLOT(setEnabled(bool)));
+  connect(ui->filterCheck, SIGNAL(toggled(bool)), ui->gritLabel, SLOT(setEnabled(bool)));
+  connect(ui->filterCheck, SIGNAL(toggled(bool)), ui->gritCombo, SLOT(setEnabled(bool)));
+  connect(ui->filterCheck, SIGNAL(toggled(bool)), ui->markLabel, SLOT(setEnabled(bool)));
+  connect(ui->filterCheck, SIGNAL(toggled(bool)), ui->markCombo, SLOT(setEnabled(bool)));
 
 
   connect(database, SIGNAL(userChanged(int)), this, SLOT(onUsersChanged()));
@@ -42,9 +62,14 @@ SelSessionBox::SelSessionBox(QWidget *parent) :
   if(database->isError())
     QMessageBox::critical(this, tr("Database error"), database->message());
 
-  ui->sessionView->setColumnWidth(0, ui->sessionView->fontMetrics().boundingRect(timeFormat).width());
-  ui->sessionView->setColumnWidth(1, ui->sessionView->fontMetrics().boundingRect("000000").width());
-  ui->sessionView->setColumnWidth(2, ui->sessionView->fontMetrics().boundingRect("000000000").width());
+  for(int i = 0; i < ColCount - 1; i++)
+  {
+    QString txt = sessionModel->headerData(i, Qt::Horizontal).toString();
+    ui->sessionView->setColumnWidth(i, ui->sessionView->fontMetrics().boundingRect(txt).width() + 20);
+  }
+
+  ui->sessionView->setColumnWidth(StartCol - 1, ui->sessionView->fontMetrics().boundingRect(timeFormat).width());
+  //ui->sessionView->setColumnWidth(UserCol, ui->sessionView->fontMetrics().boundingRect("000000000").width());
   //ui->sessionView->resizeColumnsToContents();
 
   onSessionsChanged();
@@ -107,6 +132,30 @@ void SelSessionBox::onSessionsChanged()
     ui->dateCombo->addItem(QIcon(":/view-calendar-day.png"), m_dates[i].toString(dateFormat));
   }
   ui->dateCombo->setCurrentIndex(oldIndex);
+
+  oldIndex = ui->productCombo->currentIndex();
+  m_products = database->productList(true);
+  ui->productCombo->clear();
+  ui->productCombo->addItem("");
+  ui->productCombo->addItems(m_products);
+  ui->productCombo->setCurrentIndex(oldIndex);
+
+  oldIndex = ui->markCombo->currentIndex();
+  m_marks = database->markList(true);
+  ui->markCombo->clear();
+  ui->markCombo->addItem("");
+  ui->markCombo->addItems(m_marks);
+  ui->markCombo->setCurrentIndex(oldIndex);
+
+  oldIndex = ui->gritCombo->currentIndex();
+  m_grits = database->gritList(true);
+  size = m_grits.size();
+  ui->gritCombo->clear();
+  ui->gritCombo->addItem("");
+  for(int i = 0; i < size; i++)
+    ui->gritCombo->addItem(QString("%1 %2").arg(database->standardList()[m_grits[i].standard]).arg(database->gritList(m_grits[i].standard)[m_grits[i].gritIndex]));
+  ui->gritCombo->setCurrentIndex(oldIndex);
+
   m_manualMode = false;
 }
 /*----------------------------------------------------------------------------*/
@@ -126,9 +175,16 @@ void SelSessionBox::onFilterChanged(bool check)
     ui->dateCombo->setCurrentIndex(0);
     ui->userCombo->setCurrentIndex(0);
     ui->serialCombo->setCurrentIndex(0);
+    ui->markCombo->setCurrentIndex(0);
+    ui->productCombo->setCurrentIndex(0);
+    ui->gritCombo->setCurrentIndex(0);
+
     m_filter.dateSet(false);
     m_filter.userSet(false);
     m_filter.serialSet(false);
+    m_filter.markSet(false);
+    m_filter.productSet(false);
+    m_filter.gritSet(false);
   }
   sessionModel->setQuery(database->selectSessions(m_filter));
   m_manualMode = false;
@@ -171,6 +227,41 @@ void SelSessionBox::onSerialChanged(int index)
   sessionModel->setQuery(database->selectSessions(m_filter));
 }
 /*----------------------------------------------------------------------------*/
+void SelSessionBox::onProductChanged(int index)
+{
+  if(!ui->filterCheck->checkState() || m_manualMode)
+    return;
+  if(index <= 0)
+    m_filter.productSet(false);
+  else
+    m_filter.setProduct(ui->productCombo->currentText());
+  sessionModel->setQuery(database->selectSessions(m_filter));
+}
+/*----------------------------------------------------------------------------*/
+void SelSessionBox::onMarkChanged(int index)
+{
+  if(!ui->filterCheck->checkState() || m_manualMode)
+    return;
+  if(index <= 0)
+    m_filter.markSet(false);
+  else
+    m_filter.setMark(ui->markCombo->currentText());
+  sessionModel->setQuery(database->selectSessions(m_filter));
+}
+/*----------------------------------------------------------------------------*/
+void SelSessionBox::onGritChanged(int index)
+{
+  if(!ui->filterCheck->checkState() || m_manualMode)
+    return;
+  if(index <= 0)
+    m_filter.gritSet(false);
+  else
+  {
+    m_filter.setGrit(m_grits[index - 1]);
+  }
+  sessionModel->setQuery(database->selectSessions(m_filter));
+}
+/*----------------------------------------------------------------------------*/
 void SelSessionBox::onRefresh()
 {
   onUsersChanged();
@@ -180,12 +271,6 @@ void SelSessionBox::onRefresh()
 }
 /*----------------------------------------------------------------------------*/
 //SelSessionModel
-/*----------------------------------------------------------------------------*/
-#define ID_COL 0
-#define START_COL 1
-#define SERIAL_COL 2
-#define USER_COL 3
-#define LOT_COL 4
 /*----------------------------------------------------------------------------*/
 SelSessionModel :: SelSessionModel(QObject *parent)
   : QSqlQueryModel(parent)
@@ -199,14 +284,12 @@ QVariant SelSessionModel :: data(const QModelIndex &idx, int role) const
   QSqlRecord rec = query().record();
   switch(col + 1)
   {
-  case START_COL:
-    if(role == Qt::DisplayRole)
-      return rec.value(START_COL).toDateTime().toString(timeFormat);
+  case StartCol:
+    if(role == Qt::DisplayRole || role == Qt::ToolTipRole)
+      return rec.value(StartCol).toDateTime().toString(timeFormat);
     break;
-  case SERIAL_COL:
-  case USER_COL:
-  case LOT_COL:
-    if(role == Qt::DisplayRole)
+  default:
+    if(role == Qt::DisplayRole || role == Qt::ToolTipRole)
       return rec.value(col + 1);
     break;
   }
@@ -226,13 +309,32 @@ QVariant SelSessionModel :: headerData(int section, Qt::Orientation orientation,
     {
     }
 
-    return QSqlQueryModel::headerData(section + 1, orientation, role);
+    if(role == Qt::DisplayRole || role == Qt::ToolTipRole)
+    {
+      switch(section + 1)
+      {
+      case StartCol:
+        return tr("Date");
+      //case SerialCol:
+      //  return tr("Serial");
+      case UserCol:
+        return tr("User");
+      case ProductCol:
+        return tr("Product");
+      case LotCol:
+        return tr("Lot");
+      case GritCol:
+        return tr("Grit");
+      case MarkCol:
+        return tr("Mark");
+      }
+    }
   }
-  return QSqlQueryModel::headerData(section, orientation, role);
+  return QVariant();//QSqlQueryModel::headerData(section, orientation, role);
 }
 /*----------------------------------------------------------------------------*/
 int SelSessionModel :: columnCount(const QModelIndex &) const
 {
-  return 4;
+  return ColCount - 1;
 }
 /*----------------------------------------------------------------------------*/

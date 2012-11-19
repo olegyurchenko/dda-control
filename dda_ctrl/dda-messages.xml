@@ -965,6 +965,12 @@
   <en_US>St. dev. strength [N]</en_US>
  </message>
  <message>
+  <source>Product</source>
+  <uk_UA>Марка порошку</uk_UA>
+  <ru_RU>Марка порошка</ru_RU>
+  <en_US>Mark</en_US>
+ </message>
+ <message>
   <source>Profile_%1</source>
   <uk_UA>Профіль_%1</uk_UA>
   <ru_RU>Профиль_%1</ru_RU>

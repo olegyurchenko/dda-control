@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>320</width>
+    <width>376</width>
     <height>509</height>
    </rect>
   </property>
@@ -92,6 +92,26 @@
           </property>
          </widget>
         </item>
+        <item>
+         <widget class="QLabel" name="productLabel">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string>Product</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QComboBox" name="productCombo">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
        </layout>
       </item>
       <item>
@@ -125,6 +145,26 @@
           </property>
           <property name="whatsThis">
            <string>Select user combo box</string>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QLabel" name="gritLabel">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string>Grit</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QComboBox" name="gritCombo">
+          <property name="enabled">
+           <bool>false</bool>
           </property>
          </widget>
         </item>
@@ -164,6 +204,26 @@
           </property>
          </widget>
         </item>
+        <item>
+         <widget class="QLabel" name="markLabel">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+          <property name="text">
+           <string>Mark</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QComboBox" name="markCombo">
+          <property name="enabled">
+           <bool>false</bool>
+          </property>
+         </widget>
+        </item>
        </layout>
       </item>
      </layout>
@@ -198,8 +258,8 @@
    <slot>onUserChanged(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>205</x>
-     <y>453</y>
+     <x>185</x>
+     <y>462</y>
     </hint>
     <hint type="destinationlabel">
      <x>215</x>
@@ -230,8 +290,8 @@
    <slot>onRefresh()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>303</x>
-     <y>389</y>
+     <x>362</x>
+     <y>396</y>
     </hint>
     <hint type="destinationlabel">
      <x>302</x>
@@ -246,12 +306,60 @@
    <slot>onDateChanged(int)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>281</x>
-     <y>420</y>
+     <x>185</x>
+     <y>429</y>
     </hint>
     <hint type="destinationlabel">
      <x>319</x>
      <y>453</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>productCombo</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>SelSessionBox</receiver>
+   <slot>onProductChanged(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>276</x>
+     <y>416</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>372</x>
+     <y>342</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>markCombo</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>SelSessionBox</receiver>
+   <slot>onMarkChanged(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>318</x>
+     <y>486</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>372</x>
+     <y>475</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>gritCombo</sender>
+   <signal>currentIndexChanged(int)</signal>
+   <receiver>SelSessionBox</receiver>
+   <slot>onGritChanged(int)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>309</x>
+     <y>458</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>377</x>
+     <y>275</y>
     </hint>
    </hints>
   </connection>
@@ -263,5 +371,8 @@
   <slot>onUserChanged(int)</slot>
   <slot>onSerialChanged(int)</slot>
   <slot>onRefresh()</slot>
+  <slot>onProductChanged(int)</slot>
+  <slot>onMarkChanged(int)</slot>
+  <slot>onGritChanged(int)</slot>
  </slots>
 </ui>

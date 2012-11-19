@@ -711,14 +711,27 @@ DDASerialList DDADatabase :: serialList(bool forFilter)
   return lst;
 }
 /*----------------------------------------------------------------------------*/
-QStringList DDADatabase :: markList()
+QStringList DDADatabase :: markList(bool forFilter)
 {
   QStringList lst;
   QSqlQuery q(QSqlDatabase::database(m_connectionName));
-  if(!q.exec("select txt from marks where txt <> '' and txt is not NULL"))
+  if(!forFilter)
   {
-    error(q);
-    return lst;
+    if(!q.exec("select txt from marks where txt <> '' and txt is not NULL"))
+    {
+      error(q);
+      return lst;
+    }
+  }
+  else
+  {
+    if(!q.exec("select distinct m.txt from sessions s, marks m "
+               "where m.id = s.mark and m.txt <> '' and m.txt is not NULL "
+               "order by m.id"))
+    {
+      error(q);
+      return lst;
+    }
   }
 
   if(q.first())
@@ -731,11 +744,44 @@ QStringList DDADatabase :: markList()
   return lst;
 }
 /*----------------------------------------------------------------------------*/
-QStringList DDADatabase :: productList()
+QStringList DDADatabase :: productList(bool forFilter)
 {
   QStringList lst;
   QSqlQuery q(QSqlDatabase::database(m_connectionName));
-  if(!q.exec("select txt from products where txt <> '' and txt is not NULL"))
+  if(!forFilter)
+  {
+    if(!q.exec("select txt from products where txt <> '' and txt is not NULL"))
+    {
+      error(q);
+      return lst;
+    }
+  }
+  else
+  {
+    if(!q.exec("select distinct p.txt from sessions s, products p "
+               "where p.id = s.mark and p.txt <> '' and p.txt is not NULL "
+               "order by p.id"))
+    {
+      error(q);
+      return lst;
+    }
+  }
+
+  if(q.first())
+  {
+    do
+    {
+      lst.append(q.value(0).toString());
+    } while(q.next());
+  }
+  return lst;
+}
+/*----------------------------------------------------------------------------*/
+DDAGritList DDADatabase :: gritList(bool /*TODO*/)
+{
+  DDAGritList lst;
+  QSqlQuery q(QSqlDatabase::database(m_connectionName));
+  if(!q.exec("select distinct standard, grit from sessions order by standard, grit"))
   {
     error(q);
     return lst;
@@ -745,7 +791,10 @@ QStringList DDADatabase :: productList()
   {
     do
     {
-      lst.append(q.value(0).toString());
+      DDAGrit g;
+      g.standard = q.value(0).toInt();
+      g.gritIndex = q.value(1).toInt();
+      lst.append(g);
     } while(q.next());
   }
   return lst;
@@ -1044,23 +1093,38 @@ QSqlQuery DDADatabase :: selectSessions(const SessionFilter& filter)
   QSqlQuery q(QSqlDatabase::database(m_connectionName));
   QString sql;
 
-  sql = "select s.id, s.start, d.serial, u.name, s.lot\n"
-      "from sessions s, devices d, users u, measures m\n"
+  sql = "select s.id, s.start, u.name, p.txt, s.lot, st.txt || ' ' || gr.txt, mr.txt\n"
+      "from sessions s, users u, measures m, products p, standards st, grits gr, marks mr\n"
       "where u.id = s.user\n"
-      "and d.id = s.device\n"
-      "and m.session = s.id\n";
+      "and m.session = s.id\n"
+      "and p.id = s.product\n"
+      "and st.id = s.standard\n"
+      "and gr.gritIndex = s.grit and gr.standard = s.standard\n"
+      "and mr.id = s.mark\n";
 
-  if(filter.dateSet())
+  if(filter.isDateSet())
   {
     sql += "and start >= ?\n";
     sql += "and end <= ?\n";
   }
 
-  if(filter.userSet())
+  if(filter.isUserSet())
     sql += "and s.user = ?\n";
 
-  if(filter.serialSet())
+  if(filter.isSerialSet())
     sql += "and s.device = ?\n";
+
+  if(filter.isMarkSet())
+    sql += "and s.mark = ?\n";
+
+  if(filter.isProductSet())
+    sql += "and s.product = ?\n";
+
+  if(filter.isGritSet())
+  {
+    sql += "and s.standard = ?\n";
+    sql += "and s.grit = ?\n";
+  }
 
   sql += "group by s.id\n";
   sql += "order by s.id desc\n";
@@ -1071,7 +1135,7 @@ QSqlQuery DDADatabase :: selectSessions(const SessionFilter& filter)
       sql += QString("offset %1").arg(filter.offset());
   }
   q.prepare(sql);
-  if(filter.dateSet())
+  if(filter.isDateSet())
   {
     QDateTime d1(filter.date()), d2(filter.date());
     d1.setTime(QTime(0, 0));
@@ -1079,10 +1143,19 @@ QSqlQuery DDADatabase :: selectSessions(const SessionFilter& filter)
     q.addBindValue(d1);
     q.addBindValue(d2);
   }
-  if(filter.userSet())
+  if(filter.isUserSet())
     q.addBindValue(filter.user());
-  if(filter.serialSet())
+  if(filter.isSerialSet())
     q.addBindValue(filter.serial());
+  if(filter.isMarkSet())
+    q.addBindValue(mark(filter.mark()));
+  if(filter.isProductSet())
+    q.addBindValue(product(filter.product()));
+  if(filter.isGritSet())
+  {
+    q.addBindValue(filter.standard());
+    q.addBindValue(filter.gritIndex());
+  }
 
   if(!q.exec())
     error(q);

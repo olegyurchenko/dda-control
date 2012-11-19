@@ -177,9 +177,6 @@ void MainWindow::onSourceChanged(int)
 /*----------------------------------------------------------------------------*/
 void MainWindow::onSearchTextChanged(QString txt)
 {
-  if(ui->sourceList->currentRow() < 0)
-    return;
-
   if(txt.isEmpty())
   {
     ui->actionFindNextSource->setEnabled(false);
@@ -194,6 +191,8 @@ void MainWindow::onSearchTextChanged(QString txt)
 
   int index = ui->sourceList->currentRow();
   int size = m_sourceList.size();
+  if(index < 0)
+    index = 0;
   for(int i = index; i < size; i++)
   {
     if(m_sourceList[i].indexOf(txt, 0, Qt::CaseInsensitive) != -1)
@@ -382,7 +381,7 @@ void MainWindow::onSearchTranslatedChanged(QString txt)
 /*----------------------------------------------------------------------------*/
 void MainWindow::onTranslatedSearchDown()
 {
-  if(ui->sourceList->currentRow() < 0 || ui->langCombo->currentIndex() < 0)
+  if(ui->langCombo->currentIndex() < 0)
     return;
 
   int index = ui->sourceList->currentRow();
@@ -404,7 +403,7 @@ void MainWindow::onTranslatedSearchDown()
 /*----------------------------------------------------------------------------*/
 void MainWindow::onTranslatedSearchUp()
 {
-  if(ui->sourceList->currentRow() < 0 || ui->langCombo->currentIndex() < 0)
+  if(ui->langCombo->currentIndex() < 0)
     return;
 
   int index = ui->sourceList->currentRow();
@@ -427,7 +426,7 @@ void MainWindow::onTranslatedSearchUp()
 /*----------------------------------------------------------------------------*/
 void MainWindow::onNextUntranslated()
 {
-  if(ui->sourceList->currentRow() < 0 || ui->langCombo->currentIndex() < 0)
+  if(ui->langCombo->currentIndex() < 0)
     return;
 
   int index = ui->sourceList->currentRow();
@@ -448,7 +447,7 @@ void MainWindow::onNextUntranslated()
 /*----------------------------------------------------------------------------*/
 void MainWindow::onPreviosUntranslated()
 {
-  if(ui->sourceList->currentRow() < 0 || ui->langCombo->currentIndex() < 0)
+  if(ui->langCombo->currentIndex() < 0)
     return;
 
   int index = ui->sourceList->currentRow();
