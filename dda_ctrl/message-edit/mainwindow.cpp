@@ -211,6 +211,7 @@ void MainWindow::onSourceListDblClick()
   int row = ui->translateList->currentRow();
   QString source = m_sourceList[ui->sourceList->currentRow()];
   QString lang = m_langList[row];
+  ui->translateEdit->setModified(true);
   ui->translateEdit->setText(m_messageFile->message(source, lang));
 
 }

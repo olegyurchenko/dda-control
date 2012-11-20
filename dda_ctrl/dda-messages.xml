@@ -36,6 +36,28 @@
   <en_US>Ins</en_US>
  </message>
  <message>
+  <source>Alt+C</source>
+  <uk_UA></uk_UA>
+  <ru_RU></ru_RU>
+ </message>
+ <message>
+  <source>Show facing pages</source>
+  <uk_UA>Показати розворот</uk_UA>
+  <ru_RU>Показать разворот</ru_RU>
+ </message>
+ <message>
+  <source>Cancel</source>
+  <uk_UA>Відміна</uk_UA>
+  <ru_RU>Отмена</ru_RU>
+  <en_US>Cancel</en_US>
+ </message>
+ <message>
+  <source>&amp;Yes</source>
+  <uk_UA>Так</uk_UA>
+  <ru_RU>Да</ru_RU>
+  <en_US>&amp;Yes</en_US>
+ </message>
+ <message>
   <source>[um]</source>
   <uk_UA>[мкм]</uk_UA>
   <ru_RU>[мкм]</ru_RU>
@@ -66,10 +88,28 @@
   <en_US>Ctrl+D</en_US>
  </message>
  <message>
+  <source>%1%</source>
+  <uk_UA></uk_UA>
+ </message>
+ <message>
+  <source>Ctrl+E</source>
+  <uk_UA></uk_UA>
+  <ru_RU></ru_RU>
+ </message>
+ <message>
   <source>Save File</source>
   <uk_UA>Зберегти файл</uk_UA>
   <ru_RU>Сохранить файл</ru_RU>
   <en_US>Save File</en_US>
+ </message>
+ <message>
+  <source>Ctrl+F</source>
+  <uk_UA></uk_UA>
+ </message>
+ <message>
+  <source>Alt+P</source>
+  <uk_UA></uk_UA>
+  <ru_RU></ru_RU>
  </message>
  <message>
   <source>Lot</source>
@@ -82,6 +122,11 @@
   <uk_UA>Ви впевнені у вилученні оператора  '%1' ?</uk_UA>
   <ru_RU>Вы уверены в том, что хотите удалить оператора %1 ?</ru_RU>
   <en_US>Are you shure to delte user '%1' ?</en_US>
+ </message>
+ <message>
+  <source>Alt+S</source>
+  <uk_UA></uk_UA>
+  <ru_RU></ru_RU>
  </message>
  <message>
   <source>Error</source>
@@ -108,6 +153,16 @@
   <en_US>Delete user button</en_US>
  </message>
  <message>
+  <source>Tab</source>
+  <uk_UA></uk_UA>
+  <ru_RU></ru_RU>
+ </message>
+ <message>
+  <source>Ctrl+P</source>
+  <uk_UA></uk_UA>
+  <ru_RU></ru_RU>
+ </message>
+ <message>
   <source>>=</source>
   <uk_UA>>=</uk_UA>
   <ru_RU>>=</ru_RU>
@@ -132,6 +187,10 @@
   <en_US>Default profile</en_US>
  </message>
  <message>
+  <source>Ctrl+R</source>
+  <uk_UA></uk_UA>
+ </message>
+ <message>
   <source>Database file</source>
   <uk_UA>Файл бази даних</uk_UA>
   <ru_RU>Файл базы данных</ru_RU>
@@ -144,10 +203,20 @@
   <en_US>Add user button</en_US>
  </message>
  <message>
+  <source>Ctrl+S</source>
+  <uk_UA></uk_UA>
+  <ru_RU></ru_RU>
+ </message>
+ <message>
   <source>Print</source>
   <uk_UA>Друк</uk_UA>
   <ru_RU>Печать</ru_RU>
   <en_US>Print</en_US>
+ </message>
+ <message>
+  <source>Ctrl+U</source>
+  <uk_UA></uk_UA>
+  <ru_RU></ru_RU>
  </message>
  <message>
   <source>Session</source>
@@ -160,6 +229,10 @@
   <uk_UA>Мова</uk_UA>
   <ru_RU>Язык</ru_RU>
   <en_US>Language</en_US>
+ </message>
+ <message>
+  <source>Ctrl+V</source>
+  <uk_UA></uk_UA>
  </message>
  <message>
   <source>Manage users</source>
@@ -180,6 +253,11 @@
   <en_US>Grit</en_US>
  </message>
  <message>
+  <source>Ctrl+X</source>
+  <uk_UA></uk_UA>
+  <ru_RU></ru_RU>
+ </message>
+ <message>
   <source>Delete</source>
   <uk_UA>Видалити</uk_UA>
   <ru_RU>Удалить</ru_RU>
@@ -187,9 +265,15 @@
  </message>
  <message>
   <source>UnitedStates</source>
-  <uk_UA>UnitedStates</uk_UA>
-  <ru_RU>Соединенный Штаты</ru_RU>
-  <en_US>UnitedStates</en_US>
+  <uk_UA>United States</uk_UA>
+  <ru_RU>United States</ru_RU>
+  <en_US>United States</en_US>
+ </message>
+ <message>
+  <source>&amp;No</source>
+  <uk_UA>Ні</uk_UA>
+  <ru_RU>Нет</ru_RU>
+  <en_US>&amp;No</en_US>
  </message>
  <message>
   <source>Avg. fract str [N/mm^2]</source>
@@ -211,9 +295,14 @@
  </message>
  <message>
   <source>English</source>
-  <uk_UA>Англiйська</uk_UA>
-  <ru_RU>Английский</ru_RU>
+  <uk_UA>English</uk_UA>
+  <ru_RU>English</ru_RU>
   <en_US>English</en_US>
+ </message>
+ <message>
+  <source>+</source>
+  <uk_UA></uk_UA>
+  <ru_RU></ru_RU>
  </message>
  <message>
   <source>[s]</source>
@@ -276,6 +365,12 @@
   <en_US>Report error</en_US>
  </message>
  <message>
+  <source>OK</source>
+  <uk_UA>Так</uk_UA>
+  <ru_RU>Да</ru_RU>
+  <en_US>OK</en_US>
+ </message>
+ <message>
   <source>Particles:</source>
   <uk_UA>Замірів:</uk_UA>
   <ru_RU>Замеров:</ru_RU>
@@ -286,6 +381,11 @@
   <uk_UA>Зернистість:</uk_UA>
   <ru_RU>Зернистость:</ru_RU>
   <en_US>Grit:</en_US>
+ </message>
+ <message>
+  <source>Backtab</source>
+  <uk_UA></uk_UA>
+  <ru_RU></ru_RU>
  </message>
  <message>
   <source>Add user to database</source>
@@ -324,6 +424,11 @@
   <en_US>&lt;</en_US>
  </message>
  <message>
+  <source>Shift</source>
+  <uk_UA></uk_UA>
+  <ru_RU></ru_RU>
+ </message>
+ <message>
   <source>&lt;p>Experimenter from device receive test data and stores them in a database for later analysis.&lt;/p></source>
   <uk_UA>&lt;p>Experimenter одержує від приладу дані випробувань і записує їх у базу даних для подальшого аналізу.&lt;/p></uk_UA>
   <ru_RU>&lt;p>Экспериментатор получает от прибора данные испытаний и записывает их в базу данных для последующего анализа.&lt;/p></ru_RU>
@@ -360,6 +465,15 @@
   <en_US>Unkown user</en_US>
  </message>
  <message>
+  <source>Animation is an abstract class</source>
+  <uk_UA></uk_UA>
+ </message>
+ <message>
+  <source>Esc</source>
+  <uk_UA></uk_UA>
+  <ru_RU></ru_RU>
+ </message>
+ <message>
   <source>Help</source>
   <uk_UA>Довідка</uk_UA>
   <ru_RU>Справка</ru_RU>
@@ -370,6 +484,11 @@
   <uk_UA>Партія:</uk_UA>
   <ru_RU>Партия:</ru_RU>
   <en_US>Lot:</en_US>
+ </message>
+ <message>
+  <source>Cannot load library %1: %2</source>
+  <uk_UA></uk_UA>
+  <ru_RU></ru_RU>
  </message>
  <message>
   <source>calibrating</source>
@@ -426,6 +545,12 @@
   <en_US>Current size [um]:</en_US>
  </message>
  <message>
+  <source>Mark</source>
+  <uk_UA>Марка ДСТУ</uk_UA>
+  <ru_RU>Марка ДСТУ</ru_RU>
+  <en_US>Mark</en_US>
+ </message>
+ <message>
   <source>Set user password button</source>
   <uk_UA>Кнопка встановлення пароля</uk_UA>
   <ru_RU>Кнопка установки пароля оператора</ru_RU>
@@ -436,6 +561,11 @@
   <uk_UA>&lt;p>Програма &lt;b>dda_analys&lt;/b> є частиною програмно-апаратного комплексу для проведення випробовування статичної міцності алмазного порошку.&lt;/p></uk_UA>
   <ru_RU>&lt;p>Программа &lt;b>dda_analys&lt;/b> является частью програмно-аппаратного комплекса для проведения испытаний статической прочности алмазного порошка.&lt;/p></ru_RU>
   <en_US>&lt;p>The &lt;b>dda_analys&lt;/b> is part of a software-hardware system for testing the static strength of diamond powder.&lt;/p></en_US>
+ </message>
+ <message>
+  <source>Return</source>
+  <uk_UA></uk_UA>
+  <ru_RU></ru_RU>
  </message>
  <message>
   <source>File</source>
@@ -515,10 +645,24 @@
   <en_US>Measure date</en_US>
  </message>
  <message>
+  <source>Print Preview</source>
+  <uk_UA>Попередній перегляд</uk_UA>
+  <ru_RU>Предварительный просмотр</ru_RU>
+ </message>
+ <message>
+  <source>Meta</source>
+  <uk_UA></uk_UA>
+  <ru_RU></ru_RU>
+ </message>
+ <message>
   <source>Invalid profile index</source>
   <uk_UA>Помилковий індекс профіля</uk_UA>
   <ru_RU>Ошибка индекса профиля</ru_RU>
   <en_US>Invalid profile index</en_US>
+ </message>
+ <message>
+  <source>Keys is only available via attached properties</source>
+  <uk_UA></uk_UA>
  </message>
  <message>
   <source>Error open database</source>
@@ -539,6 +683,11 @@
   <en_US>New password</en_US>
  </message>
  <message>
+  <source>Fit page</source>
+  <uk_UA>Підгонка сторінки</uk_UA>
+  <ru_RU>Подгонка страницы</ru_RU>
+ </message>
+ <message>
   <source>Device</source>
   <uk_UA>Прилад</uk_UA>
   <ru_RU>Прибор</ru_RU>
@@ -549,6 +698,11 @@
   <uk_UA>Про програму experimenter</uk_UA>
   <ru_RU>О программе experimenter</ru_RU>
   <en_US>About experimenter</en_US>
+ </message>
+ <message>
+  <source>Last page</source>
+  <uk_UA>Остання сторінка</uk_UA>
+  <ru_RU>Последняя страница</ru_RU>
  </message>
  <message>
   <source>&lt;html>&lt;head/>&lt;body>&lt;p>Select gift size from russian &lt;/p>&lt;p>state standard&lt;/p>&lt;/body>&lt;/html></source>
@@ -623,6 +777,15 @@
   <en_US>User id=%1 not found</en_US>
  </message>
  <message>
+  <source>The file '%1' is not a valid Qt plugin.</source>
+  <uk_UA></uk_UA>
+  <ru_RU></ru_RU>
+ </message>
+ <message>
+  <source>KeyNavigation is only available via attached properties</source>
+  <uk_UA></uk_UA>
+ </message>
+ <message>
   <source>false</source>
   <uk_UA>ні</uk_UA>
   <ru_RU>нет</ru_RU>
@@ -654,9 +817,9 @@
  </message>
  <message>
   <source>Ukraine</source>
-  <uk_UA>Ukraine</uk_UA>
-  <ru_RU>Украина</ru_RU>
-  <en_US>Ukraine</en_US>
+  <uk_UA>Україна</uk_UA>
+  <ru_RU>Україна</ru_RU>
+  <en_US>Україна</en_US>
  </message>
  <message>
   <source>St. dev. size [um]</source>
@@ -683,6 +846,11 @@
   <en_US>Set user management password</en_US>
  </message>
  <message>
+  <source>Space</source>
+  <uk_UA></uk_UA>
+  <ru_RU></ru_RU>
+ </message>
+ <message>
   <source>Avg. size [um]</source>
   <uk_UA>Середній розмір  [мкм]</uk_UA>
   <ru_RU>Средний размер [мкм]</ru_RU>
@@ -693,6 +861,11 @@
   <uk_UA>Значення</uk_UA>
   <ru_RU>Значение</ru_RU>
   <en_US>Value</en_US>
+ </message>
+ <message>
+  <source>Show overview of all pages</source>
+  <uk_UA>Показати огляд всіх сторінок</uk_UA>
+  <ru_RU>Показать обзор всех страниц</ru_RU>
  </message>
  <message>
   <source>Create</source>
@@ -719,6 +892,11 @@
   <en_US>Error load config</en_US>
  </message>
  <message>
+  <source>First page</source>
+  <uk_UA>Перша сторінка</uk_UA>
+  <ru_RU>Первая страница</ru_RU>
+ </message>
+ <message>
   <source>Distribution of the size of grain</source>
   <uk_UA>Розподіл за розміром</uk_UA>
   <ru_RU>Распределение по размеру</ru_RU>
@@ -741,6 +919,11 @@
   <uk_UA>Стандарт</uk_UA>
   <ru_RU>Стандарт</ru_RU>
   <en_US>Standard</en_US>
+ </message>
+ <message>
+  <source>Backspace</source>
+  <uk_UA></uk_UA>
+  <ru_RU></ru_RU>
  </message>
  <message>
   <source>DDA control system</source>
@@ -779,10 +962,21 @@
   <en_US>Print preview</en_US>
  </message>
  <message>
+  <source>Close</source>
+  <uk_UA>Закрити</uk_UA>
+  <ru_RU>Закрыть</ru_RU>
+  <en_US>Close</en_US>
+ </message>
+ <message>
   <source>Enter user name</source>
   <uk_UA>Ввод імені оператора</uk_UA>
   <ru_RU>Ввод имени оператора</ru_RU>
   <en_US>Enter user name</en_US>
+ </message>
+ <message>
+  <source>Zoom in</source>
+  <uk_UA>Збільшити</uk_UA>
+  <ru_RU>Увеличить</ru_RU>
  </message>
  <message>
   <source>Stretch [N]</source>
@@ -801,6 +995,15 @@
   <uk_UA>Налаштування змінені</uk_UA>
   <ru_RU>Настройки изменены</ru_RU>
   <en_US>Options changed</en_US>
+ </message>
+ <message>
+  <source>Enter</source>
+  <uk_UA></uk_UA>
+ </message>
+ <message>
+  <source>Show single page</source>
+  <uk_UA>Показати одну сторінку</uk_UA>
+  <ru_RU>Показать одну страницу</ru_RU>
  </message>
  <message>
   <source>Profile name</source>
@@ -845,6 +1048,11 @@
   <en_US>Select device serial</en_US>
  </message>
  <message>
+  <source>Fit width</source>
+  <uk_UA>По ширині</uk_UA>
+  <ru_RU>По ширине</ru_RU>
+ </message>
+ <message>
   <source>Add user</source>
   <uk_UA>Додати</uk_UA>
   <ru_RU>Добавить</ru_RU>
@@ -852,9 +1060,9 @@
  </message>
  <message>
   <source>Ukrainian</source>
-  <uk_UA>Ukrainian</uk_UA>
-  <ru_RU>Украинский</ru_RU>
-  <en_US>Ukrainian</en_US>
+  <uk_UA>Українська</uk_UA>
+  <ru_RU>Українська</ru_RU>
+  <en_US>Українська</en_US>
  </message>
  <message>
   <source>Databases (*.db);;All files (*)</source>
@@ -887,6 +1095,11 @@
   <en_US>Current strength [N]:</en_US>
  </message>
  <message>
+  <source>Zoom out</source>
+  <uk_UA>Зменшити</uk_UA>
+  <ru_RU>Уменьшить</ru_RU>
+ </message>
+ <message>
   <source>Error open serial port</source>
   <uk_UA>Помилка відкриття порту</uk_UA>
   <ru_RU>Ошибка открытия порта</ru_RU>
@@ -899,6 +1112,11 @@
   <en_US>Strength VS Size</en_US>
  </message>
  <message>
+  <source>Page setup</source>
+  <uk_UA>Параметри сторінки</uk_UA>
+  <ru_RU>Параметры страницы</ru_RU>
+ </message>
+ <message>
   <source>Method '%1' not found</source>
   <uk_UA>Метод %1 не знайдено</uk_UA>
   <ru_RU>Метод %1 не найден</ru_RU>
@@ -909,6 +1127,11 @@
   <uk_UA>Розподіл по міцності</uk_UA>
   <ru_RU>Распределение по прочности</ru_RU>
   <en_US>Distribution of the strength of grain</en_US>
+ </message>
+ <message>
+  <source>GroupBox</source>
+  <uk_UA></uk_UA>
+  <ru_RU></ru_RU>
  </message>
  <message>
   <source>Delete user</source>
@@ -924,9 +1147,9 @@
  </message>
  <message>
   <source>RussianFederation</source>
-  <uk_UA>Россiйська федерацiя</uk_UA>
+  <uk_UA>Российская федерация</uk_UA>
   <ru_RU>Российская федерация</ru_RU>
-  <en_US>Russian Federation</en_US>
+  <en_US>Российская федерация</en_US>
  </message>
  <message>
   <source>&lt;p>The analyzer processes the test results and generates a report for printing.&lt;/p></source>
@@ -983,16 +1206,36 @@
   <en_US>yyyy-MM-dd hh:mm</en_US>
  </message>
  <message>
+  <source>Previous page</source>
+  <uk_UA>Попередня сторінка</uk_UA>
+  <ru_RU>Предыдущая страница</ru_RU>
+ </message>
+ <message>
+  <source>Landscape</source>
+  <uk_UA>Пейзаж</uk_UA>
+  <ru_RU>Пейзаж</ru_RU>
+ </message>
+ <message>
   <source>[N]</source>
   <uk_UA>[Н]</uk_UA>
   <ru_RU>[Н]</ru_RU>
   <en_US>[N]</en_US>
  </message>
  <message>
+  <source>...</source>
+  <uk_UA></uk_UA>
+  <ru_RU></ru_RU>
+ </message>
+ <message>
   <source>Device status:</source>
   <uk_UA>Стан приладу:</uk_UA>
   <ru_RU>Статус прибора:</ru_RU>
   <en_US>Device status:</en_US>
+ </message>
+ <message>
+  <source>Next page</source>
+  <uk_UA>Наступна сторінка</uk_UA>
+  <ru_RU>Следующая страница</ru_RU>
  </message>
  <message>
   <source>User management</source>
@@ -1011,6 +1254,11 @@
   <uk_UA>&lt;html>&lt;head/>&lt;body>&lt;p>Вибір сита&lt;/p>&lt;/body>&lt;/html></uk_UA>
   <ru_RU>&lt;html>&lt;head/>&lt;body>&lt;p>Выбор сита&lt;/p>&lt;/body>&lt;/html></ru_RU>
   <en_US>&lt;html>&lt;head/>&lt;body>&lt;p>Select mesh&lt;/p>&lt;/body>&lt;/html></en_US>
+ </message>
+ <message>
+  <source>Ctrl</source>
+  <uk_UA></uk_UA>
+  <ru_RU></ru_RU>
  </message>
  <message>
   <source>Retype new password:</source>
@@ -1049,6 +1297,16 @@
   <en_US>Serial:1 Baud: 9600</en_US>
  </message>
  <message>
+  <source>Portrait</source>
+  <uk_UA>Портрет</uk_UA>
+  <ru_RU>Портрет</ru_RU>
+ </message>
+ <message>
+  <source>Alt</source>
+  <uk_UA></uk_UA>
+  <ru_RU></ru_RU>
+ </message>
+ <message>
   <source>Export to pdf</source>
   <uk_UA>Експорт у  pdf</uk_UA>
   <ru_RU>Экспорт в PDF</ru_RU>
@@ -1065,6 +1323,16 @@
   <uk_UA>Графік</uk_UA>
   <ru_RU>График</ru_RU>
   <en_US>Plot</en_US>
+ </message>
+ <message>
+  <source>The plugin '%1' uses incompatible Qt library. Expected build key "%2", got "%3"</source>
+  <uk_UA></uk_UA>
+  <ru_RU></ru_RU>
+ </message>
+ <message>
+  <source>Ctrl+/</source>
+  <uk_UA></uk_UA>
+  <ru_RU></ru_RU>
  </message>
  <message>
   <source>&lt;html>&lt;head/>&lt;body>&lt;p>Select profile&lt;/p>&lt;/body>&lt;/html></source>
@@ -1104,9 +1372,9 @@
  </message>
  <message>
   <source>Russian</source>
-  <uk_UA>Росiйський</uk_UA>
+  <uk_UA>Русский</uk_UA>
   <ru_RU>Русский</ru_RU>
-  <en_US>Russian</en_US>
+  <en_US>Русский</en_US>
  </message>
  <message>
   <source>Sessions</source>
