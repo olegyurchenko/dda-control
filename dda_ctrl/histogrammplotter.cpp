@@ -45,14 +45,14 @@ void HistogrammPlotter :: paint(QPaintDevice *dev)
   for(int i = 0; i < size && i < x.steps(); i++)
   {
     int xi = m_rect.left() + i * x.step() * m_x_scale;
-    int yi = m_rect.height() - data[i] * m_y_scale;
+    int yi = m_rect.bottom() - data[i] * m_y_scale;
 
     xi += (step - w)/2;
 
     if(yi < m_rect.top())
       yi = m_rect.top();
 
-    if(m_rect.height() - yi > 0)
+    if(yi >= m_rect.top() && yi < m_rect.bottom())
       p.drawRect(xi, yi + 1, w, m_rect.bottom() - yi - (m_pen.style() != Qt::NoPen ? 0 : 1));
   }
   p.end();

@@ -29,6 +29,7 @@ SessionDialog::SessionDialog(QWidget *parent, DDAMeasureSession *session) :
   ui->standardCombo->addItems(database->standardList());
   ui->standardCombo->setCurrentIndex(config->profile().standardIndex);
 
+  ui->gritCombo->clear();
   ui->gritCombo->addItems(database->gritList(config->profile().standardIndex));
   ui->gritCombo->setCurrentIndex(config->profile().gritIndex);
 

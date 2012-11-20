@@ -58,6 +58,7 @@ protected:
   double m_strength;
   QString m_deviceSerial;
   DDAMode m_mode;
+  int m_meshIndex;
 
   QMutex m_mutex;
   void lock() {m_mutex.lock();}
@@ -75,6 +76,8 @@ protected:
   void setSize(double s) {m_size = s;}
   void setStrength(double s) {m_strength = s;}
   void setDeviceSerial(const QString& s){m_deviceSerial = s;}
+  void setMeshIndex(int m) {m_meshIndex = m;}
+
 public:
   DDAController(QObject *parent = NULL);
   ~DDAController();
@@ -91,6 +94,7 @@ public:
   double size() {return m_size;}
   double strength() {return m_strength;}
   QString deviceSerial() {return m_deviceSerial;}
+  int meshIndex() {return m_meshIndex;}
 
 signals:
   void statusChanged(int s);
@@ -123,6 +127,9 @@ protected:
     NoCmd,
     StartCmd
   } m_cmd;
+
+  void genSize();
+
 public:
   DemoController(QObject *parent = 0);
   virtual void setMode(int meshIndex, int samples, DDAMode mode = Auto);

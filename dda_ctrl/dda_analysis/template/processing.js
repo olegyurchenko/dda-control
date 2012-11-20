@@ -156,7 +156,7 @@ function modelInit(role)
   histStrengthTable.setHeaderData(1, Qt.Horizontal, qsTr("<"))
   histStrengthTable.setHeaderData(2, Qt.Horizontal, qsTr("Particles"))
   histStrengthTable.setHeaderData(3, Qt.Horizontal, qsTr("% of grain"))
-  for(var i = 0; i < histogrammColumns; i++)
+  for(var i = 0; i < 14; i++)
     histStrengthTable.setHeaderData(i, Qt.Vertical, i + 1)
   histStrengthTable.update()
   //--------------------------------
@@ -170,7 +170,7 @@ function modelInit(role)
   strengthHistogramm.y.steps = 4
 
   strengthHistogramm.x.text = qsTr("[N]")
-  strengthHistogramm.x.decimals = 1
+  strengthHistogramm.x.decimals = 0
   strengthHistogramm.x.steps = histogrammColumns
   strengthHistogramm.title = qsTr("Distribution of the strength of grain")
   if(role === DataModel.ReportRole)
@@ -221,7 +221,7 @@ function modelInit(role)
   densityStrengthCurve.y.steps = 4
 
   densityStrengthCurve.x.text = qsTr("[N]")
-  densityStrengthCurve.x.decimals = 1
+  densityStrengthCurve.x.decimals = 0
   densityStrengthCurve.x.steps = histogrammColumns
   densityStrengthCurve.title = qsTr("The density distribution of strength")
   if(role === DataModel.ReportRole)
@@ -233,7 +233,7 @@ function modelInit(role)
   // sizeStrengthGraph
   //--------------------------------
   sizeStrengthGraph = model.newGraphModel()
-  sizeStrengthGraph.y.decimals = 1
+  sizeStrengthGraph.y.decimals = 0
   sizeStrengthGraph.x.decimals = 0
   sizeStrengthGraph.y.text = qsTr("[N]")
   sizeStrengthGraph.x.text = qsTr("[um]")
@@ -281,8 +281,53 @@ function modelUpdate(session, role)
   //--------------------------------
   // strengthHistogramm
   //--------------------------------
-  strengthHistogramm.x.min = session.minStrength
-  strengthHistogramm.x.max = session.maxStrength
+  var steps = [1000, 500, 100, 50, 40, 30, 20, 10, 5]
+  var minStrength = session.minStrength
+  var maxStrength = session.maxStrength
+
+  var minStep = (maxStrength - minStrength) / 14
+  var maxStep = (maxStrength - minStrength) / 10
+  var strengthStep = 0
+  var strengthColumns = 0
+
+  for(var i in steps)
+  {
+    var s = steps[i]
+    if(s >= minStep && s <= maxStep)
+    {
+      strengthStep = s
+      break
+    }
+  }
+
+  if(!strengthStep)
+  {
+    for(var i = steps.length - 1; i >= 0;i--)
+    {
+      var s = steps[i]
+      if(s >= minStep && s >= maxStep)
+      {
+        strengthStep = s;
+        break;
+      }
+    }
+  }
+
+  minStrength = roundTo(minStrength, strengthStep, false)
+  for(var i = 10; i <= 14; i++)
+  {
+    if(minStrength + i * strengthStep >= maxStrength)
+    {
+      strengthColumns = i
+      maxStrength = minStrength + i * strengthStep
+      break
+    }
+  }
+
+  //print(minStrength, maxStrength, strengthStep, strengthColumns)
+
+  strengthHistogramm.x.min = minStrength
+  strengthHistogramm.x.max = maxStrength
 
   //--------------------------------
   // sizeHistogramm
@@ -311,8 +356,8 @@ function modelUpdate(session, role)
   //--------------------------------
   // densityStrengthCurve
   //--------------------------------
-  densityStrengthCurve.x.min = session.minStrength
-  densityStrengthCurve.x.max = session.maxStrength
+  densityStrengthCurve.x.min = minStrength
+  densityStrengthCurve.x.max = maxStrength
   densityStrengthCurve.clear()
 
   //fill histogramm
@@ -321,12 +366,14 @@ function modelUpdate(session, role)
 
   for(var i = 0; i < histogrammColumns; i++)
   {
-    hStrength[i] = 0
     hSize[i] = 0
   }
 
-  var strengthStep = (session.maxStrength - session.minStrength) / histogrammColumns
-  //var sizeStep = (session.maxSize - session.minSize) / histogrammColumns
+  for(var i = 0; i < strengthColumns; i++)
+  {
+    hStrength[i] = 0
+  }
+
   var sizeStep = (maxSize - minSize) / histogrammColumns
 
   for(i = 0; i < session.measures.length; i++)
@@ -334,12 +381,13 @@ function modelUpdate(session, role)
     var m = session.measures[i]
     if(m.ignored)
       continue
-    var v = m.strength - session.minStrength
+    var v = m.strength - minStrength
     var col = Math.round(v / strengthStep)
-    if(col >= histogrammColumns)
-      col = histogrammColumns - 1
-    hStrength[col] += 1
-    //v = m.size - session.minSize
+    if(col < strengthColumns)
+      hStrength[col] += 1
+    else
+      hStrength[col - 1] += 1
+
     v = m.size - minSize
     col = Math.round(v / sizeStep)
     if(col < histogrammColumns)
@@ -347,40 +395,48 @@ function modelUpdate(session, role)
   }
 
   var percSum = 0
-  for(i = 0; i < histogrammColumns; i++)
+
+  histStrengthTable.rowCount = strengthColumns
+  histStrengthTable.update()
+  for(i = 0; i < strengthColumns; i++)
   {
-    histStrengthTable.setData(i, 0, (session.minStrength + i * strengthStep).toFixed(2))
-    histStrengthTable.setData(i, 1, (session.minStrength + (1 + i) * strengthStep).toFixed(2))
+    histStrengthTable.setData(i, 0, (minStrength + i * strengthStep).toFixed(2))
+    histStrengthTable.setData(i, 1, (minStrength + (1 + i) * strengthStep).toFixed(2))
     histStrengthTable.setData(i, 2, hStrength[i])
     histStrengthTable.setData(i, 3, (hStrength[i] * 100. / session.particles).toFixed(2))
 
-    //histSizeTable.setData(i, 0, (session.minSize + i * sizeStep).toFixed(2))
-    //histSizeTable.setData(i, 1, (session.minSize + (1 + i) * sizeStep).toFixed(2))
+    percSum += hStrength[i] * 100. / session.particles
+    densityStrengthCurve.add(minStrength + i * strengthStep, percSum)
+
+    hStrength[i] *= 100. / session.particles
+    //print("hStrength[" + i + "]=", hStrength[i])
+  }
+  strengthHistogramm.x.steps = strengthColumns
+  strengthHistogramm.data = hStrength
+  densityStrengthCurve.x.steps = strengthColumns
+
+  for(i = 0; i < histogrammColumns; i++)
+  {
     histSizeTable.setData(i, 0, (minSize + i * sizeStep).toFixed(2))
     histSizeTable.setData(i, 1, (minSize + (1 + i) * sizeStep).toFixed(2))
     histSizeTable.setData(i, 2, hSize[i])
     histSizeTable.setData(i, 3, (hSize[i] * 100. / session.particles).toFixed(2))
 
-    percSum += hStrength[i] * 100. / session.particles
-    densityStrengthCurve.add(session.minStrength + i * strengthStep, percSum)
-
-    hStrength[i] *= 100. / session.particles
     hSize[i] *= 100. / session.particles
   }
-  strengthHistogramm.data = hStrength
   sizeHistogramm.data = hSize
-  //densityStrengthCurve.add(session.minStrength + i * strengthStep, 0)
+  sizeHistogramm.x.marks = sizeMark
 
   //--------------------------------
   // sizeStrengthGraph
   //--------------------------------
-  sizeStrengthGraph.y.min = session.minStrength
-  sizeStrengthGraph.y.max = session.maxStrength
-  //sizeStrengthGraph.x.min = session.minSize
-  //sizeStrengthGraph.x.max = session.maxSize
+  sizeStrengthGraph.y.min = minStrength
+  sizeStrengthGraph.y.max = maxStrength
+  //sizeStrengthGraph.y.steps = strengthColumns
+
   sizeStrengthGraph.x.min = minSize
   sizeStrengthGraph.x.max = maxSize
-  sizeStrengthGraph.x.marks = sizeMark
+  sizeStrengthGraph.x.marks = sizeMark //!!!!!
   sizeStrengthGraph.clear()
   for(i = 0; i < session.measures.length; i++)
   {
@@ -499,5 +555,13 @@ function standardDeviation(sumOfSqDeviation, count)
   if(count < 2)
     return 0
   return Math.sqrt(sumOfSqDeviation / (count - 1))
+}
+//-----------------------------------------------------------------------------------
+function roundTo(val, step, upper)
+{
+  var n = Math.round(val / step)
+  if(upper)
+    n ++
+  return n * step
 }
 //-----------------------------------------------------------------------------------

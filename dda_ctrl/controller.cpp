@@ -29,6 +29,42 @@ const unsigned char ENQ = 5;	  //Запрос обмена источником 
 const unsigned char ACK = 6;	  //Ответ приемника о распознавании пакета
 const unsigned char NAK = 0x15;	//Ответ приемника о нераспознавании пакета
 /*----------------------------------------------------------------------------*/
+struct GREET
+{
+  int max;
+  int min;
+};
+/*----------------------------------------------------------------------------*/
+const GREET astm[] =
+{
+  {25, 20},
+  {31, 25},
+  {38, 31},
+  {45, 38}, //DDA - 0
+  {55, 45},
+  {63, 53},
+  {75, 63},
+  {90, 75},
+  {106, 80},
+  {125, 106},
+  {150, 125},
+  {180, 150},
+  {212, 180},
+  {250, 212},
+  {300, 250},
+  {355, 300},
+  {425, 355},
+  {500, 425},
+  {595, 500},
+  {710, 595},
+  {850, 710},
+  {1000, 850},
+  {1180, 1000},
+  {1400, 1180}, //DDA - MAX
+  {1700, 1400}
+};
+//-----------------------------------------------------------------------------------
+
 DDAController :: DDAController(QObject *parent)
   : QThread(parent)
 {
@@ -467,8 +503,19 @@ void DemoController :: run()
   }
 }
 /*----------------------------------------------------------------------------*/
+void DemoController :: genSize()
+{
+  GREET g = astm[6];
+  unsigned index = m_meshIndex + 3 - 1 + qrand() % 2;
+  if(index < sizeof(astm)/sizeof(astm[0]))
+    g = astm[index];
+  int sz = g.min + qrand() % (g.max - g.min);
+  setSize(sz);
+}
+/*----------------------------------------------------------------------------*/
 void DemoController :: setMode(int mesh, int samples, DDAMode mode)
 {
+  m_meshIndex = mesh;
   m_mode = mode;
   m_particles = samples;
 }
@@ -546,7 +593,8 @@ void DemoController :: doSimulation()
         break;
       }
 
-      setSize(234.5 + 345.6 * (double)(qrand() % 20)/10.);
+      //setSize(234.5 + 345.6 * (double)(qrand() % 20)/10.);
+      genSize();
       {
         char buffer[16];
         snprintf(buffer, sizeof(buffer), "%4.0f.", size());
