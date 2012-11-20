@@ -382,16 +382,12 @@ function modelUpdate(session, role)
     if(m.ignored)
       continue
     var v = m.strength - minStrength
-    var col = Math.round(v / strengthStep)
-    if(col < strengthColumns)
-      hStrength[col] += 1
-    else
-      hStrength[col - 1] += 1
+    var col = Math.round(v / strengthStep - 0.5)
+    hStrength[col] += 1
 
     v = m.size - minSize
-    col = Math.round(v / sizeStep)
-    if(col < histogrammColumns)
-      hSize[col] += 1
+    col = Math.round(v / sizeStep - 0.5)
+    hSize[col] += 1
   }
 
   var percSum = 0
@@ -559,9 +555,11 @@ function standardDeviation(sumOfSqDeviation, count)
 //-----------------------------------------------------------------------------------
 function roundTo(val, step, upper)
 {
-  var n = Math.round(val / step)
+  var n
   if(upper)
-    n ++
+    n = Math.round(val / step + 0.5)
+  else
+    n = Math.round(val / step - 0.5)
   return n * step
 }
 //-----------------------------------------------------------------------------------
