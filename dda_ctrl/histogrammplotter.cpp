@@ -38,6 +38,19 @@ void HistogrammPlotter :: paint(QPaintDevice *dev)
   int step = x.step() * m_x_scale;
   int w = step / 2;
 
+  QList<double>& markList = x.markList();
+  int markListSize = markList.size();
+
+  if(markListSize > 1)
+  {
+    double min = markList[1] - markList[0];
+    for(int i = 1; i < markListSize - 1; i++)
+      if(min > markList[i + 1] - markList[i])
+        min = markList[i + 1] - markList[i];
+    //w = (min * m_x_scale)/2;
+    w = (min * m_x_scale);
+  }
+
   p.setPen(m_pen);
   p.setBrush(m_brush);
 
@@ -45,9 +58,16 @@ void HistogrammPlotter :: paint(QPaintDevice *dev)
   for(int i = 0; i < size && i < x.steps(); i++)
   {
     int xi = m_rect.left() + i * x.step() * m_x_scale;
+    xi += (step - w)/2;
+    if(markListSize && i < markListSize - 1)
+    {
+      xi = m_rect.left() + (markList[i] - x.min()) * m_x_scale;
+      xi += ((markList[i + 1] - markList[i]) * m_x_scale - w)/2;
+      //w = (markList[i + 1] - markList[i]) * m_x_scale;
+    }
+
     int yi = m_rect.bottom() - data[i] * m_y_scale;
 
-    xi += (step - w)/2;
 
     if(yi < m_rect.top())
       yi = m_rect.top();

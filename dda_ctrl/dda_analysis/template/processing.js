@@ -38,7 +38,8 @@ var sizeHistogramm = null
 var densityStrengthCurve = null
 var sizeStrengthGraph = null
 //-----------------------------------------------------------------------------------
-var histogrammColumns = 10
+//var histogrammColumns = 10
+var sizeColumns = 5
 //-----------------------------------------------------------------------------------
 var gritTable =
 [
@@ -48,11 +49,11 @@ var gritTable =
      {max:31, min:25},
      {max:38, min:31},
      {max:45, min:38}, //DDA - 0
-     {max:55, min:45},
+     {max:53, min:45},
      {max:63, min:53},
      {max:75, min:63},
      {max:90, min:75},
-     {max:106, min:80},
+     {max:106, min:90},
      {max:125, min:106},
      {max:150, min:125},
      {max:180, min:150},
@@ -151,7 +152,7 @@ function modelInit(role)
   //--------------------------------
   histStrengthTable = model.newTableModel()
   histStrengthTable.columnCount = 4
-  histStrengthTable.rowCount = histogrammColumns
+  histStrengthTable.rowCount = sizeColumns
   histStrengthTable.setHeaderData(0, Qt.Horizontal, qsTr(">="))
   histStrengthTable.setHeaderData(1, Qt.Horizontal, qsTr("<"))
   histStrengthTable.setHeaderData(2, Qt.Horizontal, qsTr("Particles"))
@@ -171,7 +172,7 @@ function modelInit(role)
 
   strengthHistogramm.x.text = qsTr("[N]")
   strengthHistogramm.x.decimals = 0
-  strengthHistogramm.x.steps = histogrammColumns
+  strengthHistogramm.x.steps = 10
   strengthHistogramm.title = qsTr("Distribution of the strength of grain")
   if(role === DataModel.ReportRole)
   {
@@ -183,12 +184,12 @@ function modelInit(role)
   //--------------------------------
   histSizeTable = model.newTableModel()
   histSizeTable.columnCount = 4
-  histSizeTable.rowCount = histogrammColumns
+  histSizeTable.rowCount = sizeColumns
   histSizeTable.setHeaderData(0, Qt.Horizontal, qsTr(">="))
   histSizeTable.setHeaderData(1, Qt.Horizontal, qsTr("<"))
   histSizeTable.setHeaderData(2, Qt.Horizontal, qsTr("Particles"))
   histSizeTable.setHeaderData(3, Qt.Horizontal, qsTr("% of grain"))
-  for(var i = 0; i < histogrammColumns; i++)
+  for(var i = 0; i < sizeColumns; i++)
     histSizeTable.setHeaderData(i, Qt.Vertical, i + 1)
   histSizeTable.update()
   //--------------------------------
@@ -203,7 +204,7 @@ function modelInit(role)
 
   sizeHistogramm.x.text = qsTr("[um]")
   sizeHistogramm.x.decimals = 0
-  sizeHistogramm.x.steps = histogrammColumns
+  sizeHistogramm.x.steps = sizeColumns
   sizeHistogramm.title = qsTr("Distribution of the size of grain")
   if(role === DataModel.ReportRole)
   {
@@ -222,7 +223,7 @@ function modelInit(role)
 
   densityStrengthCurve.x.text = qsTr("[N]")
   densityStrengthCurve.x.decimals = 0
-  densityStrengthCurve.x.steps = histogrammColumns
+  densityStrengthCurve.x.steps = 10
   densityStrengthCurve.title = qsTr("The density distribution of strength")
   if(role === DataModel.ReportRole)
   {
@@ -316,7 +317,7 @@ function modelUpdate(session, role)
   minStrength = roundTo(minStrength, strengthStep, false)
   for(var i = 10; i <= 14; i++)
   {
-    if(minStrength + i * strengthStep >= maxStrength)
+    if(minStrength + i * strengthStep > maxStrength)
     {
       strengthColumns = i
       maxStrength = minStrength + i * strengthStep
@@ -348,8 +349,6 @@ function modelUpdate(session, role)
   sizeMark[5] = sizeTbl[gritIndex + 1].max
 
 
-  //sizeHistogramm.x.min = session.minSize
-  //sizeHistogramm.x.max = session.maxSize
   sizeHistogramm.x.min = minSize
   sizeHistogramm.x.max = maxSize
 
@@ -364,7 +363,7 @@ function modelUpdate(session, role)
   var hStrength = []
   var hSize = []
 
-  for(var i = 0; i < histogrammColumns; i++)
+  for(var i = 0; i < sizeColumns; i++)
   {
     hSize[i] = 0
   }
@@ -373,8 +372,6 @@ function modelUpdate(session, role)
   {
     hStrength[i] = 0
   }
-
-  var sizeStep = (maxSize - minSize) / histogrammColumns
 
   for(i = 0; i < session.measures.length; i++)
   {
@@ -385,9 +382,16 @@ function modelUpdate(session, role)
     var col = Math.round(v / strengthStep - 0.5)
     hStrength[col] += 1
 
-    v = m.size - minSize
-    col = Math.round(v / sizeStep - 0.5)
-    hSize[col] += 1
+    v = m.size
+    for(col = 0; col < sizeColumns; col++)
+    {
+      if(sizeMark[col] <= v && sizeMark[col + 1] > v)
+      {
+        hSize[col] += 1
+        break
+      }
+    }
+
   }
 
   var percSum = 0
@@ -411,10 +415,10 @@ function modelUpdate(session, role)
   strengthHistogramm.data = hStrength
   densityStrengthCurve.x.steps = strengthColumns
 
-  for(i = 0; i < histogrammColumns; i++)
+  for(i = 0; i < sizeColumns; i++)
   {
-    histSizeTable.setData(i, 0, (minSize + i * sizeStep).toFixed(2))
-    histSizeTable.setData(i, 1, (minSize + (1 + i) * sizeStep).toFixed(2))
+    histSizeTable.setData(i, 0, sizeMark[i].toFixed(2))
+    histSizeTable.setData(i, 1, sizeMark[i + 1].toFixed(2))
     histSizeTable.setData(i, 2, hSize[i])
     histSizeTable.setData(i, 3, (hSize[i] * 100. / session.particles).toFixed(2))
 
