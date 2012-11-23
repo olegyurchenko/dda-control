@@ -1,0 +1,8 @@
+USEUNIT("main.cpp");
+USEUNIT("boot_protocol.cpp");
+USEUNIT("..\dda_ctrl\get_opts.cpp");
+USEUNIT("..\dda_ctrl\pc_serial.c");
+//---------------------------------------------------------------------------
+This file is used by the project manager only and should be treated like the project file
+
+main
