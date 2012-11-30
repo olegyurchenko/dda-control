@@ -33,7 +33,7 @@ typedef enum
 
 
 void motors_init();
-void motor_start(int motor,int dir);
+void motor_start(int motor,int dir, unsigned char rate); //0,ff -max, 1 -min
 void motor_deceleration();
 void motor_stop();
 unsigned motor_step_count();

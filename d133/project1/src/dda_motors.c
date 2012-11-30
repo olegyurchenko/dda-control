@@ -67,10 +67,11 @@ const unsigned char step_table[256]=
 };
 /*----------------------------------------------------------------------------*/
 #define STP1_MIN_PERIOD 300 //us
-#define STP2_MIN_PERIOD 300 //us
+#define STP2_MIN_PERIOD 200 //us
 /*----------------------------------------------------------------------------*/
 static int active_motor = -1;
-static volatile uint32_t table_index = -1;
+static volatile uint32_t table_index;
+static volatile uint32_t max_index;
 static enum MotorState
 {
   Iddle,
@@ -85,12 +86,14 @@ static volatile uint16_t min_period;
 static CONSOLE_CMD acc_data, dec_data, stop_data, step_data;
 static int acc_cmd(int argc, char **argv)
 {
-  int mot = 0, dir = 0;
+  int mot = 0, dir = 0, rate = 0;
   if(argc > 1)
     mot = str2int(argv[1]);
   if(argc > 2)
     dir = str2int(argv[2]);
-  motor_start(mot, dir);
+  if(argc > 3)
+    rate = str2int(argv[3]);
+  motor_start(mot, dir, rate);
   return CONSOLE_OK;
 }
 /*----------------------------------------------------------------------------*/
@@ -109,6 +112,10 @@ static int stop_cmd(int argc, char **argv)
 static int steps_cmd(int argc, char **argv)
 {
   const char *state = "????";
+  uint16_t counter;
+
+  counter = min_period;
+  counter *= step_table[table_index];
   switch(motor_state)
   {
   case Iddle:
@@ -125,7 +132,11 @@ static int steps_cmd(int argc, char **argv)
     break;
   }
 
-  console_printf("State:'%s' Step counter:%u\n", state, motor_step_count());
+  console_printf("State:'%s', Table index:%u Period:%u, Step counter:%u\n",
+                 state,
+                 (unsigned)table_index,
+                 (unsigned)counter,
+                 motor_step_count());
   return CONSOLE_OK;
 }
 /*----------------------------------------------------------------------------*/
@@ -152,7 +163,7 @@ static void console_motors_init()
   console_cmd_init(&step_data);
   step_data.cmd = "pst";
   step_data.help = "pst - Print step motor state & count";
-  step_data.handler = stop_cmd;
+  step_data.handler = steps_cmd;
   console_add_cmd(&step_data);
 }
 
@@ -301,14 +312,16 @@ void TIM6_IRQHandler()
     case Slewing:
       step();
       ++ step_counter;
+//#if 0
       if(!(step_counter & 1))
       {
         counter *= step_table[table_index];
-        TIM_SetCounter(TIM6, counter);
+        //TIM_SetCounter(TIM6, counter);
+        TIM_SetAutoreload(TIM6, counter);
         if(motor_state == Accelerate)
         {
           ++ table_index;
-          if(table_index >= sizeof(step_table) / sizeof(step_table[0] - 1))
+          if(table_index >= max_index)
             motor_state = Slewing;
         }
         else
@@ -325,12 +338,13 @@ void TIM6_IRQHandler()
             -- table_index;
         }
       }
+//#endif
       break;
     }
   }
 }
 /*----------------------------------------------------------------------------*/
-void motor_start(int mr, int dir)
+void motor_start(int mr, int dir, unsigned char rate)
 {
   if(mr < 0
      || mr > 1
@@ -346,6 +360,10 @@ void motor_start(int mr, int dir)
   else
     min_period = STP2_MIN_PERIOD / 7; //7 - minimal multiplier from step_table
   table_index = 0;
+  if(!rate)
+    max_index = 255;
+  else
+    max_index = rate;
   start_timer();
 }
 /*----------------------------------------------------------------------------*/
