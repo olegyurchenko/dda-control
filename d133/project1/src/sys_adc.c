@@ -14,10 +14,13 @@
 /*----------------------------------------------------------------------------*/
 #include "sys_adc.h"
 #include "stm32f10x.h"
-#include <console.h>
-#include <sys_timer.h>
 #include <stdint.h>
 /*----------------------------------------------------------------------------*/
+#define USE_CONSOLE //!!!!
+#ifdef USE_CONSOLE
+#include <console.h>
+#include <sys_timer.h>
+
 static CONSOLE_CMD adc_console1, adc_console2;
 static int adc_cmd1(int argc, char **argv);
 static int adc_state_handler();
@@ -28,8 +31,11 @@ static struct
   int samles;
   uint8_t sample_time;
   uint32_t avg;
+  uint16_t min;
+  uint16_t max;
   uint32_t start;
 } adc_data;
+#endif //USE_CONSOLE
 /*----------------------------------------------------------------------------*/
 void sys_adc_init()
 {
@@ -67,6 +73,7 @@ void sys_adc_init()
   ADC_StartCalibration(ADC1);
   while (ADC_GetCalibrationStatus(ADC1)) { };
 
+#ifdef USE_CONSOLE
   console_cmd_init(&adc_console1);
   adc_console1.cmd = "adc";
   adc_console1.help = "adc <samples> - ADC conversion <samples> times";
@@ -81,6 +88,7 @@ void sys_adc_init()
   adc_console2.help = "adt [<ADC sample time>] - Set ADC samle time [0-7]";
   adc_console2.handler = adc_cmd2;
   console_add_cmd(&adc_console2);
+#endif //USE_CONSOLE
 }
 /*----------------------------------------------------------------------------*/
 void sys_adc_start_conversion()
@@ -99,11 +107,14 @@ int sys_adc_get_value(int *dst)
   return 1;
 }
 /*----------------------------------------------------------------------------*/
+#ifdef USE_CONSOLE
 static int adc_cmd1(int argc, char **argv)
 {
   adc_data.pos = 0;
   adc_data.samles = 1;
   adc_data.avg = 0;
+  adc_data.max = 0;
+  adc_data.min = 0xffff;
   if(argc > 1)
     adc_data.samles = str2int(argv[1]);
   sys_adc_start_conversion();
@@ -116,13 +127,20 @@ static int adc_state_handler()
   int value = 0;
   if(sys_adc_get_value(&value))
   {
-    console_printf("\r\n%4d (0x%03x)", value, value);
+    //console_printf("\r\n%4d (0x%03x)", value, value);
     adc_data.avg += value;
     adc_data.pos ++;
+    if(adc_data.min > value)
+      adc_data.min = value;
+    if(adc_data.max < value)
+      adc_data.max = value;
     if(adc_data.pos >= adc_data.samles)
     {
       adc_data.avg /= adc_data.samles;
-      console_printf("\r\nAvg:%4d (0x%03x) Time:%dms",adc_data.avg, adc_data.avg, sys_tick_count() - adc_data.start);
+      console_printf("\r\nAvg:%4d (0x%03x) Time:%dms\r\n",adc_data.avg, adc_data.avg, sys_tick_count() - adc_data.start);
+      console_printf("Min:%4d (0x%03x) Max:%4d (0x%03x)\r\n",adc_data.min, adc_data.min, adc_data.max, adc_data.max);
+      adc_data.avg = (adc_data.max + adc_data.min) / 2;
+      console_printf("Center:%4d (0x%03x)",adc_data.avg, adc_data.avg);
       return -1;
     }
     sys_adc_start_conversion();
@@ -138,3 +156,4 @@ static int adc_cmd2(int argc, char **argv)
   return 0;
 }
 /*----------------------------------------------------------------------------*/
+#endif //USE_CONSOLE
