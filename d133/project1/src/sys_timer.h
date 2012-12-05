@@ -28,6 +28,8 @@ uint32_t sys_tick_count();
 
 /**ms sleep*/
 void sys_sleep(uint32_t ms);
+/**us sleep*/
+void sys_usleep(uint32_t us);
 
 #ifdef __cplusplus
 } //extern "C"
