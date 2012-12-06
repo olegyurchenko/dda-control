@@ -15,10 +15,18 @@
 #ifndef SYS_TIMER_H_1345709875
 #define SYS_TIMER_H_1345709875
 /*----------------------------------------------------------------------------*/
+#include <stdint.h>
+
+typedef struct
+{
+  uint32_t timeout;
+  uint32_t start;
+} timeout_t;
+/*-------------------------------------------------------------------------*/
+
 #ifdef __cplusplus
 extern "C" {
 #endif /*__cplusplus*/
-#include <stdint.h>
 
 /**Init sys timer*/
 void sys_timer_init();
@@ -30,6 +38,11 @@ uint32_t sys_tick_count();
 void sys_sleep(uint32_t ms);
 /**us sleep*/
 void sys_usleep(uint32_t us);
+
+/**Timeout handle routines*/
+void timeout_set(timeout_t *dst, uint32_t timeout, uint32_t time);
+int timeout_riched(timeout_t *tm, uint32_t time);
+
 
 #ifdef __cplusplus
 } //extern "C"
