@@ -246,7 +246,7 @@ static int _strlen(const void *v)
 static void _hi_init()
 {
   _memset(lcd_old, 0, sizeof(lcd_old));
-  _memset(lcd_buffer, 0, sizeof(lcd_buffer));
+  lcd_clear();
   sheduler_add(lcd_timer, 0, 100, 100);
 }
 /*----------------------------------------------------------------------------*/
@@ -291,6 +291,29 @@ int get_lcd_height()
 void lcd_put_line(int y, const char *txt, SCR_ALIGN align)
 {
   intern_lcd_put_line(y, txt, align);
+}
+/*----------------------------------------------------------------------------*/
+void lcd_add_line(const char *txt, SCR_ALIGN align)
+{
+  int i;
+  for(i = DISPLAY_HEIGHT - 1; i > 0; i--)
+    _memcpy(&lcd_buffer[(i - 1) * DISPLAY_WIDTH], &lcd_buffer[i * DISPLAY_WIDTH], DISPLAY_WIDTH);
+
+  for(i = 0; i < scroll_count; i++)
+  {
+    scrolls[i].line --;
+    if(scrolls[i].line < 0)
+    {
+      int j;
+      //Remove scroll
+      for(j = i + 1; j < scroll_count; j++)
+        scrolls[j - 1] = scrolls[j];
+      scroll_count --;
+      i --;
+    }
+  }
+
+  intern_lcd_put_line(DISPLAY_HEIGHT - 1, txt, align);
 }
 /*----------------------------------------------------------------------------*/
 void lcd_clear()
