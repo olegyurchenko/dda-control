@@ -18,6 +18,10 @@ static void init();
 int main()
 {
   init();
+  lcd_put_line(0, "Test", SCR_ALIGN_CENTER);
+  lcd_add_scroll_text(1, 0, 16, "DDA is part of a software-hardware system");
+  lcd_put_line(1, "1234567890123456", SCR_ALIGN_LEFT);
+  lcd_update();
   while(1)
 	{
 #ifdef USE_CONSOLE

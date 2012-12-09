@@ -144,7 +144,7 @@ void lcd_init()
   gpio.GPIO_Pin = LCD_RS | LCD_RW | LCD_E | LCD_D4 | LCD_D5 | LCD_D6 | LCD_D7;
   gpio.GPIO_Speed = GPIO_Speed_50MHz;
   gpio.GPIO_Mode = GPIO_Mode_Out_PP;
-  GPIO_Init(GPIOB, &gpio);
+  GPIO_Init(GPIOA, &gpio);
 
   sys_sleep(200); /* Wait a bit after power-up */
   _init();
@@ -179,7 +179,10 @@ void _lcd_move(char n)
 static void lcd_out(int pos, const char *text, int size)
 {
   if(pos >= DISPLAY_WIDTH)
+  {
+    pos -= DISPLAY_WIDTH;
     pos += 0x40;
+  }
   _lcd_move(pos);
   while(size)
   {
@@ -260,7 +263,7 @@ static void intern_lcd_put_line(int y, const char *txt, SCR_ALIGN align)
 {
   int i, l, size;
 
-  if(y < 0 || y > DISPLAY_HEIGHT)
+  if(y < 0 || y >= DISPLAY_HEIGHT)
     return;
   size = _strlen(txt);
   l = 0;
