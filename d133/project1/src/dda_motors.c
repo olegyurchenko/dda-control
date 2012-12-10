@@ -18,6 +18,7 @@
 #ifdef USE_CONSOLE
 #include <console.h>
 #endif //USE_CONSOLE
+#include <dda_clib.h>
 /*----------------------------------------------------------------------------*/
 #define STP1_EN     GPIO_Pin_10 //PB10
 #define STP1_DIR    GPIO_Pin_11 //PB11

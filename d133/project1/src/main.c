@@ -5,6 +5,8 @@
 #include <dda_motors.h>
 #include <sys_sheduler.h>
 #include <dda_lcd.h>
+#include <dda_key.h>
+#include <dda_test_mode.h>
 
 #define USE_CONSOLE //!!!!!!!!!!!
 
@@ -22,6 +24,12 @@ int main()
   lcd_add_scroll_text(1, 0, 16, "DDA is part of a software-hardware system");
   lcd_put_line(1, "1234567890123456", SCR_ALIGN_LEFT);
   lcd_update();
+
+  //!!!!!!!!!!!!!!!!!!!!!!
+  test_mode_init();
+  //!!!!!!!!!!!!!!!!!!!!!!
+
+
   while(1)
 	{
 #ifdef USE_CONSOLE
@@ -46,5 +54,6 @@ static void init()
   //ledInit();
   motors_init();
   lcd_init();
+  keys_init();
 }
 /*----------------------------------------------------------------------------*/

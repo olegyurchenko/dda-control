@@ -15,6 +15,7 @@
 #include "sys_adc.h"
 #include "stm32f10x.h"
 #include <stdint.h>
+#include <dda_clib.h>
 /*----------------------------------------------------------------------------*/
 #define USE_CONSOLE //!!!!
 #ifdef USE_CONSOLE
@@ -42,8 +43,8 @@ void sys_adc_init()
   GPIO_InitTypeDef  GPIO_InitStructure;
   ADC_InitTypeDef  ADC_InitStructure;
 
-  RCC_ADCCLKConfig(RCC_PCLK2_Div2);
-  //RCC_ADCCLKConfig(RCC_PCLK2_Div8);
+  //RCC_ADCCLKConfig(RCC_PCLK2_Div2);
+  RCC_ADCCLKConfig(RCC_PCLK2_Div8);
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOC, ENABLE);
   RCC_APB2PeriphClockCmd(RCC_APB2Periph_ADC1, ENABLE);
 

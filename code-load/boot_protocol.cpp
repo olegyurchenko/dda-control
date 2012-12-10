@@ -68,7 +68,8 @@ bool BootLoaderProtocol :: open(const char *device, int baud)
   }
   unsigned char c = 0x7f;
   serial_write(m_serial, &c, 1);
-  waitAck();
+  if(!waitAck())
+    return false;
   //Sleep(100);
   return true;
 }
@@ -111,18 +112,22 @@ bool BootLoaderProtocol :: waitAck()
 /*----------------------------------------------------------------------------*/
 bool BootLoaderProtocol :: getVersionAndAllowedCmd()
 {
-  serial_flush_rx(m_serial);
+  unsigned char b, size;
+//  serial_flush_rx(m_serial);
+  while(serial_read(m_serial, &b, 1, 10) > 0)
+  {
+  }
+
   if(!sendComplement(0) || !waitAck())
     return false;
-  unsigned char b, size;
   if(serial_read(m_serial, &size, 1, 1000) <= 0)
   {
     m_errorString = "Rx size timeout";
     return false;
   }
 
-  //if(verbose())
-  //  printf("Size %02xh\n", (unsigned) size & 0xff);
+  if(verbose())
+    printf("Size %02xh\n", (unsigned) size & 0xff);
 
   if(serial_read(m_serial, &m_version, 1, 1000) <= 0)
   {
@@ -156,6 +161,11 @@ bool BootLoaderProtocol :: readMemory(unsigned addr, unsigned short size, unsign
   {
     m_errorString = "Size must be 4...256";
     return false;
+  }
+
+  unsigned char b;
+  while(serial_read(m_serial, &b, 1, 10) > 0)
+  {
   }
 
   if(!sendComplement(0x11) || !waitAck())

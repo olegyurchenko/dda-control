@@ -18,6 +18,7 @@
 #include <sys_timer.h>
 #include <stdint.h>
 #include <stdarg.h>
+#include <dda_clib.h>
 /*----------------------------------------------------------------------------*/
 #ifndef ABS
 #define ABS(a)              (((a) < 0) ? (- (a)) : (a))
@@ -60,171 +61,11 @@ static int console_index = 0;
 #define VERSION 1
 const char *prompt = ">";
 /*----------------------------------------------------------------------------*/
-static int _strcmp(const void *v1, const void *v2)
-{
-  const char *s1, *s2;
-  s1 = (const char *)v1;
-  s2 = (const char *)v2;
-
-  while(*s1 && *s2)
-  {
-    if(*s1 != *s2)
-      return *s1 - *s2;
-    s1 ++;
-    s2 ++;
-  }
-  return *s1 - *s2;
-}
-/*----------------------------------------------------------------------------*/
-static int _strlen(const void *v)
-{
-  const char *s;
-  s = (const char *)v;
-
-  while(*s)
-    s ++;
-
-  return s - (const char *)v;
-}
-/*----------------------------------------------------------------------------*/
-static int _atoi(const void *v)
-{
-  const char *s;
-  int i = 0, m = 1;
-  s = (const char *)v;
-
-  if(*s == '-')
-  {
-    m = -1;
-    s ++;
-  }
-  else
-  if(*s == '+')
-    s++;
-
-  while(*s)
-  {
-    if(*s >= '0' && *s <= '9')
-    {
-      i *= 10;
-      i += *s - '0';
-    }
-    else
-      break;
-    s ++;
-  }
-
-  return i * m;
-}
-/*----------------------------------------------------------------------------*/
-static int _atoi8(const void *v)
-{
-  const char *s;
-  int i = 0, m = 1;
-  s = (const char *)v;
-
-  if(*s == '-')
-  {
-    m = -1;
-    s ++;
-  }
-  else
-  if(*s == '+')
-    s++;
-
-  while(*s)
-  {
-    if(*s >= '0' && *s <= '7')
-    {
-      i *= 8;
-      i += *s - '0';
-    }
-    else
-      break;
-    s ++;
-  }
-
-  return i * m;
-}
-/*----------------------------------------------------------------------------*/
-static int _atoi16(const void *v)
-{
-  const char *s;
-  int i = 0, m = 1;
-  s = (const char *)v;
-
-  if(*s == '-')
-  {
-    m = -1;
-    s ++;
-  }
-  else
-  if(*s == '+')
-    s++;
-
-  while(*s)
-  {
-    if(*s >= '0' && *s <= '9')
-    {
-      i *= 16;
-      i += *s - '0';
-    }
-    else
-    if(*s >= 'A' && *s <= 'F')
-    {
-      i *= 16;
-      i += *s - 'A' + 0xa;
-    }
-    else
-    if(*s >= 'a' && *s <= 'f')
-    {
-      i *= 16;
-      i += *s - 'a' + 0xa;
-    }
-    else
-      break;
-    s ++;
-  }
-
-  return i * m;
-}
-/*----------------------------------------------------------------------------*/
-/**Convert string to int. Support hex(0xabcd) octal(0777) and decimal string*/
-int str2int(const char *s)
-{
-  int m = 1;
-  if(*s == '-')
-  {
-    m = -1;
-    s ++;
-  }
-  else
-  if(*s == '+')
-    s++;
-
-  if(*s == '0')
-  {
-    s ++;
-    if(*s == 'x' || *s == 'X')
-      return m * _atoi16(s + 1);
-    else
-    if(*s)
-      return m * _atoi8(s + 1);
-    else
-      return 0;
-  }
-  else
-  if(*s == 'x' || *s == 'X')
-    return m * _atoi16(s + 1);
-
-  return m * _atoi(s);
-}
-/*----------------------------------------------------------------------------*/
 static int str_out(const char *src, int before, int after)
 {
   int l, r = 0;
   char buf = ' ';
-  l = _strlen(src);
+  l = strlen(src);
   while(l < before)
   {
     r += uart_write(&buf, 1);
@@ -329,10 +170,10 @@ int console_printf(const char *fmt, ...)
         case 'u':
         case 'x':
         case 'X':
-          r += int_out(*fmt, va_arg(ap, uint32_t), _atoi(spec), spec[0] == '0' ? '0' : ' ');
+          r += int_out(*fmt, va_arg(ap, uint32_t), atoi(spec), spec[0] == '0' ? '0' : ' ');
           break;
         case 's':
-          i = _atoi(spec);
+          i = atoi(spec);
           r += str_out(va_arg(ap, char*), i > 0 ? i : 0, i < 0 ? -i : 0);
           break;
         default:
@@ -543,7 +384,7 @@ static int call_cmd(int argc, char **argv)
   c = root_cmd;
   while(c != NULL)
   {
-    if(!_strcmp(argv[0], c->cmd))
+    if(!strcmp(argv[0], c->cmd))
     {
       if(c->handler != NULL
          && CONSOLE_OK == c->handler(argc, argv)
@@ -602,7 +443,7 @@ static int help_cmd(int argc, char **argv)
       c = root_cmd;
       while(c != NULL)
       {
-        if(_strcmp(argv[i], c->cmd))
+        if(strcmp(argv[i], c->cmd))
         {
           console_printf("%-20s %s\r\n", c->cmd, c->help);
           break;

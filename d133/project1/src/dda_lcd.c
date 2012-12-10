@@ -17,6 +17,8 @@
 #include <stm32f10x.h>
 #include <sys_timer.h>
 #include <sys_sheduler.h>
+#include <dda_clib.h>
+//#include <console.h>
 /*----------------------------------------------------------------------------*/
 #define LCD_RS    GPIO_Pin_1 //PA1
 #define LCD_RW    GPIO_Pin_2 //PA2
@@ -194,61 +196,9 @@ static void lcd_out(int pos, const char *text, int size)
 /*----------------------------------------------------------------------------*/
 //Hi level
 /*----------------------------------------------------------------------------*/
-static void _memset(void *buf, int c, uint32_t size)
-{
-  char *p;
-  p = (char *)buf;
-  while(size --)
-    *(p ++) = c;
-}
-/*----------------------------------------------------------------------------*/
-static int _memcmp(const void *v1, const void *v2, uint32_t size)
-{
-  const char *s1, *s2;
-  s1 = (const char *)v1;
-  s2 = (const char *)v2;
-
-  while(size)
-  {
-    if(*s1 != *s2)
-      return *s1 - *s2;
-    s1 ++;
-    s2 ++;
-    size --;
-  }
-  return 0;
-}
-/*----------------------------------------------------------------------------*/
-static void _memcpy(void *dst, const void *src, uint32_t size)
-{
-  char *s1;
-  const char *s2;
-  s1 = (char *)dst;
-  s2 = (const char *)src;
-
-  while(size)
-  {
-    *s1 = *s2;
-    s1 ++;
-    s2 ++;
-    size --;
-  }
-}
-/*----------------------------------------------------------------------------*/
-static int _strlen(const void *v)
-{
-  const char *s;
-  s = (const char *)v;
-
-  while(*s)
-    s ++;
-
-  return s - (const char *)v;
-}
-/*----------------------------------------------------------------------------*/
 static void _hi_init()
 {
-  _memset(lcd_old, 0, sizeof(lcd_old));
+  memset(lcd_old, 0, sizeof(lcd_old));
   lcd_clear();
   sheduler_add(lcd_timer, 0, 100, 100);
 }
@@ -265,7 +215,7 @@ static void intern_lcd_put_line(int y, const char *txt, SCR_ALIGN align)
 
   if(y < 0 || y >= DISPLAY_HEIGHT)
     return;
-  size = _strlen(txt);
+  size = strlen(txt);
   l = 0;
   if(align == SCR_ALIGN_CENTER)
     l = (DISPLAY_WIDTH - size) / 2;
@@ -300,7 +250,7 @@ void lcd_add_line(const char *txt, SCR_ALIGN align)
 {
   int i;
   for(i = DISPLAY_HEIGHT - 1; i > 0; i--)
-    _memcpy(&lcd_buffer[(i - 1) * DISPLAY_WIDTH], &lcd_buffer[i * DISPLAY_WIDTH], DISPLAY_WIDTH);
+    memcpy(&lcd_buffer[(i - 1) * DISPLAY_WIDTH], &lcd_buffer[i * DISPLAY_WIDTH], DISPLAY_WIDTH);
 
   for(i = 0; i < scroll_count; i++)
   {
@@ -321,7 +271,7 @@ void lcd_add_line(const char *txt, SCR_ALIGN align)
 /*----------------------------------------------------------------------------*/
 void lcd_clear()
 {
-  _memset(lcd_buffer, ' ', sizeof(lcd_buffer));
+  memset(lcd_buffer, ' ', sizeof(lcd_buffer));
   scroll_count = 0;
 }
 /*----------------------------------------------------------------------------*/
@@ -342,10 +292,14 @@ void lcd_update()
   int i;
   for(i = 0; i < DISPLAY_HEIGHT; i++)
   {
-    if(_memcmp(&lcd_buffer[i * DISPLAY_WIDTH], &lcd_old[i * DISPLAY_WIDTH], DISPLAY_WIDTH))
+    if(memcmp(&lcd_buffer[i * DISPLAY_WIDTH], &lcd_old[i * DISPLAY_WIDTH], DISPLAY_WIDTH))
     {
+      //char buff[DISPLAY_WIDTH + 1];
+      //memcpy(buff, &lcd_buffer[i * DISPLAY_WIDTH], DISPLAY_WIDTH);
+      //buff[DISPLAY_WIDTH] ='\0';
+      //console_printf("buf='%s'\r\n", buff);
       lcd_out(i * DISPLAY_WIDTH, &lcd_buffer[i * DISPLAY_WIDTH], DISPLAY_WIDTH);
-      _memcpy(&lcd_old[i * DISPLAY_WIDTH], &lcd_buffer[i * DISPLAY_WIDTH], DISPLAY_WIDTH);
+      memcpy(&lcd_old[i * DISPLAY_WIDTH], &lcd_buffer[i * DISPLAY_WIDTH], DISPLAY_WIDTH);
     }
   }
 }
@@ -353,7 +307,7 @@ void lcd_update()
 static void scrolled_text_init(const char *caption, SCROLLED_TEXT *s)
 {
   int size;
-  size = _strlen(caption);
+  size = strlen(caption);
   if(size > MAX_SCROLLTEXT_LENGTH)
     size = MAX_SCROLLTEXT_LENGTH;
 
@@ -363,7 +317,7 @@ static void scrolled_text_init(const char *caption, SCROLLED_TEXT *s)
   s->hsize = 0;
   s->times = 0;
 
-  _memcpy(s->caption, caption, size);
+  memcpy(s->caption, caption, size);
   s->size = size;
 }
 /*----------------------------------------------------------------------------*/
