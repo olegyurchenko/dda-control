@@ -85,10 +85,33 @@ int main(int argc, char **argv)
     return 3;
   }
 
+  fseek(f, 0, SEEK_END);
+  long fileSize = ftell(f);
+
+  if(!args.get("check-only"))
+  { //Erase flash
+    unsigned short pageCount = fileSize / 1024;
+    if(pageCount > 256)
+    {
+      fprintf(stderr, "Programm not support file grater then 256kb\n");
+      return 2;
+    }
+
+    unsigned char pages[256];
+    for(int i = 0; i < 256; i++)
+      pages[i] = i;
+    if(!protocol.eraseFlash(pageCount, pages))
+    {
+      fprintf(stderr, "Erase flash error: %s\n", protocol.errorString().c_str());
+      return 3;
+    }
+  }
+
   unsigned char buffer[256];
   unsigned addr = 0x8000000;
   if(!args.get("check-only"))
   {
+    fseek(f, 0, SEEK_SET);
     while(!feof(f))
     {
       int sz = fread(buffer, 1, 256, f);

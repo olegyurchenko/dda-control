@@ -49,6 +49,7 @@ public:
   bool getVersionAndAllowedCmd();
   bool readMemory(unsigned addr, unsigned short size, unsigned char *dst);
   bool writeMemory(unsigned addr, unsigned short size, const unsigned char *src);
+  bool eraseFlash(unsigned short pageCount, const unsigned char *pages);
 
 
 };

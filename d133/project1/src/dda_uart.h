@@ -28,6 +28,7 @@ int uart_read(void *buffer, uint32_t buffer_size);
 void uart_rx_clear();
 void uart_tx_clear();
 int uart_rx_size();
+int uart_tx_size();
 
 
 #ifdef __cplusplus

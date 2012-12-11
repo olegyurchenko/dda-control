@@ -132,6 +132,11 @@ int uart_rx_size()
   return lb_size(&uart_buffer.rx);
 }
 /*----------------------------------------------------------------------------*/
+int uart_tx_size()
+{
+  return lb_size(&uart_buffer.tx);
+}
+/*----------------------------------------------------------------------------*/
 void USART1_IRQHandler(void)
 {
   if(USART_GetITStatus(USART1, USART_IT_RXNE) != RESET)

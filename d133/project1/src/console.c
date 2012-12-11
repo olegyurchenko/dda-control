@@ -434,6 +434,7 @@ static int help_cmd(int argc, char **argv)
     while(c != NULL)
     {
       console_printf("%-20s %s\r\n", c->cmd, c->help);
+      while(uart_tx_size()) {} //Wait TX buffer empty
       c = c->next;
     }
   }

@@ -240,4 +240,28 @@ bool BootLoaderProtocol :: writeMemory(unsigned addr, unsigned short size, const
   return true;
 }
 /*----------------------------------------------------------------------------*/
+bool BootLoaderProtocol :: eraseFlash(unsigned short pageCount, const unsigned char *pages)
+{
+  unsigned char cs, b;
+  if(pageCount == 0 || pageCount > 255)
+  {
+    m_errorString = "pageCount must be 1...255";
+    return false;
+  }
+  if(!sendComplement(0x43) || !waitAck())
+    return false;
+  b = pageCount - 1;
+  cs = b;
+  serial_write(m_serial, &b, 1);
+  for(unsigned short i = 0; i < pageCount; i++)
+  {
+    cs ^= pages[i];
+    serial_write(m_serial, (void *) &pages[i], 1);
+  }
+  serial_write(m_serial, &cs, 1);
+  if(!waitAck())
+    return false;
+  return true;
+}
+/*----------------------------------------------------------------------------*/
 
