@@ -148,7 +148,7 @@ void lcd_init()
   gpio.GPIO_Mode = GPIO_Mode_Out_PP;
   GPIO_Init(GPIOA, &gpio);
 
-  sys_sleep(200); /* Wait a bit after power-up */
+  sys_sleep(800); /* Wait a bit after power-up */
   _init();
   _hi_init();
 }
