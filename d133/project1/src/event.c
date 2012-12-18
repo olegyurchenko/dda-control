@@ -32,10 +32,13 @@ static EVT_HANDLER current_handler = {0, 0};
 /*----------------------------------------------------------------------------*/
 void set_event_handler(event_handler_t handler, void *data)
 {
-  handle_event(MODE_SET_EVENT, 0, 0);
-  current_handler.handler = handler;
-  current_handler.data = data;
-  handle_event(MODE_SET_EVENT, 1, 0);
+  if(current_handler.handler != handler || current_handler.data != data)
+  {
+    handle_event(MODE_SET_EVENT, 0, 0);
+    current_handler.handler = handler;
+    current_handler.data = data;
+    handle_event(MODE_SET_EVENT, 1, 0);
+  }
 }
 /*----------------------------------------------------------------------------*/
 int handle_event(event_t evt, int param1, void *param2)

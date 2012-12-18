@@ -392,12 +392,12 @@ static void menu_click()
     return;
 
 
+  push_event_handler();
+  set_event_handler(event_handler, NULL);
   if(result == MENU_CANCEL)
     return;
 
-  push_event_handler();
   init_menu(n);
-  set_event_handler(event_handler, NULL);
   draw_menu();
 }
 /*----------------------------------------------------------------------------*/
