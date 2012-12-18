@@ -37,6 +37,7 @@ void motor_start(int motor,int dir, unsigned char rate); //0,ff -max, 1 -min
 void motor_deceleration();
 void motor_stop();
 unsigned motor_step_count();
+int is_motor_idle();
 
 #ifdef __cplusplus
 } //extern "C"

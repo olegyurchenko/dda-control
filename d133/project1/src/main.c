@@ -6,7 +6,9 @@
 #include <sys_sheduler.h>
 #include <dda_lcd.h>
 #include <dda_key.h>
+#include <dda_sensor.h>
 #include <dda_test_mode.h>
+#include <event.h>
 
 #define USE_CONSOLE //!!!!!!!!!!!
 
@@ -36,6 +38,7 @@ int main()
     console_handler();
 #endif //USE_CONSOLE
     sheduler_handler();
+    process_events();
   }
 }
 /*----------------------------------------------------------------------------*/
@@ -55,5 +58,6 @@ static void init()
   motors_init();
   lcd_init();
   keys_init();
+  sensors_init();
 }
 /*----------------------------------------------------------------------------*/

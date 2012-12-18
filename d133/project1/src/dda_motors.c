@@ -75,11 +75,11 @@ static volatile uint32_t table_index;
 static volatile uint32_t max_index;
 static enum MotorState
 {
-  Iddle,
+  Idle,
   Accelerate,
   Decelerate,
   Slewing
-} motor_state = Iddle;
+} motor_state = Idle;
 static volatile uint32_t step_counter = 0;
 static volatile uint16_t min_period;
 /*----------------------------------------------------------------------------*/
@@ -119,7 +119,7 @@ static int steps_cmd(int argc, char **argv)
   counter *= step_table[table_index];
   switch(motor_state)
   {
-  case Iddle:
+  case Idle:
     state = "Iddle";
     break;
   case Accelerate:
@@ -303,7 +303,7 @@ void TIM6_IRQHandler()
     counter = min_period;
     switch(motor_state)
     {
-    case Iddle:
+    case Idle:
       //Set reset to inactive state
       set_rs(1);
       motor_state = Accelerate;
@@ -332,7 +332,7 @@ void TIM6_IRQHandler()
           {
             TIM_Cmd(TIM6, DISABLE);
             NVIC_DisableIRQ(TIM6_IRQn);
-            motor_state = Iddle;
+            motor_state = Idle;
             set_enable(1); //Enable to inactive state
           }
           else
@@ -349,7 +349,7 @@ void motor_start(int mr, int dir, unsigned char rate)
 {
   if(mr < 0
      || mr > 1
-     || motor_state != Iddle)
+     || motor_state != Idle)
     return;
   active_motor = mr;
   set_dir(dir);
@@ -378,12 +378,17 @@ void motor_stop()
 {
   TIM_Cmd(TIM6, DISABLE);
   NVIC_DisableIRQ(TIM6_IRQn);
-  motor_state = Iddle;
+  motor_state = Idle;
   set_enable(1); //Enable to inactive state
 }
 /*----------------------------------------------------------------------------*/
 unsigned motor_step_count()
 {
   return step_counter / 2;
+}
+/*----------------------------------------------------------------------------*/
+int is_motor_idle()
+{
+  return motor_state == Idle;
 }
 /*----------------------------------------------------------------------------*/

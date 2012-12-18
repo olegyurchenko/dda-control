@@ -404,8 +404,7 @@ static void lcd_timer(void *v)
     for(i = 0; i < scroll_count; i++)
       lcd_hscroll_text(&scrolls[i]);
 
-    if(scroll_count)
-      lcd_update();
   }
+  lcd_update();
 }
 /*----------------------------------------------------------------------------*/

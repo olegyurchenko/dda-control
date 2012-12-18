@@ -19,6 +19,7 @@
 #include <sys_adc.h>
 #include <dda_clib.h>
 #include <dda_motors.h>
+#include <dda_sensor.h>
 #define USE_CONSOLE //!!!!
 #ifdef USE_CONSOLE
 #include <console.h>
@@ -28,8 +29,9 @@ typedef enum
 {
   Idle = -1,
   KeyTest = 0,
-  AdcTest = 1,
-  MotorTest = 2,
+  SensorTest = 1,
+  AdcTest = 2,
+  MotorTest = 3,
   TestCount
 } TestMode;
 
@@ -43,6 +45,7 @@ static int direction = 0;
 static void set_mode(TestMode m);
 static void test_timer(void *);
 static void key_test();
+static void sensor_test();
 static void adc_test();
 static void motor_test();
 /*----------------------------------------------------------------------------*/
@@ -119,6 +122,9 @@ static void test_timer(void *v)
   case KeyTest:
     key_test();
     break;
+  case SensorTest:
+    sensor_test();
+    break;
   case AdcTest:
     adc_test();
     break;
@@ -138,13 +144,30 @@ static void key_test()
   if(!test_times)
   {
     lcd_clear();
-    lcd_put_line(0, "Key test", SCR_ALIGN_LEFT);
-    lcd_add_scroll_text(0, 10, 6, "Press any key");
+    lcd_put_line(0, "Key test", SCR_ALIGN_CENTER);
+    lcd_add_scroll_text(1, 8, 8, "Press any key");
   }
   keys = keys_real_state();
   for(i = 0; i < 6; i++)
   {
     lcd_put_char(5 - i, 1, (keys & (1 << i)) ? '1' : '0');
+  }
+  lcd_update();
+}
+/*----------------------------------------------------------------------------*/
+static void sensor_test()
+{
+  uint32_t sensors;
+  int i;
+  if(!test_times)
+  {
+    lcd_clear();
+    lcd_put_line(0, "Sensor test", SCR_ALIGN_CENTER);
+  }
+  sensors = sensors_state();
+  for(i = 0; i < 4; i++)
+  {
+    lcd_put_char(3 - i, 1, (sensors & (1 << i)) ? '1' : '0');
   }
   lcd_update();
 }

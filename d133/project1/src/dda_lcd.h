@@ -45,13 +45,13 @@ void _lcd_move(char pos);
 int lcd_width();
 /**Return screen height*/
 int lcd_height();
-/**Put line into y string (0,1) LSD whith align alignment. Don't forgat lcd_update() after all modifications.*/
+/**Put line into y string (0,1) LSD whith align alignment*/
 void lcd_put_line(int y, const char *txt, SCR_ALIGN align);
-/**Put line into LSD bottom, scrolls up old text. Don't forgat lcd_update() after all modifications.*/
+/**Put line into LSD bottom, scrolls up old text*/
 void lcd_add_line(const char *txt, SCR_ALIGN align);
-/**Clear screen and scrolled text. Don't forgat lcd_update() after all modifications.*/
+/**Clear screen and scrolled text.*/
 void lcd_clear();
-/**Put single char to screen in X,Y position. Don't forgat lcd_update() after all modifications.*/
+/**Put single char to screen in X,Y position*/
 void lcd_put_char(int x, int y, int ch);
 /**Get char from X,Y position of screen*/
 int lcd_get_char(int x, int y);
