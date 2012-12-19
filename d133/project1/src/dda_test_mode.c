@@ -20,223 +20,428 @@
 #include <dda_clib.h>
 #include <dda_motors.h>
 #include <dda_sensor.h>
+#include <event.h>
+#include <menu.h>
+
 #define USE_CONSOLE //!!!!
 #ifdef USE_CONSOLE
 #include <console.h>
 #endif //USE_CONSOLE
 /*----------------------------------------------------------------------------*/
-typedef enum
-{
-  Idle = -1,
-  KeyTest = 0,
-  SensorTest = 1,
-  AdcTest = 2,
-  MotorTest = 3,
-  TestCount
-} TestMode;
-
-TestMode mode = Idle;
-static int sheduler_id = -1;
-static int test_times;
-static int old_key_state = 0;
-static int motor = 0;
-static int direction = 0;
+static int test_handler(void*, event_t evt, int param1, void *param2);
 /*----------------------------------------------------------------------------*/
-static void set_mode(TestMode m);
-static void test_timer(void *);
-static void key_test();
-static void sensor_test();
-static void adc_test();
-static void motor_test();
+static int cassete0_handler(void*, event_t evt, int param1, void *param2);
+static int cassete_next_handler(void*, event_t evt, int param1, void *param2);
+static int top_bottom_handler(void*, event_t evt, int param1, void *param2);
+static int adc_handler(void*, event_t evt, int param1, void *param2);
 /*----------------------------------------------------------------------------*/
-#ifdef USE_CONSOLE
-static CONSOLE_CMD test_data;
-static int test_cmd(int argc, char **argv)
-{
-  int test = 1;
-  if(argc > 1)
-    test = str2int(argv[1]);
-
-  test --;
-  if(test < TestCount)
-    set_mode((TestMode) test);
-  return CONSOLE_OK;
-}
-#endif //USE_CONSOLE
+static MENU_ITEM root_itm,
+cassete_motor_itm, cassete0_itm, cassete_next_itm,
+rod_motor_itm, fulldown_itm, fullup_itm,
+adc_itm;
 /*----------------------------------------------------------------------------*/
 void test_mode_init()
 {
-  set_mode(KeyTest);
-#ifdef USE_CONSOLE
-  console_cmd_init(&test_data);
-  test_data.cmd = "test";
-  test_data.help = "test [mode 0-off, 1,2,..] - Test mode set";
-  test_data.handler = test_cmd;
-  console_add_cmd(&test_data);
-#endif //USE_CONSOLE
+  set_event_handler(test_handler, 0);
 }
 /*----------------------------------------------------------------------------*/
-void test_mode_handler()
+static void start_test_menu()
 {
+  menu_item_init("Test menu", 0, &root_itm);
+
+  menu_item_init("Cassete motor test", 0, &cassete_motor_itm);
+  menu_item_add_child(&root_itm,  &cassete_motor_itm);
+  menu_item_init("Goto 0 cell", cassete0_handler, &cassete0_itm);
+  menu_item_add_child(&cassete_motor_itm, &cassete0_itm);
+  menu_item_init("Goto next cell", cassete_next_handler, &cassete_next_itm);
+  menu_item_add_child(&cassete_motor_itm, &cassete_next_itm);
+
+
+  menu_item_init("Rod motor test", 0, &rod_motor_itm);
+  menu_item_add_child(&root_itm,  &rod_motor_itm);
+  menu_item_init("Bottom position", top_bottom_handler, &fulldown_itm);
+  fulldown_itm.data = (void *)RodDown;
+  menu_item_add_child(&rod_motor_itm,  &fulldown_itm);
+  menu_item_init("Top position", top_bottom_handler, &fullup_itm);
+  menu_item_add_child(&rod_motor_itm,  &fullup_itm);
+  fullup_itm.data = (void *)RodUp;
+
+
+  menu_item_init("ADC test", adc_handler, &adc_itm);
+  menu_item_add_child(&root_itm,  &adc_itm);
+
+  start_menu(&root_itm);
 }
 /*----------------------------------------------------------------------------*/
-static void set_mode(TestMode m)
+static int test_handler(void *data, event_t evt, int param1, void *param2)
 {
-  if(m == Idle)
+  (void) data; //Prevent unused warning
+  (void) param1;
+  (void) param2;
+  switch(evt)
   {
-    if(sheduler_id != -1)
-      sheduler_remove(sheduler_id);
-    sheduler_id = -1;
+  case MODE_SET_EVENT:
+    if(!param1) //Mode exit
+      return 0;
     lcd_clear();
-    lcd_update();
-  }
-  else
-  {
-    if(sheduler_id == -1)
-      sheduler_id = sheduler_add(test_timer, 0, 100, 100);
-  }
-  test_times = 0;
-  old_key_state = 0;
-  mode = m;
-}
-/*----------------------------------------------------------------------------*/
-static void test_timer(void *v)
-{
-  int key;
-  (void)v; //unused warning
-  key = keys_state();
-  if((old_key_state & KEY_MENU) && !(key & KEY_MENU))
-  {
-    int m = mode;
-    m ++;
-    if(m >= TestCount)
-      m = KeyTest;
-    set_mode((TestMode)m);
-  }
-
-  old_key_state &= ~KEY_MENU;
-  old_key_state |= key & KEY_MENU;
-
-  switch(mode)
-  {
-  case KeyTest:
-    key_test();
+    lcd_put_line(0, "Test", SCR_ALIGN_CENTER);
     break;
-  case SensorTest:
-    sensor_test();
+  case MENU_EVENT:
+    set_event_handler(test_handler, 0);
+    return MENU_OK;
     break;
-  case AdcTest:
-    adc_test();
-    break;
-  case MotorTest:
-    motor_test();
-    break;
+  case KEY_PRESS_EVENT:
+    if(param1 == KEY_MENU)
+    {
+      start_test_menu();
+      return 1;
+    }
   default:
     break;
   }
-  test_times ++;
+  return 0;
 }
 /*----------------------------------------------------------------------------*/
-static void key_test()
+static void dispay_sensors()
 {
-  uint32_t keys;
-  int i;
-  if(!test_times)
-  {
-    lcd_clear();
-    lcd_put_line(0, "Key test", SCR_ALIGN_CENTER);
-    lcd_add_scroll_text(1, 8, 8, "Press any key");
-  }
-  keys = keys_real_state();
-  for(i = 0; i < 6; i++)
-  {
-    lcd_put_char(5 - i, 1, (keys & (1 << i)) ? '1' : '0');
-  }
-  lcd_update();
-}
-/*----------------------------------------------------------------------------*/
-static void sensor_test()
-{
-  uint32_t sensors;
-  int i;
-  if(!test_times)
-  {
-    lcd_clear();
-    lcd_put_line(0, "Sensor test", SCR_ALIGN_CENTER);
-  }
+  int sensors, i;
   sensors = sensors_state();
   for(i = 0; i < 4; i++)
   {
-    lcd_put_char(3 - i, 1, (sensors & (1 << i)) ? '1' : '0');
+    lcd_put_char(3 - i, 0, (sensors & (1 << i)) ? '1' : '0');
   }
-  lcd_update();
 }
 /*----------------------------------------------------------------------------*/
-static void adc_test()
+static int cassete0_handler(void *data, event_t evt, int param1, void *param2)
+{
+  typedef enum
+  {
+    WaitSensorOff,
+    WaitSensorOn,
+    WaitMotorOff
+  } STATE;
+
+  static STATE state;
+  int sensors;
+
+  (void) data; //Prevent unused warning
+  (void) param1;
+  (void) param2;
+
+  switch(evt)
+  {
+  case IDLE_EVENT:
+    dispay_sensors();
+    break;
+  case MODE_SET_EVENT:
+    if(!param1) //Mode exit
+      return 0;
+    lcd_clear();
+    sensors = sensors_state();
+    if(sensors & CASSETE_0_SENSOR)
+      state = WaitSensorOff;
+    else
+      state = WaitSensorOn;
+    motor_start(CasseteMotor, state == WaitSensorOff ? PreityClockwise : Clockwise, state == WaitSensorOff ? 100 : 0);
+    break;
+
+  case MENU_EVENT:
+    set_event_handler(cassete0_handler, 0);
+    return MENU_OK;
+    break;
+
+  case KEY_PRESS_EVENT:
+    if(param1 == KEY_MENU || param1 == KEY_STOP)
+    {
+      motor_stop();
+      set_event_handler(test_handler, 0);
+      start_menu(&cassete_motor_itm);
+      return 1;
+    }
+    break;
+
+  case SENSOR_ON_EVENT:
+    if(param1 == CASSETE_0_SENSOR && state == WaitSensorOn)
+    {
+      state = WaitMotorOff;
+      motor_deceleration();
+    }
+    break;
+
+  case SENSOR_OFF_EVENT:
+    if(param1 == CASSETE_0_SENSOR && state == WaitSensorOff)
+      motor_deceleration();
+    break;
+
+  case MOTOR_OFF_EVENT:
+    if(state == WaitSensorOff)
+    {
+      state = WaitSensorOn;
+      motor_start(CasseteMotor, Clockwise, 100);
+    }
+    else
+    {
+      set_event_handler(test_handler, 0);
+      start_menu(&cassete_motor_itm);
+      return 1;
+    }
+    break;
+
+  default:
+    break;
+  }
+  return 0;
+}
+/*----------------------------------------------------------------------------*/
+static int cassete_next_handler(void *data, event_t evt, int param1, void *param2)
+{
+  typedef enum
+  {
+    WaitSensorOff,
+    WaitSensorOn,
+    WaitMotorOff
+  } STATE;
+
+  static STATE state;
+  int sensors;
+
+  (void) data; //Prevent unused warning
+  (void) param1;
+  (void) param2;
+
+  switch(evt)
+  {
+  case IDLE_EVENT:
+    dispay_sensors();
+    break;
+  case MODE_SET_EVENT:
+    if(!param1) //Mode exit
+      return 0;
+    lcd_clear();
+    sensors = sensors_state();
+    if(sensors & CASSETE_CELL_SENSOR)
+      state = WaitSensorOff;
+    else
+      state = WaitSensorOn;
+    motor_start(CasseteMotor, PreityClockwise, 0);
+    break;
+
+  case MENU_EVENT:
+    set_event_handler(cassete_next_handler, 0);
+    return MENU_OK;
+    break;
+
+  case KEY_PRESS_EVENT:
+    if(param1 == KEY_MENU || param1 == KEY_STOP)
+    {
+      motor_stop();
+      set_event_handler(test_handler, 0);
+      start_menu(&cassete_motor_itm);
+      set_menu_pos(1);
+      return 1;
+    }
+    break;
+  case SENSOR_ON_EVENT:
+    if(param1 == CASSETE_CELL_SENSOR && state == WaitSensorOn)
+    {
+      state = WaitMotorOff;
+      motor_deceleration();
+    }
+    break;
+
+  case SENSOR_OFF_EVENT:
+    if(param1 == CASSETE_CELL_SENSOR && state == WaitSensorOff)
+      state = WaitSensorOn;
+    break;
+
+  case MOTOR_OFF_EVENT:
+    set_event_handler(test_handler, 0);
+    start_menu(&cassete_motor_itm);
+    set_menu_pos(1);
+    break;
+
+  default:
+    break;
+  }
+  return 0;
+}
+/*----------------------------------------------------------------------------*/
+static int top_bottom_handler(void *data, event_t evt, int param1, void *param2)
+{
+  static int dir = RodDown;
+  typedef enum
+  {
+    WaitSensorOff,
+    WaitSensorOn,
+    WaitMotorOff
+  } STATE;
+
+  static STATE state;
+  int sensors;
+
+  (void) data; //Prevent unused warning
+  (void) param1;
+  (void) param2;
+
+  switch(evt)
+  {
+  case IDLE_EVENT:
+    dispay_sensors();
+    break;
+  case MODE_SET_EVENT:
+    if(!param1) //Mode exit
+      return 0;
+    lcd_clear();
+    dir = (int)data;
+    sensors = sensors_state();
+    if(   (dir == RodDown && (sensors & DOWN_SENSOR))
+       || (dir == RodUp && (sensors & UP_SENSOR)) )
+    {
+      state = WaitSensorOff;
+      motor_start(StrengthMotor, dir == RodDown ? RodUp : RodDown, 50);
+    }
+    else
+    {
+      state = WaitSensorOn;
+      motor_start(StrengthMotor, dir, 0);
+    }
+    break;
+
+  case MENU_EVENT:
+    set_event_handler(top_bottom_handler, data);
+    return MENU_OK;
+    break;
+
+  case KEY_PRESS_EVENT:
+    if(param1 == KEY_MENU || param1 == KEY_STOP)
+    {
+      motor_stop();
+      set_event_handler(test_handler, 0);
+      start_menu(&rod_motor_itm);
+      set_menu_pos(dir == RodDown ? 0 : 1);
+      return 1;
+    }
+    break;
+  case SENSOR_ON_EVENT:
+    if(   (param1 == DOWN_SENSOR && state == WaitSensorOn && dir == RodDown)
+       || (param1 == UP_SENSOR && state == WaitSensorOn && dir == RodUp) )
+    {
+      state = WaitMotorOff;
+      //motor_deceleration(); !!!!!!!
+      motor_stop();
+    }
+    break;
+
+  case SENSOR_OFF_EVENT:
+    if(   (param1 == DOWN_SENSOR && state == WaitSensorOff && dir == RodDown)
+       || (param1 == UP_SENSOR && state == WaitSensorOff && dir == RodUp) )
+      motor_deceleration();
+    break;
+
+  case MOTOR_OFF_EVENT:
+    if(state == WaitSensorOff)
+    {
+      state = WaitSensorOn;
+      motor_start(StrengthMotor, dir, 50);
+    }
+    else
+    {
+      set_event_handler(test_handler, 0);
+      start_menu(&rod_motor_itm);
+      set_menu_pos(dir == RodDown ? 0 : 1);
+      return 1;
+    }
+    break;
+
+  default:
+    break;
+  }
+  return 0;
+}
+/*----------------------------------------------------------------------------*/
+static void display_adc()
 {
   char buffer[16];
   int value = 0;
-  if(!test_times)
-  {
-    lcd_clear();
-    lcd_put_line(0, "ADC test", SCR_ALIGN_CENTER);
-  }
-  sys_adc_start_conversion();
-  while(!sys_adc_get_value(&value))
-  {
-  }
 
-  //value = 0xfed; //!!!
+  sys_adc_get_value(&value);
   snprintf(buffer, sizeof(buffer), "(0x%03x) %4d", value, value);
   lcd_put_line(1, buffer, SCR_ALIGN_RIGHT);
-  lcd_update();
+//  lcd_update();
 }
 /*----------------------------------------------------------------------------*/
-static void motor_test()
+static int adc_handler(void *data, event_t evt, int param1, void *param2)
 {
-  int key;
-  char buffer[20];
+  int sensors, dir;
 
-  key = keys_state();
-  if(!test_times)
+  (void) data; //Prevent unused warning
+  (void) param1;
+  (void) param2;
+
+  switch(evt)
   {
+  case IDLE_EVENT:
+    dispay_sensors();
+    display_adc();
+    break;
+  case MODE_SET_EVENT:
+    if(!param1) //Mode exit
+      return 0;
     lcd_clear();
-    lcd_put_line(0, "Motor test", SCR_ALIGN_CENTER);
+    break;
+
+  case MENU_EVENT:
+    set_event_handler(adc_handler, 0);
+    return MENU_OK;
+    break;
+
+  case KEY_PRESS_EVENT:
+    if(param1 == KEY_MENU || param1 == KEY_STOP)
+    {
+      motor_stop();
+      set_event_handler(test_handler, 0);
+      start_menu(&root_itm);
+      set_menu_pos(2);
+      return 1;
+    }
+    else
+    if(param1 == KEY_UP)
+    {
+      dir = RodUp;
+      sensors = sensors_state();
+      if(!(sensors & UP_SENSOR))
+         motor_start(StrengthMotor, dir, 0);
+    }
+    else
+    if(param1 == KEY_DOWN)
+    {
+      dir = RodDown;
+      sensors = sensors_state();
+      if(!(sensors & DOWN_SENSOR))
+        motor_start(StrengthMotor, dir, 0);
+    }
+    break;
+
+  case KEY_RELEASE_EVENT:
+    if(param1 == KEY_UP || param1 == KEY_DOWN)
+    {
+      motor_deceleration();
+    }
+    break;
+
+  case SENSOR_ON_EVENT:
+    if(   (param1 == DOWN_SENSOR && dir == RodDown)
+       || (param1 == UP_SENSOR && dir == RodUp) )
+    {
+      //motor_deceleration(); !!!!!!!
+      motor_stop();
+    }
+    break;
+
+
+  default:
+    break;
   }
-
-  if((old_key_state & KEY_START) && !(key & KEY_START))
-    motor_start(motor, direction, 0);
-
-  if((old_key_state & KEY_STOP) && !(key & KEY_STOP))
-    motor_deceleration();
-
-  if((old_key_state & KEY_UP) && !(key & KEY_UP))
-  {
-    motor ++;
-    if(motor > 1)
-      motor = 0;
-  }
-
-  if((old_key_state & KEY_DOWN) && !(key & KEY_DOWN))
-  {
-    motor --;
-    if(motor < 0)
-      motor = 1;
-  }
-
-  if((old_key_state & KEY_OK) && !(key & KEY_OK))
-  {
-    direction ++;
-    if(direction > 1)
-      direction = 0;
-  }
-
-  //snprintf(buffer, sizeof(buffer), "%04x %04x", key, old_key_state); //!!!!
-  old_key_state &= ~(KEY_START | KEY_STOP | KEY_UP | KEY_DOWN | KEY_OK);
-  old_key_state |= key & (KEY_START | KEY_STOP | KEY_UP | KEY_DOWN | KEY_OK);
-
-  snprintf(buffer, sizeof(buffer), "m:%d d:%d %08u", motor, direction, motor_step_count());
-  lcd_put_line(1, buffer, SCR_ALIGN_LEFT);
-  lcd_update();
+  return 0;
 }
 /*----------------------------------------------------------------------------*/

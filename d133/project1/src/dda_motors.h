@@ -22,7 +22,11 @@ extern "C" {
 typedef enum
 {
   Forward = 0,
-  Reverse =1
+  Reverse =1,
+  RodUp = 0,
+  RodDown = 1,
+  Clockwise = 0,
+  PreityClockwise = 1
 } MotorDirection;
 
 typedef enum

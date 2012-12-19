@@ -300,12 +300,25 @@ static int write_int(writer_t write, void *data, char spec, unsigned src, int wi
   if(sign && i)
     buffer[--i] = '-';
   len = sizeof(buffer) - i;
-  while(len < width)
+  if(width < 0)
   {
-    r += write(data, &blank, 1);
-    width --;
+    width = - width;
+    r += write(data, &buffer[i], len);
+    while(len < width)
+    {
+      r += write(data, &blank, 1);
+      width --;
+    }
   }
-  r += write(data, &buffer[i], len);
+  else
+  {
+    while(len < width)
+    {
+      r += write(data, &blank, 1);
+      width --;
+    }
+    r += write(data, &buffer[i], len);
+  }
   return r;
 }
 /*----------------------------------------------------------------------------*/

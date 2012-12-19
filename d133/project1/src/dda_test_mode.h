@@ -20,7 +20,6 @@ extern "C" {
 #endif /*__cplusplus*/
 
 void test_mode_init();
-void test_mode_handler();
 
 #ifdef __cplusplus
 } //extern "C"

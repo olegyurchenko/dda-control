@@ -67,7 +67,7 @@ const unsigned char step_table[256]=
 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x07, 0x07
 };
 /*----------------------------------------------------------------------------*/
-#define STP1_MIN_PERIOD 300 //us
+#define STP1_MIN_PERIOD 800 //300//us
 #define STP2_MIN_PERIOD 200 //us
 /*----------------------------------------------------------------------------*/
 static int active_motor = -1;

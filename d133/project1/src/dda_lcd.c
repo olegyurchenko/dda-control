@@ -231,12 +231,12 @@ static void intern_lcd_put_line(int y, const char *txt, SCR_ALIGN align)
     intern_lcd_put_char(i, y, ' ');
 }
 /*----------------------------------------------------------------------------*/
-int get_lcd_width()
+int lcd_width()
 {
   return DISPLAY_WIDTH;
 }
 /*----------------------------------------------------------------------------*/
-int get_lcd_height()
+int lcd_height()
 {
   return DISPLAY_HEIGHT;
 }

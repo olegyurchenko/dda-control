@@ -18,6 +18,11 @@
 #include <dda_clib.h>
 #include <sys_timer.h>
 /*----------------------------------------------------------------------------*/
+#define DEBUG
+#ifdef DEBUG
+#include <console.h>
+#endif
+/*----------------------------------------------------------------------------*/
 #ifndef NULL
 #define NULL ((void *)0)
 #endif
@@ -270,6 +275,7 @@ static void init_menu(MENU_ITEM *m)
 void start_menu(MENU_ITEM *m)
 {
   init_menu(m);
+  push_event_handler();
   set_event_handler(event_handler, NULL);
 }
 /*----------------------------------------------------------------------------*/
@@ -283,14 +289,14 @@ static void draw_selection(int active)
 
   if(active)
   {
-    index = state.pos + 1;
+    index = state.pos;
 
-    if(state.pos >= height - 1)
+    if(state.pos >= height)
       index = height - 1;
   }
 
   if(state.pos >= height)
-    j = state.pos - height;
+    j = state.pos - height + 1;
 
   n = state.root->childs;
   while(n != NULL && j)
@@ -314,9 +320,9 @@ static int hscroll_menu()
 
   height = lcd_height();
 
-  y = state.pos + 1;
+  y = state.pos;
 
-  if(state.pos >= height - 1)
+  if(state.pos >= height)
     y = height - 1;
 
   j = state.pos;
@@ -344,7 +350,7 @@ static void draw_menu()
   lcd_clear();
 
   if(state.pos >= height)
-    i = state.pos - height;
+    i = state.pos - height + 1;
 
   n = state.root->childs;
   while(n != NULL && i)
@@ -438,6 +444,7 @@ void draw_menu_item(int y, int index_width, MENU_ITEM *n)
   {
     sprintf(fmt,"%%-%ud", index_width);
     sprintf(buffer, fmt, n->menu_index);
+    //console_printf("`%s` `%s`\r\n", fmt, buffer); //!!!!!!!!!!!!!!!!!!!!!!!
   }
   p = buffer;
   for(j = MENU_ITEM_INDENT; j < width-SELECTION_CHAR_COUNT && *p; j++, p++)

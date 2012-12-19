@@ -17,10 +17,10 @@
 /*----------------------------------------------------------------------------*/
 #include <stdint.h>
 
-#define DOWN_SENSOR 1
-#define UP_SENSOR 2
-#define CASSETE_0_SENSOR 4
-#define CASSETE_CELL_SENSOR 8
+#define DOWN_SENSOR 4
+#define UP_SENSOR 8
+#define CASSETE_0_SENSOR 1
+#define CASSETE_CELL_SENSOR 2
 
 
 #ifdef __cplusplus

@@ -62,8 +62,8 @@ int pop_event_handler(void)
 {
   if(handler_shack_point)
   {
-    set_event_handler(event_stack[handler_shack_point].handler, event_stack[handler_shack_point].data);
     handler_shack_point --;
+    set_event_handler(event_stack[handler_shack_point].handler, event_stack[handler_shack_point].data);
     return 1;
   }
   return 0;

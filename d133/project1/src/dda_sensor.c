@@ -41,7 +41,7 @@ void sensors_init()
   gpio.GPIO_Mode = GPIO_Mode_IPU;
   GPIO_Init(GPIOB, &gpio);
 
-  sheduler_add(sensor_timer, 0, 10, 10);
+  sheduler_add(sensor_timer, 0, 1, 10);
 }
 /*----------------------------------------------------------------------------*/
 uint32_t sensors_real_state()
