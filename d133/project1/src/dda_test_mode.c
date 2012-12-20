@@ -22,6 +22,8 @@
 #include <dda_sensor.h>
 #include <event.h>
 #include <menu.h>
+#include <dda_mode.h>
+#include <dda_cassette.h>
 
 #define USE_CONSOLE //!!!!
 #ifdef USE_CONSOLE
@@ -42,12 +44,8 @@ adc_itm;
 /*----------------------------------------------------------------------------*/
 void test_mode_init()
 {
-  set_event_handler(test_handler, 0);
-}
-/*----------------------------------------------------------------------------*/
-static void start_test_menu()
-{
-  menu_item_init("Test menu", 0, &root_itm);
+  menu_item_init("Test", 0, &root_itm);
+  menu_item_add_child(root_menu,  &root_itm);
 
   menu_item_init("Cassete motor test", 0, &cassete_motor_itm);
   menu_item_add_child(&root_itm,  &cassete_motor_itm);
@@ -57,19 +55,24 @@ static void start_test_menu()
   menu_item_add_child(&cassete_motor_itm, &cassete_next_itm);
 
 
-  menu_item_init("Rod motor test", 0, &rod_motor_itm);
+  menu_item_init("Plunger motor test", 0, &rod_motor_itm);
   menu_item_add_child(&root_itm,  &rod_motor_itm);
   menu_item_init("Bottom position", top_bottom_handler, &fulldown_itm);
-  fulldown_itm.data = (void *)RodDown;
+  fulldown_itm.data = (void *)PlungerDown;
   menu_item_add_child(&rod_motor_itm,  &fulldown_itm);
   menu_item_init("Top position", top_bottom_handler, &fullup_itm);
   menu_item_add_child(&rod_motor_itm,  &fullup_itm);
-  fullup_itm.data = (void *)RodUp;
+  fullup_itm.data = (void *)PlungerUp;
 
 
   menu_item_init("ADC test", adc_handler, &adc_itm);
   menu_item_add_child(&root_itm,  &adc_itm);
 
+  //set_event_handler(test_handler, 0);
+}
+/*----------------------------------------------------------------------------*/
+static void start_test_menu()
+{
   start_menu(&root_itm);
 }
 /*----------------------------------------------------------------------------*/
@@ -143,6 +146,7 @@ static int cassete0_handler(void *data, event_t evt, int param1, void *param2)
     else
       state = WaitSensorOn;
     motor_start(CasseteMotor, state == WaitSensorOff ? PreityClockwise : Clockwise, state == WaitSensorOff ? 100 : 0);
+    reset_cassette_calibration();
     break;
 
   case MENU_EVENT:
@@ -224,6 +228,7 @@ static int cassete_next_handler(void *data, event_t evt, int param1, void *param
     else
       state = WaitSensorOn;
     motor_start(CasseteMotor, PreityClockwise, 0);
+    reset_cassette_calibration();
     break;
 
   case MENU_EVENT:
@@ -268,7 +273,7 @@ static int cassete_next_handler(void *data, event_t evt, int param1, void *param
 /*----------------------------------------------------------------------------*/
 static int top_bottom_handler(void *data, event_t evt, int param1, void *param2)
 {
-  static int dir = RodDown;
+  static int dir = PlungerDown;
   typedef enum
   {
     WaitSensorOff,
@@ -294,16 +299,16 @@ static int top_bottom_handler(void *data, event_t evt, int param1, void *param2)
     lcd_clear();
     dir = (int)data;
     sensors = sensors_state();
-    if(   (dir == RodDown && (sensors & DOWN_SENSOR))
-       || (dir == RodUp && (sensors & UP_SENSOR)) )
+    if(   (dir == PlungerDown && (sensors & DOWN_SENSOR))
+       || (dir == PlungerUp && (sensors & UP_SENSOR)) )
     {
       state = WaitSensorOff;
-      motor_start(StrengthMotor, dir == RodDown ? RodUp : RodDown, 50);
+      motor_start(PlungerMotor, dir == PlungerDown ? PlungerUp : PlungerDown, 50);
     }
     else
     {
       state = WaitSensorOn;
-      motor_start(StrengthMotor, dir, 0);
+      motor_start(PlungerMotor, dir, 0);
     }
     break;
 
@@ -318,13 +323,13 @@ static int top_bottom_handler(void *data, event_t evt, int param1, void *param2)
       motor_stop();
       set_event_handler(test_handler, 0);
       start_menu(&rod_motor_itm);
-      set_menu_pos(dir == RodDown ? 0 : 1);
+      set_menu_pos(dir == PlungerDown ? 0 : 1);
       return 1;
     }
     break;
   case SENSOR_ON_EVENT:
-    if(   (param1 == DOWN_SENSOR && state == WaitSensorOn && dir == RodDown)
-       || (param1 == UP_SENSOR && state == WaitSensorOn && dir == RodUp) )
+    if(   (param1 == DOWN_SENSOR && state == WaitSensorOn && dir == PlungerDown)
+       || (param1 == UP_SENSOR && state == WaitSensorOn && dir == PlungerUp) )
     {
       state = WaitMotorOff;
       //motor_deceleration(); !!!!!!!
@@ -333,8 +338,8 @@ static int top_bottom_handler(void *data, event_t evt, int param1, void *param2)
     break;
 
   case SENSOR_OFF_EVENT:
-    if(   (param1 == DOWN_SENSOR && state == WaitSensorOff && dir == RodDown)
-       || (param1 == UP_SENSOR && state == WaitSensorOff && dir == RodUp) )
+    if(   (param1 == DOWN_SENSOR && state == WaitSensorOff && dir == PlungerDown)
+       || (param1 == UP_SENSOR && state == WaitSensorOff && dir == PlungerUp) )
       motor_deceleration();
     break;
 
@@ -342,13 +347,13 @@ static int top_bottom_handler(void *data, event_t evt, int param1, void *param2)
     if(state == WaitSensorOff)
     {
       state = WaitSensorOn;
-      motor_start(StrengthMotor, dir, 50);
+      motor_start(PlungerMotor, dir, 50);
     }
     else
     {
       set_event_handler(test_handler, 0);
       start_menu(&rod_motor_itm);
-      set_menu_pos(dir == RodDown ? 0 : 1);
+      set_menu_pos(dir == PlungerDown ? 0 : 1);
       return 1;
     }
     break;
@@ -372,7 +377,8 @@ static void display_adc()
 /*----------------------------------------------------------------------------*/
 static int adc_handler(void *data, event_t evt, int param1, void *param2)
 {
-  int sensors, dir;
+  int sensors;
+  static int dir;
 
   (void) data; //Prevent unused warning
   (void) param1;
@@ -407,18 +413,18 @@ static int adc_handler(void *data, event_t evt, int param1, void *param2)
     else
     if(param1 == KEY_UP)
     {
-      dir = RodUp;
+      dir = PlungerUp;
       sensors = sensors_state();
       if(!(sensors & UP_SENSOR))
-         motor_start(StrengthMotor, dir, 0);
+         motor_start(PlungerMotor, dir, 0);
     }
     else
     if(param1 == KEY_DOWN)
     {
-      dir = RodDown;
+      dir = PlungerDown;
       sensors = sensors_state();
       if(!(sensors & DOWN_SENSOR))
-        motor_start(StrengthMotor, dir, 0);
+        motor_start(PlungerMotor, dir, 0);
     }
     break;
 
@@ -430,8 +436,8 @@ static int adc_handler(void *data, event_t evt, int param1, void *param2)
     break;
 
   case SENSOR_ON_EVENT:
-    if(   (param1 == DOWN_SENSOR && dir == RodDown)
-       || (param1 == UP_SENSOR && dir == RodUp) )
+    if(   (param1 == DOWN_SENSOR && dir == PlungerDown)
+       || (param1 == UP_SENSOR && dir == PlungerUp) )
     {
       //motor_deceleration(); !!!!!!!
       motor_stop();

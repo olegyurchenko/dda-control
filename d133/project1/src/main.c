@@ -7,7 +7,7 @@
 #include <dda_lcd.h>
 #include <dda_key.h>
 #include <dda_sensor.h>
-#include <dda_test_mode.h>
+#include <dda_mode.h>
 #include <event.h>
 
 #define USE_CONSOLE //!!!!!!!!!!!
@@ -28,7 +28,7 @@ int main()
   lcd_update();
 
   //!!!!!!!!!!!!!!!!!!!!!!
-  test_mode_init();
+  mode_init(); //STart of work
   //!!!!!!!!!!!!!!!!!!!!!!
 
 

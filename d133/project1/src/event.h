@@ -42,6 +42,7 @@ void set_event_handler(event_handler_t handler, void *data);
 int handle_event(event_t evt, int param1, void *param2);
 int push_event_handler(void);
 int pop_event_handler(void);
+void clear_event_handler_stack();
 int process_events(void);
 #ifdef __cplusplus
 } //extern "C"

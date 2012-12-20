@@ -23,15 +23,15 @@ typedef enum
 {
   Forward = 0,
   Reverse =1,
-  RodUp = 0,
-  RodDown = 1,
+  PlungerUp = 0,
+  PlungerDown = 1,
   Clockwise = 0,
   PreityClockwise = 1
 } MotorDirection;
 
 typedef enum
 {
-  StrengthMotor = 0,
+  PlungerMotor = 0,
   CasseteMotor = 1
 } MotorIndex;
 

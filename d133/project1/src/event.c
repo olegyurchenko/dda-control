@@ -69,6 +69,12 @@ int pop_event_handler(void)
   return 0;
 }
 /*----------------------------------------------------------------------------*/
+void clear_event_handler_stack()
+{
+  set_event_handler(0, 0);
+  handler_shack_point = 0;
+}
+/*----------------------------------------------------------------------------*/
 static int key_handler(int state, int old_state)
 {
   int i, result = 0;
