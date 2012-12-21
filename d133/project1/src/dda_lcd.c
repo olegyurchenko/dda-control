@@ -47,7 +47,7 @@ typedef struct SCROLLED_TEXT SCROLLED_TEXT;
 #define MAX_SCROLL_COUNT 4
 static SCROLLED_TEXT scrolls[MAX_SCROLL_COUNT];
 static int scroll_count = 0;
-#define HSCROLL_TIME 500
+#define HSCROLL_TIME 600
 #define HSCROLL_TIMES 3
 /*----------------------------------------------------------------------------*/
 static char lcd_buffer[DISPLAY_HEIGHT * DISPLAY_WIDTH];
@@ -148,7 +148,7 @@ void lcd_init()
   gpio.GPIO_Mode = GPIO_Mode_Out_PP;
   GPIO_Init(GPIOA, &gpio);
 
-  sys_sleep(800); /* Wait a bit after power-up */
+  sys_sleep(1000); /* Wait a bit after power-up */
   _init();
   _hi_init();
 }
@@ -200,7 +200,7 @@ static void _hi_init()
 {
   memset(lcd_old, 0, sizeof(lcd_old));
   lcd_clear();
-  sheduler_add(lcd_timer, 0, 100, 100);
+  sheduler_add(lcd_timer, 0, 100, 200);
 }
 /*----------------------------------------------------------------------------*/
 static void intern_lcd_put_char(int x, int y, int ch)

@@ -1,1 +1,6 @@
-./st-flash write main.bin 8000000
+if [ "$1" == "" ] ; then
+  file=main.bin
+else
+  file=$1
+fi
+./st-flash write $file 8000000

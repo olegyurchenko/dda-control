@@ -24,6 +24,7 @@
 #include <menu.h>
 #include <dda_mode.h>
 #include <dda_cassette.h>
+#include <dda_conv.h>
 
 #define USE_CONSOLE //!!!!
 #ifdef USE_CONSOLE
@@ -366,13 +367,23 @@ static int top_bottom_handler(void *data, event_t evt, int param1, void *param2)
 /*----------------------------------------------------------------------------*/
 static void display_adc()
 {
-  char buffer[16];
+  char buffer[16], fbuf[16];
+  decimal32_t force;
   int value = 0;
 
   sys_adc_get_value(&value);
-  snprintf(buffer, sizeof(buffer), "(0x%03x) %4d", value, value);
-  lcd_put_line(1, buffer, SCR_ALIGN_RIGHT);
+  discrets2force(value, &force);
+  decimal32_str(&force, fbuf, sizeof(fbuf));
+  snprintf(buffer, sizeof(buffer), "%5s (%03xH %d)", fbuf, value, value);
+  lcd_put_line(1, buffer, SCR_ALIGN_LEFT);
 //  lcd_update();
+}
+/*----------------------------------------------------------------------------*/
+static void set_zero()
+{
+  int value = 0;
+  sys_adc_get_value(&value);
+  set_zero_force(value);
 }
 /*----------------------------------------------------------------------------*/
 static int adc_handler(void *data, event_t evt, int param1, void *param2)
@@ -394,6 +405,7 @@ static int adc_handler(void *data, event_t evt, int param1, void *param2)
     if(!param1) //Mode exit
       return 0;
     lcd_clear();
+    set_zero();
     break;
 
   case MENU_EVENT:

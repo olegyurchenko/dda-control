@@ -21,6 +21,7 @@
 #include <dda_cassette.h>
 #include <dda_plunger.h>
 #include <dda_clib.h>
+#include <dda_conv.h>
 /*----------------------------------------------------------------------------*/
 static MENU_ITEM root_itm;
 static int work_handler(void *data, event_t evt, int param1, void *param2);
@@ -38,13 +39,23 @@ void set_work_mode()
 /*----------------------------------------------------------------------------*/
 static void display()
 {
-  char buffer[16];
+  char buffer[16], fbuf[16];
+  decimal32_t force;
   int value = 0;
 
   sys_adc_get_value(&value);
-  snprintf(buffer, sizeof(buffer), "(0x%03x) %4d", value, value);
-  lcd_put_line(1, buffer, SCR_ALIGN_RIGHT);
+  discrets2force(value, &force);
+  decimal32_str(&force, fbuf, sizeof(fbuf));
+  snprintf(buffer, sizeof(buffer), "%5s", fbuf);
+  lcd_put_line(1, buffer, SCR_ALIGN_LEFT);
 //  lcd_update();
+}
+/*----------------------------------------------------------------------------*/
+static void set_zero()
+{
+  int value = 0;
+  sys_adc_get_value(&value);
+  set_zero_force(value);
 }
 /*----------------------------------------------------------------------------*/
 static int work_handler(void *data, event_t evt, int param1, void *param2)
@@ -76,6 +87,7 @@ static int work_handler(void *data, event_t evt, int param1, void *param2)
         return 1;
       }
       state = CasseteCatch;
+      set_zero();
       break;
 
     case CasseteCatch:
