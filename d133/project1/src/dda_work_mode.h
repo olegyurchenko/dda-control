@@ -15,12 +15,20 @@
 #ifndef DDA_WORK_MODE_H_1355992020
 #define DDA_WORK_MODE_H_1355992020
 /*----------------------------------------------------------------------------*/
+typedef enum WORK_MODE
+{
+  UnknownMode,
+  AutoMode,
+  ManualMode
+} work_mode_t;
+
 #ifdef __cplusplus
 extern "C" {
 #endif /*__cplusplus*/
 
 void work_mode_init();
-void set_work_mode();
+void set_work_mode(work_mode_t m);
+work_mode_t work_mode();
 
 #ifdef __cplusplus
 } //extern "C"

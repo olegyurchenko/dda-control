@@ -48,7 +48,7 @@ void test_mode_init()
   menu_item_init("Test", 0, &root_itm);
   menu_item_add_child(root_menu,  &root_itm);
 
-  menu_item_init("Cassete motor test", 0, &cassete_motor_itm);
+  menu_item_init("Cassette motor test", 0, &cassete_motor_itm);
   menu_item_add_child(&root_itm,  &cassete_motor_itm);
   menu_item_init("Goto 0 cell", cassete0_handler, &cassete0_itm);
   menu_item_add_child(&cassete_motor_itm, &cassete0_itm);
@@ -147,7 +147,7 @@ static int cassete0_handler(void *data, event_t evt, int param1, void *param2)
     else
       state = WaitSensorOn;
     motor_start(CasseteMotor, state == WaitSensorOff ? PreityClockwise : Clockwise, state == WaitSensorOff ? 100 : 0);
-    reset_cassette_calibration();
+    reset_cassette_position();
     break;
 
   case MENU_EVENT:
@@ -229,7 +229,7 @@ static int cassete_next_handler(void *data, event_t evt, int param1, void *param
     else
       state = WaitSensorOn;
     motor_start(CasseteMotor, PreityClockwise, 0);
-    reset_cassette_calibration();
+    reset_cassette_position();
     break;
 
   case MENU_EVENT:

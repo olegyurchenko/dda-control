@@ -1,29 +1,29 @@
 /*----------------------------------------------------------------------------*/
 /**
-* @pkg audio
+* @pkg dda_message
 */
 /**
-* Audio functions.
+* Output message to LCD and wait.
 *
 * (C) DDA team, Kiev, Ukraine 2012.<br>
-* started 29.08.2012 13:11:38<br>
-* @pkgdoc audio
+* started 24.12.2012 10:24:55<br>
+* @pkgdoc dda_message
 * @author oleg
 * @version 0.01 
 */
 /*----------------------------------------------------------------------------*/
-#ifndef AUDIO_H_1346235098
-#define AUDIO_H_1346235098
+#ifndef DDA_MESSAGE_H_1356337495
+#define DDA_MESSAGE_H_1356337495
 /*----------------------------------------------------------------------------*/
 #ifdef __cplusplus
 extern "C" {
 #endif /*__cplusplus*/
 
-void audio_init();
+void show_message(const char *caption, const char *message, int timeout /*=0*/);
 
 #ifdef __cplusplus
 } //extern "C"
 #endif /*__cplusplus*/
 /*----------------------------------------------------------------------------*/
-#endif /*AUDIO_H_1346235098*/
+#endif /*DDA_MESSAGE_H_1356337495*/
 

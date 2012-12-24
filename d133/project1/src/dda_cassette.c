@@ -17,19 +17,36 @@
 #include <dda_key.h>
 #include <event.h>
 #include <dda_sensor.h>
+#include <sys_timer.h>
 /*----------------------------------------------------------------------------*/
 static int position = CASSETTE_UNKNOWN_POSITION;
-static int cassete0_handler(void*, event_t evt, int param1, void *param2);
-static int cassete_next_handler(void*, event_t evt, int param1, void *param2);
+static int cassete_pos_handler(void*, event_t evt, int param1, void *param2);
+static int dst_position, direction;
 /*----------------------------------------------------------------------------*/
-void reset_cassette_calibration()
+#define CASSETTE_TIMEOUT 10000 //10s
+/*----------------------------------------------------------------------------*/
+typedef enum
+{
+  Idle = 0,
+  WaitNullSensor,
+  WaitSensorOff,
+  WaitSensorOn,
+  WaitMotorOff
+} STATE;
+
+static STATE state = Idle;
+/*----------------------------------------------------------------------------*/
+handler_t cassete_handler = {cassete_pos_handler, 0};
+static timeout_t timeout;
+/*----------------------------------------------------------------------------*/
+void reset_cassette_position()
 {
   position = CASSETTE_UNKNOWN_POSITION;
 }
 /*----------------------------------------------------------------------------*/
-int is_cassete_calibrated()
+int is_cassete_position_unknown()
 {
-  return position != CASSETTE_UNKNOWN_POSITION;
+  return position == CASSETTE_UNKNOWN_POSITION;
 }
 /*----------------------------------------------------------------------------*/
 int cassette_position()
@@ -37,33 +54,19 @@ int cassette_position()
   return position;
 }
 /*----------------------------------------------------------------------------*/
-void cassette_calibration()
+void cassete_goto_position(int pos)
 {
-  push_event_handler();
-  set_event_handler(cassete0_handler, 0);
-}
-/*----------------------------------------------------------------------------*/
-void cassete_goto_cell(int pos)
-{
-  push_event_handler();
-  set_event_handler(cassete_next_handler, &pos);
-  if(!is_cassete_calibrated())
+  if(pos >= 0 && pos < CASSETTE_MAX_CELL && pos != position)
   {
-    push_event_handler();
-    set_event_handler(cassete0_handler, 0);
+    dst_position = pos;
+    cassete_handler.handler = cassete_pos_handler;
+    cassete_handler.data = 0;
+    handler_call(&cassete_handler, MODE_SET_EVENT, 1, 0);
   }
 }
 /*----------------------------------------------------------------------------*/
-static int cassete0_handler(void *data, event_t evt, int param1, void *param2)
+static int cassete_pos_handler(void *data, event_t evt, int param1, void *param2)
 {
-  typedef enum
-  {
-    WaitSensorOff,
-    WaitSensorOn,
-    WaitMotorOff
-  } STATE;
-
-  static STATE state;
   int sensors;
 
   (void) data; //Prevent unused warning
@@ -76,116 +79,62 @@ static int cassete0_handler(void *data, event_t evt, int param1, void *param2)
     if(!param1) //Mode exit
       return 0;
     sensors = sensors_state();
-    if(sensors & CASSETE_0_SENSOR)
-      state = WaitSensorOff;
-    else
-      state = WaitSensorOn;
-    motor_start(CasseteMotor, state == WaitSensorOff ? PreityClockwise : Clockwise, state == WaitSensorOff ? 100 : 0);
+    state = Idle;
+    if(is_cassete_position_unknown())
+    {
+      if(sensors & CASSETE_0_SENSOR)
+        position = 0;
+      else
+      {
+        state = WaitNullSensor;
+        direction = Clockwise;
+      }
+    }
+
+    if(state == Idle)
+    {
+      if(dst_position == position)
+        return EVENT_HANDLER_DONE;
+
+      if(sensors & CASSETE_CELL_SENSOR)
+        state = WaitSensorOff;
+      else
+        state = WaitSensorOn;
+
+      if(dst_position > position)
+        direction = PreityClockwise;
+      else
+        direction = Clockwise;
+    }
+    motor_start(CasseteMotor, direction, 0);
+    timeout_set(&timeout, CASSETTE_TIMEOUT, sys_tick_count());
     break;
 
-  case KEY_PRESS_EVENT:
-    if(param1 == KEY_STOP)
+  case IDLE_EVENT:
+    if(state != Idle && timeout_riched(&timeout, sys_tick_count()))
     {
       motor_stop();
-      reset_cassette_calibration();
-      pop_event_handler();
-      return 1;
+      reset_cassette_position();
+      state = Idle;
+      return CASSETTE_TIMEOUT_ERROR;
     }
     break;
 
   case SENSOR_ON_EVENT:
-    if(param1 == CASSETE_0_SENSOR && state == WaitSensorOn)
+    if(param1 == CASSETE_0_SENSOR && state == WaitNullSensor)
     {
-      state = WaitMotorOff;
+      timeout_set(&timeout, CASSETTE_TIMEOUT, sys_tick_count());
       motor_deceleration();
+      break;
     }
-    break;
 
-  case SENSOR_OFF_EVENT:
-    if(param1 == CASSETE_0_SENSOR && state == WaitSensorOff)
-      motor_deceleration();
-    break;
-
-  case MOTOR_OFF_EVENT:
-    if(state == WaitSensorOff)
-    {
-      state = WaitSensorOn;
-      motor_start(CasseteMotor, Clockwise, 100);
-    }
-    else
-    {
-      position = CASSETTE_NULL_POSITION;
-      pop_event_handler();
-      return 1;
-    }
-    break;
-
-  default:
-    break;
-  }
-  return 0;
-}
-/*----------------------------------------------------------------------------*/
-static int cassete_next_handler(void *data, event_t evt, int param1, void *param2)
-{
-  typedef enum
-  {
-    WaitSensorOff,
-    WaitSensorOn,
-    WaitMotorOff
-  } STATE;
-
-  static STATE state;
-  static int end_position, dir;
-
-  int sensors;
-
-  (void) data; //Prevent unused warning
-  (void) param1;
-  (void) param2;
-
-  switch(evt)
-  {
-  case MODE_SET_EVENT:
-    if(!param1) //Mode exit
-      return 0;
-    end_position = *(int *)data;
-    sensors = sensors_state();
-    if(sensors & CASSETE_CELL_SENSOR)
-      state = WaitSensorOff;
-    else
-      state = WaitSensorOn;
-    if(end_position == position)
-    {
-      pop_event_handler();
-      return 1;
-    }
-    else
-    if(end_position > position)
-      dir = PreityClockwise;
-    else
-      dir = Clockwise;
-
-    motor_start(CasseteMotor, dir, 0);
-    break;
-
-  case KEY_PRESS_EVENT:
-    if(param1 == KEY_STOP)
-    {
-      motor_stop();
-      pop_event_handler();
-      return 1;
-    }
-    break;
-
-  case SENSOR_ON_EVENT:
     if(param1 == CASSETE_CELL_SENSOR && state == WaitSensorOn)
     {
       state = WaitMotorOff;
-      if(dir == PreityClockwise)
+      if(direction == PreityClockwise)
       {
         position ++;
-        if(position >= end_position)
+        if(position >= dst_position)
           motor_deceleration();
         else
           state = WaitSensorOff;
@@ -193,7 +142,7 @@ static int cassete_next_handler(void *data, event_t evt, int param1, void *param
       else
       {
         position --;
-        if(position <= end_position)
+        if(position <= dst_position)
           motor_deceleration();
         else
           state = WaitSensorOff;
@@ -207,13 +156,34 @@ static int cassete_next_handler(void *data, event_t evt, int param1, void *param
     break;
 
   case MOTOR_OFF_EVENT:
-    pop_event_handler();
-    return 1;
+    if(state == WaitNullSensor)
+    {
+      position = 0;
+      if(dst_position != position)
+      {
+        sensors = sensors_state();
+        if(sensors & CASSETE_CELL_SENSOR)
+          state = WaitSensorOff;
+        else
+          state = WaitSensorOn;
+
+        direction = PreityClockwise;
+        motor_start(CasseteMotor, direction, 0);
+        timeout_set(&timeout, CASSETTE_TIMEOUT, sys_tick_count());
+        break;
+      }
+    }
+    state = Idle;
+    break;
 
   default:
     break;
   }
-  return 0;
+
+  if(state == Idle)
+    return EVENT_HANDLER_DONE;
+
+  return HANDLED_EVENTS;
 }
 /*----------------------------------------------------------------------------*/
 

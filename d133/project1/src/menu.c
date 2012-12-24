@@ -37,6 +37,9 @@ static MENU_ITEM root_item;
 /*----------------------------------------------------------------------------*/
 static struct MENU_STATE state;
 static int event_handler(void*, event_t evt, int param1, void *param2);
+void draw_menu_item(int y, int index_width, MENU_ITEM *m);
+void draw_menu_selection(int y, int index_width, MENU_ITEM *m, int sel);
+int hscroll_menu_item(int y, int index_width, MENU_ITEM *n);
 /*----------------------------------------------------------------------------*/
 typedef struct
 {
@@ -50,10 +53,8 @@ typedef struct
 /*----------------------------------------------------------------------------*/
 void menu_item_init(const char *caption, event_handler_t handler, MENU_ITEM *dst)
 {
-  int size;
-
   dst->flag = 0;
-  dst->caption[0] = '\0';
+  dst->caption = "";
   dst->handler = handler;
   dst->data = NULL;
   dst->parent = NULL;
@@ -65,152 +66,8 @@ void menu_item_init(const char *caption, event_handler_t handler, MENU_ITEM *dst
   dst->caption_size = 0;
   if(caption != NULL && *caption)
   {
-    size = strlen(caption);
-    if(size >= MENU_CAPTION_SIZE - 1)
-      size = MENU_CAPTION_SIZE - 1;
-    memcpy(dst->caption, caption, size);
-    dst->caption[size] = '\0';
-    dst->caption_size = size;
-  }
-}
-/*----------------------------------------------------------------------------*/
-static int checkbox_item_handler(void *data, event_t evt, int param1, void *param2)
-{
-  MENU_ITEM *n;
-  int checked;
-  (void) param1;
-  (void) param2; //Unused warning
-  switch(evt)
-  {
-  case MENU_EVENT:
-    n = (MENU_ITEM *) param2;
-    if(n != NULL && n->caption != NULL && n->caption_size > 1)
-    {
-      checked = n->caption[1] == '-' ? 1 : 0;
-      n->caption[1] = checked ? '+' : '-';
-      if(n->data != NULL)
-      {
-        int bit = 0;
-        int *d;
-
-        d = (int *)data;
-        n = n->prev;
-        while(n != NULL)
-        {
-          if(n->flag & MENU_CHECK_ITEM)
-            bit ++;
-          n = n->prev;
-        }
-
-        if(checked)
-          *d |= (1 << bit);
-        else
-          *d &= ~(1 << bit);
-      }
-    }
-  default:
-    break;
-  }
-  return MENU_CANCEL;
-}
-/*----------------------------------------------------------------------------*/
-void checkbox_item_init(const char *caption, MENU_ITEM *dst)
-{
-  int size;
-
-  dst->flag = MENU_CHECK_ITEM;
-  dst->caption[0] = '\0';
-  dst->handler = checkbox_item_handler;
-  dst->data = NULL;
-  dst->parent = NULL;
-  dst->next = NULL;
-  dst->prev = NULL;
-  dst->childs = NULL;
-  dst->hstart = 4;
-  dst->hscroll = 0;
-  dst->caption_size = 0;
-  if(caption != NULL && *caption)
-  {
-    size = strlen(caption);
-
-    if(size >= MENU_CAPTION_SIZE - 5)
-      size = MENU_CAPTION_SIZE - 5;
-    memcpy(dst->caption, "[-] ", 4);
-    memcpy(dst->caption + 4, caption, size);
-    dst->caption[size + 4] = '\0';
-
-    dst->caption_size = size + 4;
-  }
-}
-/*----------------------------------------------------------------------------*/
-static int radiobox_item_handler(void *data, event_t evt, int param1, void *param2)
-{
-  MENU_ITEM *n;
-  (void) param1;
-  switch(evt)
-  {
-  case MENU_EVENT:
-    n = (MENU_ITEM *) param2;
-    if(n != NULL && n->caption_size > 1 && n->caption[1] == ' ')
-    {
-      n->caption[1] = '*';
-      if(n->data != NULL)
-      {
-        int bit = 0;
-        int *d;
-
-        d = (int *)data;
-        n = n->parent;
-        if(n != NULL)
-          n = n->childs;
-        while(n != NULL)
-        {
-          if((n->flag & MENU_RADIO_ITEM) && d == n->data)
-          {
-            if(n == param2)
-              *d = bit;
-            else
-            {
-              if(n->caption_size > 1)
-                n->caption[1] = ' ';
-            }
-
-            bit ++;
-          }
-          n = n->next;
-        }
-      }
-    }
-  default:
-    break;
-  }
-  return MENU_CANCEL;
-}
-/*----------------------------------------------------------------------------*/
-void radiobox_item_init(const char *caption, MENU_ITEM *dst)
-{
-  int size;
-
-  dst->flag = MENU_RADIO_ITEM;
-  dst->caption[0] = '\0';
-  dst->handler = radiobox_item_handler;
-  dst->data = NULL;
-  dst->parent = NULL;
-  dst->next = NULL;
-  dst->prev = NULL;
-  dst->childs = NULL;
-  dst->hstart = 4;
-  dst->hscroll = 0;
-  dst->caption_size = 0;
-  if(caption != NULL && *caption)
-  {
-    size = strlen(caption);
-    if(size >= MENU_CAPTION_SIZE - 5)
-      size = MENU_CAPTION_SIZE - 5;
-    memcpy(dst->caption, "( ) ", 4);
-    memcpy(dst->caption + 4, caption, size + 1);
-    dst->caption[size + 4] = '\0';
-    dst->caption_size = size + 4;
+    dst->caption = caption;
+    dst->caption_size = strlen(caption);
   }
 }
 /*----------------------------------------------------------------------------*/
@@ -433,7 +290,7 @@ void set_menu_pos_by_index(int index)
 void draw_menu_item(int y, int index_width, MENU_ITEM *n)
 {
   char buffer[16], fmt[16];
-  char *p;
+  const char *p;
   int j;
   int width;
 
@@ -509,23 +366,6 @@ void draw_menu_selection(int y, int index_width, MENU_ITEM *n, int sel)
   }
 }
 /*----------------------------------------------------------------------------*/
-static void set_checked()
-{
-  int check_i = 0;
-  MENU_ITEM *n;
-  n = state.root->childs;
-  while(n != 0)
-  {
-    if(n->flag & MENU_CHECK_ITEM)
-    {
-      if(n->data != NULL && (*(int *)n->data & (1 << check_i)))
-        n->caption[1] = '+';
-      check_i ++;
-    }
-    n = n->next;
-  }
-}
-/*----------------------------------------------------------------------------*/
 static int event_handler(void* m, event_t evt, int param1, void *param2)
 {
   static unsigned iddle_time;
@@ -542,7 +382,6 @@ static int event_handler(void* m, event_t evt, int param1, void *param2)
   case MODE_SET_EVENT:
     if(param1)
     {
-      set_checked();
       draw_menu();
       iddle_time = sys_tick_count();
     }

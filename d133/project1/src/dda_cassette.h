@@ -15,19 +15,25 @@
 #ifndef DDA_CASSETTE_H_1355998352
 #define DDA_CASSETTE_H_1355998352
 /*----------------------------------------------------------------------------*/
+#include <event.h>
+#define CASSETTE_UNKNOWN_POSITION (-1)
+#define CASSETTE_NULL_POSITION 0
+#define CASSETTE_1ST_CELL 1
+#define CASSETTE_MAX_CELL 60
+
+extern handler_t cassete_handler;
+
+#define CASSETTE_TIMEOUT_ERROR (-1)
+
 #ifdef __cplusplus
 extern "C" {
 #endif /*__cplusplus*/
 
-#define CASSETTE_UNKNOWN_POSITION (-1)
-#define CASSETTE_NULL_POSITION 0
-#define CASSETTE_1ST_CELL_POSITION 1
 
-void reset_cassette_calibration();
-int is_cassete_calibrated();
+void reset_cassette_position();
+int is_cassete_position_unknown();
 int cassette_position();
-void cassette_calibration();
-void cassete_goto_cell(int pos);
+void cassete_goto_position(int pos);
 
 #ifdef __cplusplus
 } //extern "C"

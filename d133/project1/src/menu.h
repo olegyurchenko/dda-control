@@ -29,7 +29,7 @@
 struct MENU_ITEM
 {
   int menu_index;
-  char caption[MENU_CAPTION_SIZE];
+  const char *caption;
   event_handler_t handler;
   void *data;
   short flag;
@@ -69,9 +69,6 @@ extern "C" {
 #endif /*__cplusplus*/
 
 void menu_item_init(const char *caption, event_handler_t handler, MENU_ITEM *dst);
-void checkbox_item_init(const char *caption, MENU_ITEM *dst);
-void radiobox_item_init(const char *caption, MENU_ITEM *dst);
-
 
 int menu_item_add(MENU_ITEM *m, MENU_ITEM *n);
 int menu_item_add_child(MENU_ITEM *m, MENU_ITEM *n);
@@ -79,11 +76,6 @@ int menu_item_add_child(MENU_ITEM *m, MENU_ITEM *n);
 void start_menu(MENU_ITEM *m);
 void set_menu_pos(int index);
 void set_menu_pos_by_index(int index);
-
-void draw_menu_item(int y, int index_width, MENU_ITEM *m);
-void draw_menu_selection(int y, int index_width, MENU_ITEM *m, int sel);
-int hscroll_menu_item(int y, int index_width, MENU_ITEM *n);
-
 
 #ifdef __cplusplus
 } //extern "C"

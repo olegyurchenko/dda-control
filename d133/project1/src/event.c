@@ -19,16 +19,10 @@
 #include <dda_motors.h>
 /*----------------------------------------------------------------------------*/
 #define EVENT_STACK_SIZE 8
-typedef struct
-{
-  event_handler_t handler;
-  void *data;
-} EVT_HANDLER;
-/*----------------------------------------------------------------------------*/
 static int handler_shack_point = 0;
 /*----------------------------------------------------------------------------*/
-static EVT_HANDLER event_stack[EVENT_STACK_SIZE];
-static EVT_HANDLER current_handler = {0, 0};
+static handler_t event_stack[EVENT_STACK_SIZE];
+static handler_t current_handler = {0, 0};
 /*----------------------------------------------------------------------------*/
 void set_event_handler(event_handler_t handler, void *data)
 {
@@ -41,11 +35,16 @@ void set_event_handler(event_handler_t handler, void *data)
   }
 }
 /*----------------------------------------------------------------------------*/
+int handler_call(handler_t *h, event_t evt, int param1, void *param2)
+{
+  if(h != 0 && h->handler != 0)
+    return h->handler(h->data, evt, param1, param2);
+  return NO_HANDLED_EVENTS;
+}
+/*----------------------------------------------------------------------------*/
 int handle_event(event_t evt, int param1, void *param2)
 {
-  if(current_handler.handler != 0)
-    return current_handler.handler(current_handler.data, evt, param1, param2);
-  return 0;
+  return handler_call(&current_handler, evt, param1, param2);
 }
 /*----------------------------------------------------------------------------*/
 int push_event_handler(void)
@@ -77,43 +76,43 @@ void clear_event_handler_stack()
 /*----------------------------------------------------------------------------*/
 static int key_handler(int state, int old_state)
 {
-  int i, result = 0;
+  int i;
   for(i = 0; i < 6; i++)
   {
     if((state ^ old_state) & (1 << i))
     {
       if(state & (1 << i))
-        result += handle_event(KEY_PRESS_EVENT, 1 << i, 0);
+        handle_event(KEY_PRESS_EVENT, 1 << i, 0);
       else
-        result += handle_event(KEY_RELEASE_EVENT, 1 << i, 0);
+        handle_event(KEY_RELEASE_EVENT, 1 << i, 0);
     }
   }
-  return result;
+  return 1;
 }
 /*----------------------------------------------------------------------------*/
 static int sensor_handler(int state, int old_state)
 {
-  int i, result = 0;
+  int i;
   for(i = 0; i < 4; i++)
   {
     if((state ^ old_state) & (1 << i))
     {
       if(state & (1 << i))
-        result += handle_event(SENSOR_ON_EVENT, 1 << i, 0);
+        handle_event(SENSOR_ON_EVENT, 1 << i, 0);
       else
-        result += handle_event(SENSOR_OFF_EVENT, 1 << i, 0);
+        handle_event(SENSOR_OFF_EVENT, 1 << i, 0);
     }
   }
-  return result;
+  return 1;
 }
 /*----------------------------------------------------------------------------*/
 static int motor_handler(int state, int old_state)
 {
   if(state)
-    return handle_event(MOTOR_ON_EVENT, 1, 0);
+    handle_event(MOTOR_ON_EVENT, 1, 0);
   if(old_state)
-    return handle_event(MOTOR_OFF_EVENT, 0, 0);
-  return 0;
+    handle_event(MOTOR_OFF_EVENT, 0, 0);
+  return 1;
 }
 /*----------------------------------------------------------------------------*/
 int process_events(void)

@@ -1,38 +1,29 @@
 /*----------------------------------------------------------------------------*/
 /**
-* @pkg dda_plunger
+* @pkg spin_edit
 */
 /**
-* Plunger functions.
+* Spin edit. Enable input integer values.
 *
 * (C) DDA team, Kiev, Ukraine 2012.<br>
-* started 20.12.2012 12:20:06<br>
-* @pkgdoc dda_plunger
+* started 24.12.2012 12:29:29<br>
+* @pkgdoc spin_edit
 * @author oleg
 * @version 0.01 
 */
 /*----------------------------------------------------------------------------*/
-#ifndef DDA_PLUNGER_H_1355998806
-#define DDA_PLUNGER_H_1355998806
+#ifndef SPIN_EDIT_H_1356344969
+#define SPIN_EDIT_H_1356344969
 /*----------------------------------------------------------------------------*/
-#include <event.h>
-
-extern handler_t plunger_handler;
-#define PLUNGER_TIMEOUT_ERROR (-1)
-#define PLUNGER_END_POS_ERROR (-2)
-
-
 #ifdef __cplusplus
 extern "C" {
 #endif /*__cplusplus*/
 
-int is_plunger_down();
-int plunger_position();
-void plunger_go_down();
+void spin_edit_start(int x, int y, int w, int *value, int max, int min, int increment);
 
 #ifdef __cplusplus
 } //extern "C"
 #endif /*__cplusplus*/
 /*----------------------------------------------------------------------------*/
-#endif /*DDA_PLUNGER_H_1355998806*/
+#endif /*SPIN_EDIT_H_1356344969*/
 

@@ -30,10 +30,17 @@ typedef enum
   MENU_EVENT,
   USER_EVENT = 1000
 } event_t;
-
+/*----------------------------------------------------------------------------*/
 typedef int (*event_handler_t)(void*, event_t evt, int param1, void *param2);
-
-
+typedef struct
+{
+  event_handler_t handler;
+  void *data;
+} handler_t;
+/*----------------------------------------------------------------------------*/
+#define NO_HANDLED_EVENTS 0
+#define HANDLED_EVENTS 1
+#define EVENT_HANDLER_DONE 2
 /*----------------------------------------------------------------------------*/
 #ifdef __cplusplus
 extern "C" {
@@ -44,6 +51,7 @@ int push_event_handler(void);
 int pop_event_handler(void);
 void clear_event_handler_stack();
 int process_events(void);
+int handler_call(handler_t *h, event_t evt, int param1, void *param2);
 #ifdef __cplusplus
 } //extern "C"
 #endif /*__cplusplus*/

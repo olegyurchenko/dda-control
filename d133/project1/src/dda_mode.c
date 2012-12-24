@@ -20,6 +20,10 @@
 #include <dda_key.h>
 #include <sys_timer.h>
 #include <dda_clib.h>
+#include <dda_cassette.h>
+#include <dda_plunger.h>
+#include <dda_message.h>
+#include <dda_motors.h>
 /*----------------------------------------------------------------------------*/
 MENU_ITEM *root_menu = 0;
 static MENU_ITEM root_itm;
@@ -111,10 +115,61 @@ static void draw_splash_screen()
 static int splash_handler(void *data, event_t evt, int param1, void *param2)
 {
   static timeout_t timeout;
+  typedef enum
+  {
+    Idle,
+    PlungerCatch,
+    CasseteCatch
+  } STATE;
+
+  static STATE state = PlungerCatch;
+  int res;
 
   (void) data; //Prevent unused warning
   (void) param1;
   (void) param2;
+
+  switch(state)
+  {
+  case Idle:
+    break;
+  case PlungerCatch:
+    res = handler_call(&plunger_handler, evt, param1, param2);
+    if(res == EVENT_HANDLER_DONE)
+    {
+      cassete_goto_position(CASSETTE_NULL_POSITION);
+      state = CasseteCatch;
+    }
+    else
+    if(res == PLUNGER_TIMEOUT_ERROR)
+    {
+      state = Idle;
+      show_message("Error", "Plunger timeout", 0);
+      return -1;
+    }
+    else
+    if(res == PLUNGER_END_POS_ERROR)
+    {
+      state = Idle;
+      show_message("Error", "Plunger end key", 0);
+      return -1;
+    }
+    break;
+  case CasseteCatch:
+    res = handler_call(&cassete_handler, evt, param1, param2);
+    if(res == EVENT_HANDLER_DONE)
+    {
+      state = Idle;
+    }
+    else
+    if(res == CASSETTE_TIMEOUT_ERROR)
+    {
+      state = Idle;
+      show_message("Error", "Cassette timeout", 0);
+      return -1;
+    }
+    break;
+  }
 
   switch(evt)
   {
@@ -124,16 +179,19 @@ static int splash_handler(void *data, event_t evt, int param1, void *param2)
     draw_splash_screen();
     timeout_set(&timeout, SPLASH_TIME, sys_tick_count());
     break;
+
   case KEY_PRESS_EVENT:
     if(param1 == KEY_MENU)
     {
+      motor_stop();
       start_root_menu();
       return 1;
     }
+
   default:
-    if(timeout_riched(&timeout, sys_tick_count()))
+    if(state == Idle && timeout_riched(&timeout, sys_tick_count()))
     {
-      set_work_mode();
+      set_work_mode(UnknownMode);
       return 1;
     }
     break;
