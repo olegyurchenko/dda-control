@@ -53,7 +53,7 @@ void work_mode_init()
 /*----------------------------------------------------------------------------*/
 void set_work_mode(work_mode_t m)
 {
-  state = SelMesh;
+  state = Idle;
   mode = m;
   set_event_handler(work_handler, 0);
   if(mode == UnknownMode)
@@ -118,7 +118,9 @@ static int item_handler(void *data, event_t evt, int param1, void *param2)
   {
   case MENU_EVENT:
     mode = (param2 == &auto_itm) ? AutoMode : ManualMode;
+    state = Idle;
     set_event_handler(work_handler, 0);
+    state = SelMesh;
     return MENU_OK;
 
   default:
