@@ -24,6 +24,7 @@
 #include <dda_plunger.h>
 #include <dda_message.h>
 #include <dda_motors.h>
+#include <dda_text.h>
 /*----------------------------------------------------------------------------*/
 MENU_ITEM *root_menu = 0;
 static MENU_ITEM root_itm;
@@ -144,14 +145,14 @@ static int splash_handler(void *data, event_t evt, int param1, void *param2)
     if(res == PLUNGER_TIMEOUT_ERROR)
     {
       state = Idle;
-      show_message("Error", "Plunger timeout", 0);
+      show_message(get_text(STR_ERROR), get_text(STR_PLUNGER_TIMEOUT), 0);
       return -1;
     }
     else
     if(res == PLUNGER_END_POS_ERROR)
     {
       state = Idle;
-      show_message("Error", "Plunger end key", 0);
+      show_message(get_text(STR_ERROR), get_text(STR_PLUNGER_END_KEY), 0);
       return -1;
     }
     break;
@@ -165,7 +166,7 @@ static int splash_handler(void *data, event_t evt, int param1, void *param2)
     if(res == CASSETTE_TIMEOUT_ERROR)
     {
       state = Idle;
-      show_message("Error", "Cassette timeout", 0);
+      show_message(get_text(STR_ERROR), get_text(STR_CASSETTE_TIMEOUT), 0);
       return -1;
     }
     break;

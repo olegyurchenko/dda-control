@@ -261,6 +261,14 @@ static void menu_click()
     return;
 
   init_menu(n);
+  if(n->handler != NULL)
+  {
+    int position = -1;
+    n->handler(n->data, MENU_GET_POSITION, 0, &position);
+    if(position >= 0)
+      set_menu_pos(position);
+  }
+
   draw_menu();
 }
 /*----------------------------------------------------------------------------*/
@@ -315,7 +323,7 @@ void draw_menu_item(int y, int index_width, MENU_ITEM *n)
 /*----------------------------------------------------------------------------*/
 int hscroll_menu_item(int y, int index_width, MENU_ITEM *n)
 {
-  char *p;
+  const char *p;
   int j;
   int width;
 

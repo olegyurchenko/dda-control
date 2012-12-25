@@ -28,6 +28,7 @@ typedef enum
   MOTOR_OFF_EVENT,
   TIMER_EVENT,
   MENU_EVENT,
+  MENU_GET_POSITION,
   USER_EVENT = 1000
 } event_t;
 /*----------------------------------------------------------------------------*/

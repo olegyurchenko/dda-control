@@ -25,6 +25,7 @@
 #include <dda_mode.h>
 #include <dda_cassette.h>
 #include <dda_conv.h>
+#include <dda_text.h>
 
 #define USE_CONSOLE //!!!!
 #ifdef USE_CONSOLE
@@ -45,28 +46,28 @@ adc_itm;
 /*----------------------------------------------------------------------------*/
 void test_mode_init()
 {
-  menu_item_init("Test", 0, &root_itm);
+  menu_item_init(get_text(STR_TEST), 0, &root_itm);
   menu_item_add_child(root_menu,  &root_itm);
 
-  menu_item_init("Cassette motor test", 0, &cassete_motor_itm);
+  menu_item_init(get_text(STR_CASSETTE_MOTOR_TEST), 0, &cassete_motor_itm);
   menu_item_add_child(&root_itm,  &cassete_motor_itm);
-  menu_item_init("Goto 0 cell", cassete0_handler, &cassete0_itm);
+  menu_item_init(get_text(STR_GOTO_0_CELL), cassete0_handler, &cassete0_itm);
   menu_item_add_child(&cassete_motor_itm, &cassete0_itm);
-  menu_item_init("Goto next cell", cassete_next_handler, &cassete_next_itm);
+  menu_item_init(get_text(STR_GOTO_NEXT_CELL), cassete_next_handler, &cassete_next_itm);
   menu_item_add_child(&cassete_motor_itm, &cassete_next_itm);
 
 
-  menu_item_init("Plunger motor test", 0, &rod_motor_itm);
+  menu_item_init(get_text(STR_PLUNGER_MOTOR_TEST), 0, &rod_motor_itm);
   menu_item_add_child(&root_itm,  &rod_motor_itm);
-  menu_item_init("Bottom position", top_bottom_handler, &fulldown_itm);
+  menu_item_init(get_text(STR_BOTTOM_POSITION), top_bottom_handler, &fulldown_itm);
   fulldown_itm.data = (void *)PlungerDown;
   menu_item_add_child(&rod_motor_itm,  &fulldown_itm);
-  menu_item_init("Top position", top_bottom_handler, &fullup_itm);
+  menu_item_init(get_text(STR_TOP_POSITION), top_bottom_handler, &fullup_itm);
   menu_item_add_child(&rod_motor_itm,  &fullup_itm);
   fullup_itm.data = (void *)PlungerUp;
 
 
-  menu_item_init("ADC test", adc_handler, &adc_itm);
+  menu_item_init(get_text(STR_ADC_TEST), adc_handler, &adc_itm);
   menu_item_add_child(&root_itm,  &adc_itm);
 
   //set_event_handler(test_handler, 0);
@@ -88,7 +89,7 @@ static int test_handler(void *data, event_t evt, int param1, void *param2)
     if(!param1) //Mode exit
       return 0;
     lcd_clear();
-    lcd_put_line(0, "Test", SCR_ALIGN_CENTER);
+    lcd_put_line(0, get_text(STR_TEST), SCR_ALIGN_CENTER);
     break;
   case MENU_EVENT:
     set_event_handler(test_handler, 0);

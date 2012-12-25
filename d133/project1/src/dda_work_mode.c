@@ -24,10 +24,13 @@
 #include <dda_conv.h>
 #include <dda_message.h>
 #include <dda_motors.h>
+#include <dda_text.h>
+#include <dda_mesh.h>
 /*----------------------------------------------------------------------------*/
 static MENU_ITEM root_itm, auto_itm, manual_itm;
 static int work_handler(void *data, event_t evt, int param1, void *param2);
-static int item_handler(void *data, event_t evt, int param1, void *param2);
+static int mode_item_handler(void *data, event_t evt, int param1, void *param2);
+static int work_item_handler(void *data, event_t evt, int param1, void *param2);
 /*----------------------------------------------------------------------------*/
 typedef enum
 {
@@ -43,11 +46,11 @@ static work_mode_t mode = UnknownMode;
 /*----------------------------------------------------------------------------*/
 void work_mode_init()
 {
-  menu_item_init("Work", 0, &root_itm);
+  menu_item_init(get_text(STR_WORK), work_item_handler, &root_itm);
   menu_item_add_child(root_menu,  &root_itm);
-  menu_item_init("Auto", item_handler, &auto_itm);
+  menu_item_init(get_text(STR_AUTO), mode_item_handler, &auto_itm);
   menu_item_add_child(&root_itm,  &auto_itm);
-  menu_item_init("Manual", item_handler, &manual_itm);
+  menu_item_init(get_text(STR_MANUAL), mode_item_handler, &manual_itm);
   menu_item_add_child(&root_itm,  &manual_itm);
 }
 /*----------------------------------------------------------------------------*/
@@ -70,23 +73,25 @@ static void display()
   char buffer[16], fbuf[16];
   decimal32_t force;
   int value = 0;
-  const char *state_msg = "Work mode";
+  const char *state_msg;
+
+  state_msg = get_text(STR_WORK_MODE);
 
   if(mode == AutoMode)
-    state_msg = "Auto mode";
+    state_msg = get_text(STR_AUTO_MODE);
   else
   if(mode == ManualMode)
-    state_msg = "Manual mode";
+    state_msg = get_text(STR_MANUAL_MODE);
 
   switch(state)
   {
   case Idle:
     break;
   case PlungerCatch:
-    state_msg = "Plunger go home";
+    state_msg = get_text(STR_PLUNGER_GO_HOME);
     break;
   case CasseteCatch:
-    state_msg = "Cassette go home";
+    state_msg = get_text(STR_CASSETTE_GO_HOME);
     break;
   case SelMode:
     break;
@@ -109,7 +114,8 @@ static void set_zero()
   set_zero_force(value);
 }
 /*----------------------------------------------------------------------------*/
-static int item_handler(void *data, event_t evt, int param1, void *param2)
+/*Use only for return menu position: Auto or Manual mode*/
+static int work_item_handler(void *data, event_t evt, int param1, void *param2)
 {
   (void) data; //Prevent unused warning
   (void) param1;
@@ -117,11 +123,64 @@ static int item_handler(void *data, event_t evt, int param1, void *param2)
   switch(evt)
   {
   case MENU_EVENT:
-    mode = (param2 == &auto_itm) ? AutoMode : ManualMode;
+    return MENU_CONTINUE;
+
+  case MENU_GET_POSITION:
+    switch(work_mode())
+    {
+    case AutoMode:
+      *(int *)param2 = 0;
+      return MENU_OK;
+    case ManualMode:
+      *(int *)param2 = 1;
+      return MENU_OK;
+    default:
+      break;
+    }
+    break;
+
+  default:
+    break;
+  }
+  return 0;
+}
+/*----------------------------------------------------------------------------*/
+static int mode_item_handler(void *data, event_t evt, int param1, void *param2)
+{
+  (void) data; //Prevent unused warning
+  (void) param1;
+  (void) param2;
+  switch(evt)
+  {
+  case MENU_EVENT:
+    if(param2 == &auto_itm)
+    {
+      mode = AutoMode;
+      auto_itm.childs = 0;
+      manual_itm.childs = 0;
+      init_mesh_menu(&auto_itm);
+
+    }
+    else
+    if(param2 == &manual_itm)
+    {
+      mode = ManualMode;
+      auto_itm.childs = 0;
+      manual_itm.childs = 0;
+      init_mesh_menu(&manual_itm);
+    }
+
     state = Idle;
     set_event_handler(work_handler, 0);
-    state = SelMesh;
-    return MENU_OK;
+    return MENU_CONTINUE;
+
+  case MENU_GET_POSITION:
+    if(mesh_index() != INVALID_MESH_INDEX)
+    {
+      *(int *)param2 = mesh_index();
+      return MENU_OK;
+    }
+    break;
 
   default:
     break;
@@ -151,14 +210,14 @@ static int work_handler(void *data, event_t evt, int param1, void *param2)
     if(res == PLUNGER_TIMEOUT_ERROR)
     {
       state = Idle;
-      show_message("Error", "Plunger timeout", 0);
+      show_message(get_text(STR_ERROR), get_text(STR_PLUNGER_TIMEOUT), 0);
       return -1;
     }
     else
     if(res == PLUNGER_END_POS_ERROR)
     {
       state = Idle;
-      show_message("Error", "Plunger end key", 0);
+      show_message(get_text(STR_ERROR), get_text(STR_PLUNGER_END_KEY), 0);
       return -1;
     }
     break;
@@ -172,7 +231,7 @@ static int work_handler(void *data, event_t evt, int param1, void *param2)
     if(res == CASSETTE_TIMEOUT_ERROR)
     {
       state = Idle;
-      show_message("Error", "Cassette timeout", 0);
+      show_message(get_text(STR_ERROR), get_text(STR_CASSETTE_TIMEOUT), 0);
       return -1;
     }
     break;
@@ -194,7 +253,7 @@ default:
     if(!param1) //Mode exit
       return 0;
     lcd_clear();
-    lcd_put_line(0, "Work", SCR_ALIGN_CENTER);
+    lcd_put_line(0, get_text(STR_WORK), SCR_ALIGN_CENTER);
     set_zero();
     break;
 
@@ -211,7 +270,7 @@ default:
          || state == CasseteCatch)
       {
         motor_stop();
-        show_message("Warning", "Positioning operation break !", 0);
+        show_message(get_text(STR_WARNING), get_text(STR_POS_OPERATION_BREAK), 0);
         state = Idle;
       }
     }

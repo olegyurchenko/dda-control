@@ -19,7 +19,7 @@
 extern "C" {
 #endif /*__cplusplus*/
 
-void spin_edit_start(int x, int y, int w, int *value, int max, int min, int increment);
+void spin_edit_start(const char *caption, int *value, int max, int min, int increment);
 
 #ifdef __cplusplus
 } //extern "C"
