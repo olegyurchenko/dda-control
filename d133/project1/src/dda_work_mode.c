@@ -26,6 +26,7 @@
 #include <dda_motors.h>
 #include <dda_text.h>
 #include <dda_mesh.h>
+#include <spin_edit.h>
 /*----------------------------------------------------------------------------*/
 static MENU_ITEM root_itm, auto_itm, manual_itm;
 static int work_handler(void *data, event_t evt, int param1, void *param2);
@@ -43,6 +44,7 @@ typedef enum
 
 static STATE state = Idle;
 static work_mode_t mode = UnknownMode;
+static int particles = 1;
 /*----------------------------------------------------------------------------*/
 void work_mode_init()
 {
@@ -66,6 +68,14 @@ void set_work_mode(work_mode_t m)
 work_mode_t work_mode()
 {
   return mode;
+}
+/*----------------------------------------------------------------------------*/
+void start_work_menu()
+{
+  clear_event_handler_stack();
+  state = Idle;
+  set_event_handler(work_handler, 0);
+  start_menu(&root_itm);
 }
 /*----------------------------------------------------------------------------*/
 static void display()
@@ -172,6 +182,9 @@ static int mode_item_handler(void *data, event_t evt, int param1, void *param2)
 
     state = Idle;
     set_event_handler(work_handler, 0);
+    if(mode == AutoMode)
+      spin_edit_start(get_text(STR_NUMBER_OF_SAMPLES), &particles, CASSETTE_MAX_CELL, 1, 1);
+
     return MENU_CONTINUE;
 
   case MENU_GET_POSITION:

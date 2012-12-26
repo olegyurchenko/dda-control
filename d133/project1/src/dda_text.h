@@ -38,6 +38,7 @@
 #define STR_PLUNGER_GO_HOME 20 //"Plunger go home"
 #define STR_CASSETTE_GO_HOME 21 //"Cassette go home"
 #define STR_POS_OPERATION_BREAK 22 //"Positioning operation break !"
+#define STR_NUMBER_OF_SAMPLES 23 //"Number of samples"
 
 #ifdef __cplusplus
 extern "C" {

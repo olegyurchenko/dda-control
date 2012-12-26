@@ -46,7 +46,7 @@ const text_t text_en[] =
 , {STR_PLUNGER_GO_HOME, "Plunger go home"}
 , {STR_CASSETTE_GO_HOME, "Cassette go home"}
 , {STR_POS_OPERATION_BREAK, "Positioning operation break !"}
-
+, {STR_NUMBER_OF_SAMPLES, "Samples count"}
 };
 /*----------------------------------------------------------------------------*/
 const char *get_text(int id)

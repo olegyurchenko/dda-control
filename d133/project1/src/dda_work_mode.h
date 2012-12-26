@@ -29,6 +29,8 @@ extern "C" {
 void work_mode_init();
 void set_work_mode(work_mode_t m);
 work_mode_t work_mode();
+void start_work_menu();
+
 
 #ifdef __cplusplus
 } //extern "C"
