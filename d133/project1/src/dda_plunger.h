@@ -27,8 +27,12 @@ extern "C" {
 #endif /*__cplusplus*/
 
 int is_plunger_down();
-int plunger_position();
+unsigned plunger_position();
 void plunger_go_down();
+void plunger_go_up();
+void plunger_stop();
+unsigned touch_position();
+void set_touch_position();
 
 #ifdef __cplusplus
 } //extern "C"

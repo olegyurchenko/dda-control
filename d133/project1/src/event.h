@@ -42,6 +42,8 @@ typedef struct
 #define NO_HANDLED_EVENTS 0
 #define HANDLED_EVENTS 1
 #define EVENT_HANDLER_DONE 2
+#define EVENT_HANDLER_FAILED (-1)
+#define USER_BREAK (-100)
 /*----------------------------------------------------------------------------*/
 #ifdef __cplusplus
 extern "C" {

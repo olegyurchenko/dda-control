@@ -155,6 +155,13 @@ static int splash_handler(void *data, event_t evt, int param1, void *param2)
       show_message(get_text(STR_ERROR), get_text(STR_PLUNGER_END_KEY), 0);
       return -1;
     }
+    else
+    if(res == USER_BREAK)
+    {
+      state = Idle;
+      start_root_menu();
+      return -1;
+    }
     break;
   case CasseteCatch:
     res = handler_call(&cassete_handler, evt, param1, param2);
@@ -167,6 +174,13 @@ static int splash_handler(void *data, event_t evt, int param1, void *param2)
     {
       state = Idle;
       show_message(get_text(STR_ERROR), get_text(STR_CASSETTE_TIMEOUT), 0);
+      return -1;
+    }
+    else
+    if(res == USER_BREAK)
+    {
+      state = Idle;
+      start_root_menu();
       return -1;
     }
     break;

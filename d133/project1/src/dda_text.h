@@ -39,6 +39,11 @@
 #define STR_CASSETTE_GO_HOME 21 //"Cassette go home"
 #define STR_POS_OPERATION_BREAK 22 //"Positioning operation break !"
 #define STR_NUMBER_OF_SAMPLES 23 //"Number of samples"
+#define STR_CALIBRATION 24 //"Calibration"
+#define STR_MEASURING 25 //"Measuring"
+#define STR_WAIT_TOUCH 26 //"Wait touch"
+#define STR_PRESS_START 27 //"Press START"
+#define STR_FINISHING 28 //"Finishing"
 
 #ifdef __cplusplus
 extern "C" {

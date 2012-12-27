@@ -22,6 +22,8 @@ static decimal64_t force_k = {12195122, 8};//0.12195122
 static decimal64_t zero_force = {0, 0}; //0
 static decimal64_t step_ratio = {714286, 7}; //0.0714286
 /*----------------------------------------------------------------------------*/
+#define TOUCH_DISCRETS 10
+/*----------------------------------------------------------------------------*/
 void discrets2force(int discr, decimal32_t* dst)
 {
   decimal64_t src, f;
@@ -38,18 +40,36 @@ void discrets2force(int discr, decimal32_t* dst)
   decimal64_32(&f, dst);
 }
 /*----------------------------------------------------------------------------*/
-void steps2um(unsigned step, decimal32_t* dst)
+void steps2um(unsigned step, decimal64_t* dst)
 {
   decimal64_t src, um;
   src = decimal64_init(step, 0);
   decimal64_mul(&src, &step_ratio, &um);
-  decimal64_math_round(&um, 2, &um);
-  decimal64_32(&um, dst);
+  decimal64_math_round(&um, 2, dst);
+}
+/*----------------------------------------------------------------------------*/
+void umsize(unsigned empty_touch, unsigned touch, decimal64_t* dst)
+{
+  decimal64_t d1, d2;
+  d1 = decimal64_init(touch, 0);
+  d2 = decimal64_init(empty_touch, 0);
+  decimal64_sub(&d2, &d1, &d1);
+  decimal64_mul(&d1, &step_ratio, &d1);
+  decimal64_math_round(&d1, 1, dst);
 }
 /*----------------------------------------------------------------------------*/
 void set_zero_force(int discr)
 {
   zero_force = decimal64_init(discr, 0);
+}
+/*----------------------------------------------------------------------------*/
+int is_touch_force(int discr)
+{
+  decimal64_t src, touch;
+  src = decimal64_init(discr, 0);
+  touch = decimal64_init(TOUCH_DISCRETS, 0);
+  decimal64_sub(&src, &zero_force, &src);
+  return decimal64_cmp(&src, &touch) > 0;
 }
 /*----------------------------------------------------------------------------*/
 

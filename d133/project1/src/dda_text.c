@@ -47,6 +47,12 @@ const text_t text_en[] =
 , {STR_CASSETTE_GO_HOME, "Cassette go home"}
 , {STR_POS_OPERATION_BREAK, "Positioning operation break !"}
 , {STR_NUMBER_OF_SAMPLES, "Samples count"}
+, {STR_CALIBRATION, "Calibration"}
+, {STR_MEASURING, "Measuring"}
+, {STR_WAIT_TOUCH, "Wait touch"}
+, {STR_PRESS_START, "Press START"}
+, {STR_FINISHING, "Finishing"}
+
 };
 /*----------------------------------------------------------------------------*/
 const char *get_text(int id)

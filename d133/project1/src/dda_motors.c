@@ -69,6 +69,7 @@ const unsigned char step_table[256]=
 /*----------------------------------------------------------------------------*/
 #define STP1_MIN_PERIOD 800 //300//us
 #define STP2_MIN_PERIOD 200 //us
+#define STOPPAGE_TIME 30000 //us
 /*----------------------------------------------------------------------------*/
 static int active_motor = -1;
 static volatile uint32_t table_index;
@@ -78,7 +79,8 @@ static enum MotorState
   Idle,
   Accelerate,
   Decelerate,
-  Slewing
+  Slewing,
+  Stoppage
 } motor_state = Idle;
 static volatile uint32_t step_counter = 0;
 static volatile uint16_t min_period;
@@ -313,7 +315,6 @@ void TIM6_IRQHandler()
     case Slewing:
       step();
       ++ step_counter;
-//#if 0
       if(!(step_counter & 1))
       {
         counter *= step_table[table_index];
@@ -330,17 +331,21 @@ void TIM6_IRQHandler()
         {
           if(!table_index)
           {
-            TIM_Cmd(TIM6, DISABLE);
-            NVIC_DisableIRQ(TIM6_IRQn);
-            motor_state = Idle;
-            set_enable(1); //Enable to inactive state
+            motor_state = Stoppage;
+            TIM_SetAutoreload(TIM6, STOPPAGE_TIME);
           }
           else
             -- table_index;
         }
       }
-//#endif
       break;
+    case Stoppage:
+      set_enable(1); //Enable to inactive state
+      motor_state = Idle;
+      TIM_Cmd(TIM6, DISABLE);
+      NVIC_DisableIRQ(TIM6_IRQn);
+      break;
+
     }
   }
 }
@@ -376,10 +381,18 @@ void motor_deceleration()
 /*----------------------------------------------------------------------------*/
 void motor_stop()
 {
-  TIM_Cmd(TIM6, DISABLE);
-  NVIC_DisableIRQ(TIM6_IRQn);
-  motor_state = Idle;
-  set_enable(1); //Enable to inactive state
+  switch(motor_state)
+  {
+  case Idle:
+  case Stoppage:
+    break;
+  case Accelerate:
+  case Decelerate:
+  case Slewing:
+    motor_state = Stoppage;
+    TIM_SetAutoreload(TIM6, STOPPAGE_TIME);
+    break;
+  }
 }
 /*----------------------------------------------------------------------------*/
 unsigned motor_step_count()

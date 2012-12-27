@@ -176,6 +176,16 @@ static int cassete_pos_handler(void *data, event_t evt, int param1, void *param2
     state = Idle;
     break;
 
+  case KEY_PRESS_EVENT:
+    if(param1 == KEY_STOP)
+    {
+      motor_stop();
+      reset_cassette_position();
+      state = Idle;
+      return USER_BREAK;
+    }
+    break;
+
   default:
     break;
   }

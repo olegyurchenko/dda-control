@@ -31,19 +31,29 @@ typedef enum
 /*----------------------------------------------------------------------------*/
 static STATE state;
 static int direction = PlungerDown;
-static int position = -1;
 static int plunger_go_handler(void *data, event_t evt, int param1, void *param2);
 handler_t plunger_handler = {plunger_go_handler, 0};
 static timeout_t timeout;
+static unsigned m_touch_position = 0;
 /*----------------------------------------------------------------------------*/
 int is_plunger_down()
 {
   return sensors_state() & DOWN_SENSOR;
 }
 /*----------------------------------------------------------------------------*/
-int plunger_position()
+unsigned plunger_position()
 {
-  return position;
+  return motor_step_count();
+}
+/*----------------------------------------------------------------------------*/
+unsigned touch_position()
+{
+  return m_touch_position;
+}
+/*----------------------------------------------------------------------------*/
+void set_touch_position()
+{
+  m_touch_position = motor_step_count();
 }
 /*----------------------------------------------------------------------------*/
 void plunger_go_down()
@@ -52,6 +62,19 @@ void plunger_go_down()
   plunger_handler.data = 0;
   direction = PlungerDown;
   handler_call(&plunger_handler, MODE_SET_EVENT, 1, 0);
+}
+/*----------------------------------------------------------------------------*/
+void plunger_go_up()
+{
+  plunger_handler.handler = plunger_go_handler;
+  plunger_handler.data = 0;
+  direction = PlungerUp;
+  handler_call(&plunger_handler, MODE_SET_EVENT, 1, 0);
+}
+/*----------------------------------------------------------------------------*/
+void plunger_stop()
+{
+  handler_call(&plunger_handler, MODE_SET_EVENT, 0, 0);
 }
 /*----------------------------------------------------------------------------*/
 static int plunger_go_handler(void *data, event_t evt, int param1, void *param2)
@@ -65,8 +88,16 @@ static int plunger_go_handler(void *data, event_t evt, int param1, void *param2)
   switch(evt)
   {
   case MODE_SET_EVENT:
-    if(!param1) //Mode exit
+    if(!param1) //Stop
+    {
+      if(state != Idle)
+      {
+        state = WaitMotorOff;
+        motor_deceleration();
+        //motor_stop();
+      }
       return 0;
+    }
     state = Idle;
     sensors = sensors_state();
     if(   (direction == PlungerDown && (sensors & DOWN_SENSOR))
@@ -99,6 +130,15 @@ static int plunger_go_handler(void *data, event_t evt, int param1, void *param2)
 
   case MOTOR_OFF_EVENT:
     state = Idle;
+    break;
+
+  case KEY_PRESS_EVENT:
+    if(param1 == KEY_STOP)
+    {
+      motor_stop();
+      state = Idle;
+      return USER_BREAK;
+    }
     break;
 
   default:
