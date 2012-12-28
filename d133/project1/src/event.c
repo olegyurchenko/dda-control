@@ -126,7 +126,8 @@ int process_events(void)
   if(state != key_state)
     result += key_handler(state, key_state);
   key_state = state;
-  state = sensors_state();
+//  state = sensors_state();
+  state = sensors_real_state(); //!!!!!!!!!!!!!!!!!
   if(state != sensor_state)
     result += sensor_handler(state, sensor_state);
   sensor_state = state;

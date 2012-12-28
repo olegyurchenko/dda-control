@@ -48,6 +48,18 @@ void steps2um(unsigned step, decimal64_t* dst)
   decimal64_math_round(&um, 2, dst);
 }
 /*----------------------------------------------------------------------------*/
+int um2steps(int um)
+{
+  decimal64_t src, stp;
+  decimal32_t dst;
+  src = decimal64_init(um, 0);
+  decimal64_div(&src, &step_ratio, &stp);
+  decimal64_math_round(&stp, 0, &stp);
+  if(decimal64_32(&stp,  &dst))
+    return MAX_INT_32;
+  return dst.data;
+}
+/*----------------------------------------------------------------------------*/
 void umsize(unsigned empty_touch, unsigned touch, decimal64_t* dst)
 {
   decimal64_t d1, d2;
@@ -72,4 +84,5 @@ int is_touch_force(int discr)
   return decimal64_cmp(&src, &touch) > 0;
 }
 /*----------------------------------------------------------------------------*/
+
 

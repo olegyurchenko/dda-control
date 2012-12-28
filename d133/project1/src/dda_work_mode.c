@@ -29,6 +29,8 @@
 #include <spin_edit.h>
 #include <sys_timer.h>
 /*----------------------------------------------------------------------------*/
+#define SLOW_RATE 128
+/*----------------------------------------------------------------------------*/
 static MENU_ITEM root_itm, auto_itm, manual_itm;
 static int work_handler(void *data, event_t evt, int param1, void *param2);
 static int calibrarion_handler(void *data, event_t evt, int param1, void *param2);
@@ -131,6 +133,8 @@ static int touch_detect()
 {
   int value = 0;
   sys_adc_get_value(&value);
+  discrets2force(value, &force); //For display force
+  umsize(touch_position(), plunger_position(), &size); //For display size
   return is_touch_force(value);
 }
 /*----------------------------------------------------------------------------*/
@@ -141,13 +145,13 @@ static void set_size_postion()
 /*----------------------------------------------------------------------------*/
 static int destruction_detect()
 {
-  static decimal32_t max_force = {10,0}; //!!! 10N
+  static decimal32_t max_force = {50,0}; //!!! 10N
   //!!!!!!!!!!!!!!!!!!!!
   //TODO
   //!!!!!!!!!!!!!!!!!!!!
   int value = 0;
   sys_adc_get_value(&value);
-  discrets2force(value, &force);
+  discrets2force(value, &force); //For display force
   if(decimal32_cmp(&force, &max_force) > 0)
     return 1;
   return 0;
@@ -359,6 +363,7 @@ static int work_handler(void *data, event_t evt, int param1, void *param2)
 /*----------------------------------------------------------------------------*/
 static int calibrarion_handler(void *data, event_t evt, int param1, void *param2)
 {
+  #define um_SLOW_OFFSET 1500 //1.5mm
   typedef enum
   {
     StartState,
@@ -371,6 +376,8 @@ static int calibrarion_handler(void *data, event_t evt, int param1, void *param2
   static MICRO_STATE micro_state = StartState;
   static timeout_t timeout = {0, 0};
   static int cursor = 0;
+  static int detect;
+  static int slow_offset;
   int res;
 
   (void) data; //Prevent unused warning
@@ -381,6 +388,8 @@ static int calibrarion_handler(void *data, event_t evt, int param1, void *param2
     {
       plunger_go_down();
       micro_state = PlungerCatch;
+      detect = 0;
+      slow_offset = um2steps(um_SLOW_OFFSET);
     }
     else
     {
@@ -486,10 +495,17 @@ static int calibrarion_handler(void *data, event_t evt, int param1, void *param2
       return EVENT_HANDLER_FAILED;
     }
     else
-    if(touch_detect())
+    if(!detect)
     {
-      set_touch_position();
-      plunger_stop();
+      if(motor_rate() > SLOW_RATE && (int)plunger_position() > slow_offset)
+        motor_change_rate(SLOW_RATE);
+
+      if(touch_detect())
+      {
+        set_touch_position();
+        detect = 1;
+        plunger_stop();
+      }
     }
     break;
 
@@ -533,6 +549,7 @@ static int calibrarion_handler(void *data, event_t evt, int param1, void *param2
 /*----------------------------------------------------------------------------*/
 static int measuring_handler(void *data, event_t evt, int param1, void *param2)
 {
+
   typedef enum
   {
     StartState,
@@ -546,6 +563,8 @@ static int measuring_handler(void *data, event_t evt, int param1, void *param2)
   static MICRO_STATE micro_state = StartState;
   static timeout_t timeout = {0, 0};
   static int cursor = 0;
+  static int detect;
+  static int slow_offset;
   int res;
 
   (void) data; //Prevent unused warning
@@ -554,10 +573,20 @@ static int measuring_handler(void *data, event_t evt, int param1, void *param2)
   case StartState:
     if(start_flag)
     {
+      const mesh_t *current_mesh;
       plunger_go_down();
       micro_state = PlungerCatch;
       force = decimal32_init(0,0);
       size = decimal64_init(0,0);
+      detect = 0;
+      //Calculate slow offset
+      current_mesh = mesh();
+      if(current_mesh == 0)
+        slow_offset = MAX_INT_32;
+      else
+      {
+        slow_offset = (int)touch_position() - um2steps(current_mesh->max) - (255 - SLOW_RATE);
+      }
     }
     else
     {
@@ -655,11 +684,19 @@ static int measuring_handler(void *data, event_t evt, int param1, void *param2)
       show_message(get_text(STR_WARNING), get_text(STR_POS_OPERATION_BREAK), 0);
       return EVENT_HANDLER_FAILED;
     }
-
-    if(touch_detect())
+    else
     {
-      micro_state = WaitDestruction;
-      set_size_postion();
+      if(motor_rate() > SLOW_RATE && (int)plunger_position() >= slow_offset)
+        motor_change_rate(SLOW_RATE);
+
+      if(touch_detect())
+      {
+        if(motor_rate() > SLOW_RATE)
+          motor_change_rate(SLOW_RATE);
+
+        micro_state = WaitDestruction;
+        set_size_postion();
+      }
     }
     break;
 
@@ -692,8 +729,9 @@ static int measuring_handler(void *data, event_t evt, int param1, void *param2)
       return EVENT_HANDLER_FAILED;
     }
     else
-    if(destruction_detect())
+    if(!detect && destruction_detect())
     {
+      detect = 1;
       set_destruction_position();
       plunger_stop();
     }

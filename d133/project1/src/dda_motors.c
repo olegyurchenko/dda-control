@@ -71,15 +71,20 @@ const unsigned char step_table[256]=
 #define STP2_MIN_PERIOD 200 //us
 #define STOPPAGE_TIME 30000 //us
 /*----------------------------------------------------------------------------*/
+#define ACCELERATION_STEP 1
+#define DECELERATION_STEP 16
+#define CHANGE_RATE_STEP 1
+/*----------------------------------------------------------------------------*/
 static int active_motor = -1;
-static volatile uint32_t table_index;
-static volatile uint32_t max_index;
+static volatile int32_t table_index;
+static volatile int32_t max_index;
 static enum MotorState
 {
   Idle,
   Accelerate,
   Decelerate,
   Slewing,
+  ChangeRate,
   Stoppage
 } motor_state = Idle;
 static volatile uint32_t step_counter = 0;
@@ -132,6 +137,12 @@ static int steps_cmd(int argc, char **argv)
     break;
   case Slewing:
     state = "Slewing";
+    break;
+  case ChangeRate:
+    state = "ChangeRate";
+    break;
+  case Stoppage:
+    state = "Stoppage";
     break;
   }
 
@@ -313,6 +324,7 @@ void TIM6_IRQHandler()
     case Accelerate:
     case Decelerate:
     case Slewing:
+    case ChangeRate:
       step();
       ++ step_counter;
       if(!(step_counter & 1))
@@ -322,22 +334,51 @@ void TIM6_IRQHandler()
         TIM_SetAutoreload(TIM6, counter);
         if(motor_state == Accelerate)
         {
-          ++ table_index;
+          table_index += ACCELERATION_STEP;
           if(table_index >= max_index)
+          {
             motor_state = Slewing;
+            table_index = max_index;
+          }
         }
         else
         if(motor_state == Decelerate)
         {
-          if(!table_index)
+          if(table_index <= 0)
           {
             motor_state = Stoppage;
             TIM_SetAutoreload(TIM6, STOPPAGE_TIME);
           }
           else
-            -- table_index;
+          {
+            table_index -= DECELERATION_STEP;
+            if(table_index < 0)
+              table_index = 0;
+          }
         }
-      }
+        else
+        if(motor_state == ChangeRate)
+        {
+          if(table_index < max_index)
+          {
+            table_index += CHANGE_RATE_STEP;
+            if(table_index >= max_index)
+            {
+              motor_state = Slewing;
+              table_index = max_index;
+            }
+          }
+          else
+          {
+            table_index -= CHANGE_RATE_STEP;
+            if(table_index <= max_index)
+            {
+              motor_state = Slewing;
+              table_index = max_index;
+            }
+          }
+        }
+      } //if(!(step_counter & 1))
       break;
     case Stoppage:
       set_enable(1); //Enable to inactive state
@@ -348,6 +389,11 @@ void TIM6_IRQHandler()
 
     }
   }
+}
+/*----------------------------------------------------------------------------*/
+unsigned char motor_rate()
+{
+  return (unsigned char) max_index;
 }
 /*----------------------------------------------------------------------------*/
 void motor_start(int mr, int dir, unsigned char rate)
@@ -375,8 +421,21 @@ void motor_start(int mr, int dir, unsigned char rate)
 /*----------------------------------------------------------------------------*/
 void motor_deceleration()
 {
-  if(motor_state == Accelerate || motor_state == Slewing)
+  if(motor_state == Accelerate || motor_state == Slewing || motor_state == ChangeRate)
     motor_state = Decelerate;
+}
+/*----------------------------------------------------------------------------*/
+void motor_change_rate(unsigned char rate)
+{
+  if(motor_state == Accelerate || motor_state == Slewing || motor_state == ChangeRate)
+  {
+    if(!rate)
+      max_index = 255;
+    else
+      max_index = rate;
+
+    motor_state = ChangeRate;
+  }
 }
 /*----------------------------------------------------------------------------*/
 void motor_stop()
@@ -388,9 +447,10 @@ void motor_stop()
     break;
   case Accelerate:
   case Decelerate:
+  case ChangeRate:
   case Slewing:
-    motor_state = Stoppage;
-    TIM_SetAutoreload(TIM6, STOPPAGE_TIME);
+    motor_state = Decelerate;
+    table_index = DECELERATION_STEP;
     break;
   }
 }

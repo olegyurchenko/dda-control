@@ -23,6 +23,7 @@ extern "C" {
 
 void discrets2force(int discr, decimal32_t* dst);
 void steps2um(unsigned step, decimal64_t* dst);
+int um2steps(int um);
 void umsize(unsigned empty_touch, unsigned touch, decimal64_t* dst);
 
 void set_zero_force(int discr);
