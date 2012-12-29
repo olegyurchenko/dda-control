@@ -15,6 +15,11 @@
 /*----------------------------------------------------------------------------*/
 #include "sys_sheduler.h"
 #include <sys_timer.h>
+//#define DEBUG
+
+#ifdef DEBUG
+#include <console.h>
+#endif
 /*----------------------------------------------------------------------------*/
 typedef struct
 {
@@ -27,6 +32,9 @@ typedef struct
 #define MAX_JOB_COUNT 10
 /*----------------------------------------------------------------------------*/
 static SHEDULER_DATA sheduler_data[MAX_JOB_COUNT];
+#ifdef DEBUG
+static void debug_handler(void *);
+#endif
 /*----------------------------------------------------------------------------*/
 void sheduler_init()
 {
@@ -37,6 +45,9 @@ void sheduler_init()
     sheduler_data[i].data = 0;
     sheduler_data[i].period = 0;
   }
+#ifdef DEBUG
+  sheduler_add(debug_handler, 0, 100, 1000);
+#endif
 }
 /*----------------------------------------------------------------------------*/
 int sheduler_add(sh_callback cb, void *user_data, uint32_t delay, uint32_t period)
@@ -78,3 +89,13 @@ void sheduler_handler()
   }
 }
 /*----------------------------------------------------------------------------*/
+#ifdef DEBUG
+static void debug_handler(void *data)
+{
+  static unsigned t;
+  (void) data;
+  console_printf("Sheduler: %u\r\n", sys_tick_count() - t);
+  t = sys_tick_count();
+}
+
+#endif

@@ -28,8 +28,15 @@
 #include <dda_mesh.h>
 #include <spin_edit.h>
 #include <sys_timer.h>
+#define DEBUG
+
+#ifdef DEBUG
+#include <console.h>
+#endif
 /*----------------------------------------------------------------------------*/
 #define SLOW_RATE 128
+#define um_SLOW_OFFSET 1500 //1.5mm
+#define TOUCH_COUNT 3
 /*----------------------------------------------------------------------------*/
 static MENU_ITEM root_itm, auto_itm, manual_itm;
 static int work_handler(void *data, event_t evt, int param1, void *param2);
@@ -135,6 +142,12 @@ static int touch_detect()
   sys_adc_get_value(&value);
   discrets2force(value, &force); //For display force
   umsize(touch_position(), plunger_position(), &size); //For display size
+#ifdef DEBUG
+  if(is_touch_force(value))
+  {
+    console_printf("tm:%u pos:%u val:%d\r\n", sys_tick_count() % 1000, plunger_position(), value);
+  }
+#endif
   return is_touch_force(value);
 }
 /*----------------------------------------------------------------------------*/
@@ -363,7 +376,6 @@ static int work_handler(void *data, event_t evt, int param1, void *param2)
 /*----------------------------------------------------------------------------*/
 static int calibrarion_handler(void *data, event_t evt, int param1, void *param2)
 {
-  #define um_SLOW_OFFSET 1500 //1.5mm
   typedef enum
   {
     StartState,
@@ -378,6 +390,7 @@ static int calibrarion_handler(void *data, event_t evt, int param1, void *param2
   static int cursor = 0;
   static int detect;
   static int slow_offset;
+  static int touch_count = 0;
   int res;
 
   (void) data; //Prevent unused warning
@@ -390,6 +403,7 @@ static int calibrarion_handler(void *data, event_t evt, int param1, void *param2
       micro_state = PlungerCatch;
       detect = 0;
       slow_offset = um2steps(um_SLOW_OFFSET);
+      touch_count = 0;
     }
     else
     {
@@ -498,14 +512,24 @@ static int calibrarion_handler(void *data, event_t evt, int param1, void *param2
     if(!detect)
     {
       if(motor_rate() > SLOW_RATE && (int)plunger_position() > slow_offset)
+      {
         motor_change_rate(SLOW_RATE);
+        set_zero();
+      }
 
       if(touch_detect())
       {
-        set_touch_position();
-        detect = 1;
-        plunger_stop();
+        touch_count ++;
+        if(touch_count > TOUCH_COUNT)
+        {
+          set_touch_position();
+          detect = 1;
+          plunger_stop();
+        }
       }
+      else
+        touch_count = 0;
+
     }
     break;
 
@@ -565,6 +589,7 @@ static int measuring_handler(void *data, event_t evt, int param1, void *param2)
   static int cursor = 0;
   static int detect;
   static int slow_offset;
+  static int touch_count = 0;
   int res;
 
   (void) data; //Prevent unused warning
@@ -587,6 +612,7 @@ static int measuring_handler(void *data, event_t evt, int param1, void *param2)
       {
         slow_offset = (int)touch_position() - um2steps(current_mesh->max) - (255 - SLOW_RATE);
       }
+      touch_count = 0;
     }
     else
     {
@@ -642,7 +668,7 @@ static int measuring_handler(void *data, event_t evt, int param1, void *param2)
     res = handler_call(&cassete_handler, evt, param1, param2);
     if(res == EVENT_HANDLER_DONE)
     {
-      set_zero();
+      //set_zero();
       plunger_go_up();
       micro_state = WaitTouch;
     }
@@ -687,16 +713,25 @@ static int measuring_handler(void *data, event_t evt, int param1, void *param2)
     else
     {
       if(motor_rate() > SLOW_RATE && (int)plunger_position() >= slow_offset)
+      {
         motor_change_rate(SLOW_RATE);
+        //set_zero();
+      }
 
       if(touch_detect())
       {
         if(motor_rate() > SLOW_RATE)
           motor_change_rate(SLOW_RATE);
+        touch_count ++;
 
-        micro_state = WaitDestruction;
-        set_size_postion();
+        if(touch_count > TOUCH_COUNT)
+        {
+          micro_state = WaitDestruction;
+          set_size_postion();
+        }
       }
+      else
+        touch_count = 0;
     }
     break;
 

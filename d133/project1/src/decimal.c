@@ -32,7 +32,16 @@
 Default:
 RETURN values - 0 if Ok, else != 0
 */
-
+/*----------------------------------------------------------------------------*/
+static int fast_division = 0;
+void set_fast_division(int f)
+{
+  fast_division = f;
+}
+/*----------------------------------------------------------------------------*/
+//(src * 205) >> 11;  // 205/2048 is nearly the same as /10
+#define div10(src) (fast_division ? (((src) * 205) >> 11) : ((src)/10))
+#define mul10(src) (((src) << 3) + ((src) << 1))
 /*----------------------------------------------------------------------------*/
 decimal64_t decimal64_init(int64_t data, decimals_t decimals)
 {
@@ -75,8 +84,8 @@ int adjust_decimals64(/*IN/OUT*/ decimal64_t *arg1, /*IN*/ decimals_t decimals)
   for(;arg1->decimals < decimals; arg1->decimals ++)
   {
     /* *= 10*/
-    mul = (mul << 3) + (mul << 1);
-    arg1->data = (arg1->data << 3) + (arg1->data << 1);
+    mul = mul10(mul);
+    arg1->data = mul10(arg1->data);
   }
 
   return mulhs64(tmp, mul) == 0 ? 0 : CUR_OVERFLOAT;
@@ -185,7 +194,7 @@ int decimal64_div(/*IN*/ const decimal64_t *arg1, /*IN*/  const decimal64_t *arg
   if(!arg2->data) return CUR_ZERODIVIDE;
   while(tmp1.data /*&& tmp2.decimals*/ && tmp1.decimals < MAX_CURRENCY_DECIMALS && ABS(tmp1.data) < (MAX_INT_64 & MASK1_64))
   {
-    tmp1.data *= 10;
+    tmp1.data = mul10(tmp1.data);
     tmp1.decimals ++;
   }
 
@@ -214,9 +223,9 @@ int decimal64_math_round(/*IN*/ const decimal64_t *arg, decimals_t decimals, /*O
   for(i = 0; i < dst->decimals - decimals; i++)
   {
     char c = (char) (tmp % 10) + cy;
-    tmp /= 10;
+    tmp = div10(tmp);
     cy = c < 5 ? 0 : 1;
-    dst->data /= 10;
+    dst->data = div10(dst->data);
   }
 
   dst->data += dst->data < 0 ? - cy : cy;
@@ -251,7 +260,7 @@ int decimal64_cut_round(/*IN*/ const decimal64_t *arg, decimals_t decimals, /*OU
    	return adjust_decimals64(dst, decimals);
 
   for(; dst->decimals > decimals; dst->decimals --)
-    dst->data /= 10;
+    dst->data = div10(dst->data);
 
   return 0;
 }
@@ -271,7 +280,7 @@ int decimal64_str(/*IN*/ const decimal64_t *arg, /*OUT*/ char *dst, /*IN*/unsign
   while(tmp && index < sizeof(buffer))
   {
     buffer[index ++] = (char) (tmp % 10);
-    tmp /= 10;
+    tmp = div10(tmp);
     if(index == arg->decimals)
       buffer[index ++] = '.' - '0';
   }
@@ -362,7 +371,7 @@ int str_decimal64(/*IN*/const char *src, /*OUT*/ decimal64_t *dst)
 
 
 //      trace(__FILE__, __LINE__, "Before mul l:%d h:%d * %d\n", (int)dst->data, (int)(dst->data >> 32), (int) c);
-      dst->data *= 10;
+      dst->data = mul10(dst->data);
       dst->data += (int64_t)(c & 0xf);
 //      trace(__FILE__, __LINE__, "After mul l:%d h:%d * %d\n", (int)dst->data, (int)(dst->data >> 32), (int) c);
     }
@@ -424,7 +433,7 @@ int decimal64_32( const decimal64_t *src,  decimal32_t *dst)
   tmp.data = ABS(tmp.data);
   while(((tmp.data & (int64_t)MASK2_64) || tmp.decimals >= MAX_FLOAT_DECIMALS) && tmp.decimals )
   {
-    tmp.data /= 10;
+    tmp.data = div10(tmp.data);
     tmp.decimals --;
   }
 
@@ -465,7 +474,7 @@ int adjust_decimals32(/*IN/OUT*/ decimal32_t *arg1, /*IN*/ decimals_t decimals)
   for(;arg1->decimals < decimals; arg1->decimals ++)
   {
     /* *= 10*/
-    mul = (mul << 3) + (mul << 1);
+    mul = mul10(mul);
     arg1->data = (arg1->data << 3) + (arg1->data << 1);
   }
 
@@ -564,7 +573,7 @@ int decimal32_div(/*IN*/ const decimal32_t *arg1, /*IN*/  const decimal32_t *arg
   if(!arg2->data) return CUR_ZERODIVIDE;
   while(tmp1.data && /*tmp2.decimals &&*/ tmp1.decimals < MAX_FLOAT_DECIMALS && ABS(tmp1.data) < (MAX_INT_32 & 0xffffff))
   {
-    tmp1.data *= 10;
+    tmp1.data = mul10(tmp1.data);
     tmp1.decimals ++;
   }
 
@@ -595,7 +604,7 @@ int decimal32_math_round(/*IN*/ const decimal32_t *arg, decimals_t decimals, /*O
   for(i = 0; i < dst->decimals - decimals; i++)
   {
     char c = (char) (tmp % 10) + cy;
-    tmp /= 10;
+    tmp = div10(tmp);
     cy = c < 5 ? 0 : 1;
     dst->data /= 10;
   }
@@ -616,7 +625,7 @@ int decimal32_cash_round(/*IN*/ const decimal32_t *arg, decimals_t decimals, /*O
 
   decimal32_cut_round(dst, decimals + 1, dst);
   c = (char) (ABS(dst->data) % 10) + cy;
-  dst->data /= 10;
+  dst->data = mul10(dst->data);
   cy = c < 5 ? 0 : 1;
 
   dst->data += dst->data < 0 ? - cy : cy;
@@ -632,7 +641,7 @@ int decimal32_cut_round(/*IN*/ const decimal32_t *arg, decimals_t decimals, /*OU
    	return adjust_decimals32(dst, decimals);
 
   for(; dst->decimals > decimals; dst->decimals --)
-    dst->data /= 10;
+    dst->data = div10(dst->data);
 
   return 0;
 }
@@ -650,7 +659,7 @@ int decimal32_str(/*IN*/ const decimal32_t *arg, /*OUT*/ char *dst, /*IN*/unsign
   while(tmp && index < sizeof(buffer))
   {
     buffer[index ++] = (char) (tmp % 10);
-    tmp /= 10;
+    tmp = div10(tmp);
     if(index == arg->decimals)
       buffer[index ++] = '.' - '0';
   }
@@ -739,7 +748,7 @@ int str_decimal32(/*IN*/const char *src, /*OUT*/ decimal32_t *dst)
     	if(c > '9' || c < '0')
         return -1;
 
-      dst->data *= 10;
+      dst->data = mul10(dst->data);
       dst->data += (int32_t)(c & 0xf);
     }
   }
@@ -768,7 +777,7 @@ void decimal32_strip(decimal32_t *arg)
 {
   while(arg->decimals && !(arg->data % 10))
   {
-    arg->data /= 10;
+    arg->data = div10(arg->data);
     arg->decimals --;
   }
 }
@@ -777,7 +786,7 @@ void decimal64_strip(decimal64_t *arg)
 {
   while(arg->decimals && !(arg->data % 10))
   {
-    arg->data /= 10;
+    arg->data = div10(arg->data);
     arg->decimals --;
   }
 }

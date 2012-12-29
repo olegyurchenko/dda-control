@@ -26,6 +26,10 @@ static CONSOLE_CMD adc_console1;
 static int adc_cmd1(int argc, char **argv);
 #endif //USE_CONSOLE
 /*----------------------------------------------------------------------------*/
+#ifndef ABS
+#define ABS(a)              (((a) < 0) ? (- (a)) : (a))
+#endif
+/*----------------------------------------------------------------------------*/
 #define ADC1_DR_Address    ((uint32_t)0x4001244C)
 #define ADC_BUFFER_SIZE 100
 static volatile uint16_t adc_buffer[ADC_BUFFER_SIZE];
@@ -39,8 +43,8 @@ void sys_adc_init()
   /* Enable DMA1 clock */
   RCC_AHBPeriphClockCmd(RCC_AHBPeriph_DMA1, ENABLE);
 
-//#define DIV RCC_PCLK2_Div2
-#define DIV RCC_PCLK2_Div4
+#define DIV RCC_PCLK2_Div2
+//#define DIV RCC_PCLK2_Div4
 //#define DIV RCC_PCLK2_Div6
 //#define DIV RCC_PCLK2_Div8
 
@@ -86,12 +90,12 @@ void sys_adc_init()
 
   /* ADC1 regular channel12 configuration */
 
-//#define SAMPLE_TIME ADC_SampleTime_1Cycles5
+#define SAMPLE_TIME ADC_SampleTime_1Cycles5
 //#define SAMPLE_TIME ADC_SampleTime_7Cycles5
 //#define SAMPLE_TIME ADC_SampleTime_13Cycles5
 //#define SAMPLE_TIME ADC_SampleTime_28Cycles5
 //#define SAMPLE_TIME ADC_SampleTime_41Cycles5
-#define SAMPLE_TIME ADC_SampleTime_55Cycles5
+//#define SAMPLE_TIME ADC_SampleTime_55Cycles5
 //#define SAMPLE_TIME ADC_SampleTime_71Cycles5
 //#define SAMPLE_TIME ADC_SampleTime_239Cycles5
 
@@ -132,19 +136,32 @@ void sys_adc_start_conversion()
 /*----------------------------------------------------------------------------*/
 int sys_adc_get_value(int *dst)
 {
-  uint32_t avg = 0;
-  uint16_t min = 0xffff;
-  uint16_t max = 0;
-  int i;
+  int32_t dirty_avg = 0, avg = 0, deviation, avg_deviation = 0;
+  int i, count = 0;
+
+  for(i = 0; i < ADC_BUFFER_SIZE; i++)
+    dirty_avg += adc_buffer[i];
+  dirty_avg /= ADC_BUFFER_SIZE;
+
+  for(i = 0; i < ADC_BUFFER_SIZE; i++)
+    avg_deviation += ABS((int32_t)adc_buffer[i] - dirty_avg);
+  avg_deviation /= ADC_BUFFER_SIZE;
+
   for(i = 0; i < ADC_BUFFER_SIZE; i++)
   {
-    if(min > adc_buffer[i])
-      min = adc_buffer[i];
-    if(max < adc_buffer[i])
-      max = adc_buffer[i];
-    avg += adc_buffer[i];
+    deviation = ABS((int32_t)adc_buffer[i] - dirty_avg);
+    if(deviation < avg_deviation)
+    {
+      avg += adc_buffer[i];
+      count ++;
+    }
   }
-  *dst = avg / ADC_BUFFER_SIZE;
+
+  if(count)
+    *dst = avg / count;
+  else
+    *dst = dirty_avg;
+
   return 1;
 }
 /*----------------------------------------------------------------------------*/

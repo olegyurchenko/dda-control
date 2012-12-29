@@ -141,7 +141,7 @@ void USART1_IRQHandler(void)
 {
   if(USART_GetITStatus(USART1, USART_IT_RXNE) != RESET)
   {
-    //USART_ClearITPendingBit(USART1, USART_IT_RXNE); //?????????
+    USART_ClearITPendingBit(USART1, USART_IT_RXNE); //?????????
     /* Read one byte from the receive data register */
     lb_push(&uart_buffer.rx, USART_ReceiveData(USART1));
   }
@@ -149,7 +149,7 @@ void USART1_IRQHandler(void)
   if(USART_GetITStatus(USART1, USART_IT_TXE) != RESET)
   {
     uint8_t c;
-    //USART_ClearITPendingBit(USART1, USART_IT_TXE); //??????????
+    USART_ClearITPendingBit(USART1, USART_IT_TXE); //??????????
  /* Write one byte to the transmit data register */
     /* Write one byte to the transmit data register */
 
@@ -161,6 +161,7 @@ void USART1_IRQHandler(void)
       USART_ITConfig(USART1, USART_IT_TXE, DISABLE);
     }
   }
+
 }
 /*----------------------------------------------------------------------------*/
 

@@ -17,6 +17,12 @@
 #include <dda_key.h>
 #include <dda_sensor.h>
 #include <dda_motors.h>
+#include <sys_timer.h>
+#define DEBUG
+/*----------------------------------------------------------------------------*/
+#ifdef DEBUG
+#include <console.h>
+#endif
 /*----------------------------------------------------------------------------*/
 #define EVENT_STACK_SIZE 8
 static int handler_shack_point = 0;
@@ -120,7 +126,21 @@ int process_events(void)
   static int key_state = 0;
   static int sensor_state = 0;
   static int motor_state = 0;
+#ifdef DEBUG
+  static unsigned t = 0, max_t = 0;
+#endif
   int state, result = 0;
+
+#ifdef DEBUG
+  if(t)
+  {
+    if(sys_tick_count() - t > 1)
+    {
+      console_printf("%u,", sys_tick_count() - t);
+    }
+  }
+  t = sys_tick_count();
+#endif
 
   state = keys_state();
   if(state != key_state)

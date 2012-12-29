@@ -79,6 +79,9 @@ extern "C"
 {
 #endif  /*__cplusplus*/
 
+/*Be fast and dirty*/
+void set_fast_division(int f);
+
 /**64bit Constructor*/
 decimal64_t decimal64_init(int64_t data, decimals_t decimals);
 #define CURRENCY_INIT(a,b) decimal64_init((int64_t)(a), (decimals_t)(b))
