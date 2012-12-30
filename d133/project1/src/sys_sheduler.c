@@ -29,7 +29,7 @@ typedef struct
   uint32_t period;
 } SHEDULER_DATA;
 /*----------------------------------------------------------------------------*/
-#define MAX_JOB_COUNT 10
+#define MAX_JOB_COUNT 16
 /*----------------------------------------------------------------------------*/
 static SHEDULER_DATA sheduler_data[MAX_JOB_COUNT];
 #ifdef DEBUG
@@ -93,8 +93,14 @@ void sheduler_handler()
 static void debug_handler(void *data)
 {
   static unsigned t;
+  volatile int64_t test = 0;
+  int i;
   (void) data;
   console_printf("Sheduler: %u\r\n", sys_tick_count() - t);
+  for(int i = 0; i < 64; i++)
+    test /= 10;
+  t = sys_tick_count();
+  console_printf("Calc: %u\r\n", sys_tick_count() - t);
   t = sys_tick_count();
 }
 

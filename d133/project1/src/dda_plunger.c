@@ -35,11 +35,15 @@ static int plunger_go_handler(void *data, event_t evt, int param1, void *param2)
 handler_t plunger_handler = {plunger_go_handler, 0};
 static timeout_t timeout;
 static unsigned m_touch_position = 0;
+static unsigned top_position = 0;
 static unsigned zero_step = 0; //Motor step count when DOWN_SENSEOR OFF
+/*----------------------------------------------------------------------------*/
+#define SLOW_DOWN_POSITION 2000
+#define SLOW_RATE 128
 /*----------------------------------------------------------------------------*/
 int is_plunger_down()
 {
-  return sensors_state() & DOWN_SENSOR;
+  return sensors_real_state() & DOWN_SENSOR;
 }
 /*----------------------------------------------------------------------------*/
 unsigned plunger_position()
@@ -49,6 +53,12 @@ unsigned plunger_position()
   if(count < zero_step)
     return 0;
 */
+  if(direction == PlungerDown)
+  {
+    if(count > top_position)
+      return 0;
+    return top_position - count;
+  }
   return  count /*- zero_step*/;
 }
 /*----------------------------------------------------------------------------*/
@@ -108,7 +118,7 @@ static int plunger_go_handler(void *data, event_t evt, int param1, void *param2)
     }
     state = Idle;
     ret_code = EVENT_HANDLER_DONE;
-    //sensors = sensors_state();
+    //sensors = sensors_real_state();
     sensors = sensors_real_state();
     if(   (direction == PlungerDown && (sensors & DOWN_SENSOR))
        || (direction == PlungerUp && (sensors & UP_SENSOR)) )
@@ -125,6 +135,12 @@ static int plunger_go_handler(void *data, event_t evt, int param1, void *param2)
       state = WaitMotorOff;
       motor_deceleration();
       ret_code = PLUNGER_TIMEOUT_ERROR;
+    }
+
+    if(direction == PlungerDown && top_position)
+    {
+      if(motor_rate() > SLOW_RATE && plunger_position() <= SLOW_DOWN_POSITION)
+        motor_change_rate(SLOW_RATE);
     }
     break;
 
@@ -146,6 +162,10 @@ static int plunger_go_handler(void *data, event_t evt, int param1, void *param2)
     break;
 
   case MOTOR_OFF_EVENT:
+    if(direction == PlungerUp && !(sensors_real_state() & UP_SENSOR))
+      top_position = motor_step_count();
+    else
+      top_position = 0;
     state = Idle;
     break;
 
@@ -164,7 +184,7 @@ static int plunger_go_handler(void *data, event_t evt, int param1, void *param2)
 
   if(state == Idle)
   {
-    sensors = sensors_state();
+    sensors = sensors_real_state();
     return (sensors & UP_SENSOR) ? PLUNGER_END_POS_ERROR : ret_code;
   }
 

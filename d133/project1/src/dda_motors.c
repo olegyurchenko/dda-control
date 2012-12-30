@@ -71,7 +71,7 @@ const unsigned char step_table[256]=
 #define STP2_MIN_PERIOD 200 //us
 #define STOPPAGE_TIME 30000 //us
 /*----------------------------------------------------------------------------*/
-#define ACCELERATION_STEP 1
+#define ACCELERATION_STEP 4
 #define DECELERATION_STEP 16
 #define CHANGE_RATE_STEP 1
 /*----------------------------------------------------------------------------*/
@@ -330,6 +330,7 @@ void TIM6_IRQHandler()
       if(!(step_counter & 1))
       {
         counter *= step_table[table_index];
+        //counter *= 256 - table_index;
         //TIM_SetCounter(TIM6, counter);
         TIM_SetAutoreload(TIM6, counter);
         if(motor_state == Accelerate)

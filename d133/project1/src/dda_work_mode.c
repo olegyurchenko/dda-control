@@ -610,7 +610,7 @@ static int measuring_handler(void *data, event_t evt, int param1, void *param2)
         slow_offset = MAX_INT_32;
       else
       {
-        slow_offset = (int)touch_position() - um2steps(current_mesh->max) - (255 - SLOW_RATE);
+        slow_offset = (int)touch_position() - um2steps(current_mesh->max) - 500;//(255 - SLOW_RATE);
       }
       touch_count = 0;
     }

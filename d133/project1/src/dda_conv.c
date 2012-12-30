@@ -29,27 +29,27 @@ void discrets2force(int discr, decimal32_t* dst)
   decimal64_t src, f;
 
   /*dst = (discr - zero_force) * force_k */
-  set_fast_division(1); //!!!!!!!!!!!!
+  //set_fast_division(1); //!!!!!!!!!!!!
   *dst = decimal32_init(discr, 0);
   src = decimal64_init(discr, 0);
   decimal64_sub(&src, &zero_force, &f);
   decimal64_mul(&f, &force_k, &f);
-  decimal64_cut_round(&f, 2, &f);
+  decimal64_math_round(&f, 2, &f);
   decimal64_abs(&f, &src);
   if(src.data > 10000) /*if(abs(f) > 100.00)*/
-    decimal64_cut_round(&f, 1, &f);
+    decimal64_math_round(&f, 1, &f);
   decimal64_32(&f, dst);
-  set_fast_division(0); //!!!!!!!!!!!!
+  //set_fast_division(0); //!!!!!!!!!!!!
 }
 /*----------------------------------------------------------------------------*/
 void steps2um(unsigned step, decimal64_t* dst)
 {
   decimal64_t src, um;
-  set_fast_division(1); //!!!!!!!!!!!!
+  //set_fast_division(1); //!!!!!!!!!!!!
   src = decimal64_init(step, 0);
   decimal64_mul(&src, &step_ratio, &um);
-  decimal64_cut_round(&um, 2, dst);
-  set_fast_division(0); //!!!!!!!!!!!!
+  decimal64_math_round(&um, 2, dst);
+  //set_fast_division(0); //!!!!!!!!!!!!
 }
 /*----------------------------------------------------------------------------*/
 int um2steps(int um)
@@ -58,7 +58,7 @@ int um2steps(int um)
   decimal32_t dst;
   src = decimal64_init(um, 0);
   decimal64_div(&src, &step_ratio, &stp);
-  decimal64_cut_round(&stp, 0, &stp);
+  decimal64_math_round(&stp, 0, &stp);
   if(decimal64_32(&stp,  &dst))
     return MAX_INT_32;
   return dst.data;
@@ -71,7 +71,7 @@ void umsize(unsigned empty_touch, unsigned touch, decimal64_t* dst)
   d2 = decimal64_init(empty_touch, 0);
   decimal64_sub(&d2, &d1, &d1);
   decimal64_mul(&d1, &step_ratio, &d1);
-  decimal64_cut_round(&d1, 1, dst);
+  decimal64_math_round(&d1, 1, dst);
 }
 /*----------------------------------------------------------------------------*/
 void set_zero_force(int discr)

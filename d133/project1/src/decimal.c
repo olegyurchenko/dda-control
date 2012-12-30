@@ -40,8 +40,9 @@ void set_fast_division(int f)
 }
 /*----------------------------------------------------------------------------*/
 //(src * 205) >> 11;  // 205/2048 is nearly the same as /10
-#define div10(src) (fast_division ? (((src) * 205) >> 11) : ((src)/10))
+#define div10(src) ((sizeof(src) > sizeof(int) && fast_division) ? (((src) * 205) >> 11) : ((src)/10))
 #define mul10(src) (((src) << 3) + ((src) << 1))
+#define mod10(src) ((src) - mul10(div10(src)))
 /*----------------------------------------------------------------------------*/
 decimal64_t decimal64_init(int64_t data, decimals_t decimals)
 {
@@ -222,7 +223,7 @@ int decimal64_math_round(/*IN*/ const decimal64_t *arg, decimals_t decimals, /*O
   tmp = ABS(arg->data);
   for(i = 0; i < dst->decimals - decimals; i++)
   {
-    char c = (char) (tmp % 10) + cy;
+    char c = (char) mod10(tmp) + cy;
     tmp = div10(tmp);
     cy = c < 5 ? 0 : 1;
     dst->data = div10(dst->data);
@@ -243,8 +244,8 @@ int decimal64_cash_round(/*IN*/ const decimal64_t *arg, decimals_t decimals, /*O
    	return adjust_decimals64(dst, decimals);
 
   decimal64_cut_round(dst, decimals + 1, dst);
-  c = (char) (ABS(dst->data) % 10) + cy;
-  dst->data /= 10;
+  c = (char) mod10(ABS(dst->data)) + cy;
+  dst->data  = div10(dst->data);
   cy = c < 5 ? 0 : 1;
 
   dst->data += dst->data < 0 ? - cy : cy;
@@ -279,7 +280,7 @@ int decimal64_str(/*IN*/ const decimal64_t *arg, /*OUT*/ char *dst, /*IN*/unsign
   tmp = ABS(arg->data);
   while(tmp && index < sizeof(buffer))
   {
-    buffer[index ++] = (char) (tmp % 10);
+    buffer[index ++] = (char) mod10(tmp);
     tmp = div10(tmp);
     if(index == arg->decimals)
       buffer[index ++] = '.' - '0';
@@ -603,7 +604,7 @@ int decimal32_math_round(/*IN*/ const decimal32_t *arg, decimals_t decimals, /*O
   tmp = ABS(arg->data);
   for(i = 0; i < dst->decimals - decimals; i++)
   {
-    char c = (char) (tmp % 10) + cy;
+    char c = (char) mod10(tmp) + cy;
     tmp = div10(tmp);
     cy = c < 5 ? 0 : 1;
     dst->data /= 10;
@@ -624,7 +625,7 @@ int decimal32_cash_round(/*IN*/ const decimal32_t *arg, decimals_t decimals, /*O
    	return adjust_decimals32(dst, decimals);
 
   decimal32_cut_round(dst, decimals + 1, dst);
-  c = (char) (ABS(dst->data) % 10) + cy;
+  c = (char) ABS(mod10(dst->data)) + cy;
   dst->data = mul10(dst->data);
   cy = c < 5 ? 0 : 1;
 
@@ -658,7 +659,7 @@ int decimal32_str(/*IN*/ const decimal32_t *arg, /*OUT*/ char *dst, /*IN*/unsign
   tmp = ABS(arg->data);
   while(tmp && index < sizeof(buffer))
   {
-    buffer[index ++] = (char) (tmp % 10);
+    buffer[index ++] = (char) mod10(tmp);
     tmp = div10(tmp);
     if(index == arg->decimals)
       buffer[index ++] = '.' - '0';
@@ -775,7 +776,7 @@ void decimal32_abs(/*IN*/ const decimal32_t *src, /*OUT*/  decimal32_t *dst)
 /*----------------------------------------------------------------------------*/
 void decimal32_strip(decimal32_t *arg)
 {
-  while(arg->decimals && !(arg->data % 10))
+  while(arg->decimals && !mod10(arg->data))
   {
     arg->data = div10(arg->data);
     arg->decimals --;
@@ -784,7 +785,7 @@ void decimal32_strip(decimal32_t *arg)
 /*----------------------------------------------------------------------------*/
 void decimal64_strip(decimal64_t *arg)
 {
-  while(arg->decimals && !(arg->data % 10))
+  while(arg->decimals && !mod10(arg->data))
   {
     arg->data = div10(arg->data);
     arg->decimals --;

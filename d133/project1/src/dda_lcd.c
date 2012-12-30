@@ -54,6 +54,7 @@ static char lcd_buffer[DISPLAY_HEIGHT * DISPLAY_WIDTH];
 static char lcd_old[DISPLAY_HEIGHT * DISPLAY_WIDTH];
 static void _hi_init();
 static void lcd_timer(void *);
+static void lcd_updater(void *);
 /*----------------------------------------------------------------------------*/
 static void RS(int on)
 {
@@ -201,6 +202,7 @@ static void _hi_init()
   memset(lcd_old, 0, sizeof(lcd_old));
   lcd_clear();
   sheduler_add(lcd_timer, 0, 100, 200);
+  sheduler_add(lcd_updater, 0, 5, 10);
 }
 /*----------------------------------------------------------------------------*/
 static void intern_lcd_put_char(int x, int y, int ch)
@@ -289,6 +291,8 @@ int lcd_get_char(int x, int y)
 /*----------------------------------------------------------------------------*/
 void lcd_update()
 {
+  /*
+  Move to update_handler
   int i;
   for(i = 0; i < DISPLAY_HEIGHT; i++)
   {
@@ -302,6 +306,7 @@ void lcd_update()
       memcpy(&lcd_old[i * DISPLAY_WIDTH], &lcd_buffer[i * DISPLAY_WIDTH], DISPLAY_WIDTH);
     }
   }
+  */
 }
 /*----------------------------------------------------------------------------*/
 static void scrolled_text_init(const char *caption, SCROLLED_TEXT *s)
@@ -405,6 +410,43 @@ static void lcd_timer(void *v)
       lcd_hscroll_text(&scrolls[i]);
 
   }
-  lcd_update();
+  //lcd_update();
+}
+/*----------------------------------------------------------------------------*/
+static void lcd_updater(void *v)
+{
+  static unsigned lcd_pos = 0xffffffff, pos = 0;
+  unsigned i;
+  (void)v; //Q_UNUSED
+  for(i = 0; i < sizeof(lcd_buffer); i++)
+  {
+    if(pos >= sizeof(lcd_buffer))
+       pos = 0;
+
+    if(!(pos % DISPLAY_WIDTH))
+      lcd_pos = 0xffffffff; //For move position
+
+    if(lcd_old[pos] != lcd_buffer[pos])
+    {
+      if(lcd_pos != pos)
+      {
+        char p;
+        lcd_pos = pos;
+        p = lcd_pos;
+        if(p >= DISPLAY_WIDTH)
+        {
+          p -= DISPLAY_WIDTH;
+          p += 0x40;
+        }
+      _lcd_move(p);
+      }
+      _lcd_putch(lcd_buffer[pos]);
+      lcd_old[pos] = lcd_buffer[pos];
+      lcd_pos ++;
+      pos ++;
+      break;
+    }
+    pos ++;
+  }
 }
 /*----------------------------------------------------------------------------*/

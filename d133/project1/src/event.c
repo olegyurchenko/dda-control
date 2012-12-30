@@ -18,7 +18,7 @@
 #include <dda_sensor.h>
 #include <dda_motors.h>
 #include <sys_timer.h>
-#define DEBUG
+//#define DEBUG
 /*----------------------------------------------------------------------------*/
 #ifdef DEBUG
 #include <console.h>
