@@ -78,7 +78,7 @@ static int cassete_pos_handler(void *data, event_t evt, int param1, void *param2
   case MODE_SET_EVENT:
     if(!param1) //Mode exit
       return 0;
-    sensors = sensors_state();
+    sensors = sensors_real_state();
     state = Idle;
     if(is_cassete_position_unknown())
     {
@@ -161,7 +161,7 @@ static int cassete_pos_handler(void *data, event_t evt, int param1, void *param2
       position = 0;
       if(dst_position != position)
       {
-        sensors = sensors_state();
+        sensors = sensors_real_state();
         if(sensors & CASSETE_CELL_SENSOR)
           state = WaitSensorOff;
         else

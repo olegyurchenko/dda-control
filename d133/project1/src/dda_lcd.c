@@ -121,6 +121,7 @@ static void _init()
   RS(0);
   RW(0);
   DATA(0);
+  sys_sleep(500); /* Wait a bit after power-up */
   lcd_write8(0x30); //Function set ( Interface is 8 bits long. )
   sys_sleep(10);    //Wait for more than 4.1 ms
   lcd_write8(0x30); //Function set ( Interface is 8 bits long. )
@@ -149,7 +150,6 @@ void lcd_init()
   gpio.GPIO_Mode = GPIO_Mode_Out_PP;
   GPIO_Init(GPIOA, &gpio);
 
-  sys_sleep(1000); /* Wait a bit after power-up */
   _init();
   _hi_init();
 }
