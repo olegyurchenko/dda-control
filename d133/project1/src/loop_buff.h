@@ -34,10 +34,16 @@ extern "C" {
 void lb_init(LOOP_BUFFER *b, uint8_t *buffer, uint16_t buffer_size);
 /**Return data size in buffer*/
 unsigned lb_size(LOOP_BUFFER *b);
+/**Return free size in buffer*/
+unsigned lb_free(LOOP_BUFFER *b);
+/**Get data pointer at index*/
+uint8_t *lb_at(LOOP_BUFFER *b, uint16_t index);
 /**Put byte to buffer. Return 0 if buffer full*/
 int lb_push(LOOP_BUFFER *b, uint8_t c);
 /**Get byte from buffer. Return 0 if buffer empty*/
 int lb_pop(LOOP_BUFFER *b, uint8_t *c);
+/**Clear buffer*/
+void lb_clear(LOOP_BUFFER *b);
 
 
 #ifdef __cplusplus

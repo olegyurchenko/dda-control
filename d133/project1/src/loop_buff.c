@@ -38,6 +38,25 @@ unsigned lb_size(LOOP_BUFFER *b)
   return 0;
 }
 /*----------------------------------------------------------------------------*/
+unsigned lb_free(LOOP_BUFFER *b)
+{
+  return b->size - lb_size(b);
+}
+/*----------------------------------------------------------------------------*/
+uint8_t *lb_at(LOOP_BUFFER *b, uint16_t index)
+{
+  static uint8_t none = 0;
+  uint16_t tail;
+  if(index >= lb_size(b))
+    return &none;
+
+  tail = b->tail + index;
+  if(tail >= b->size)
+    tail -= b->size;
+
+  return &b->buffer[tail];
+}
+/*----------------------------------------------------------------------------*/
 int lb_push(LOOP_BUFFER *b, uint8_t c)
 {
   if(lb_size(b) >= (unsigned)b->size - 1)
@@ -56,5 +75,10 @@ int lb_pop(LOOP_BUFFER *b, uint8_t *c)
   if(b->tail >= b->size)
     b->tail = 0;
   return 1;
+}
+/*----------------------------------------------------------------------------*/
+void lb_clear(LOOP_BUFFER *b)
+{
+  b->tail = b->head = 0;
 }
 /*----------------------------------------------------------------------------*/

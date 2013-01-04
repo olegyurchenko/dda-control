@@ -9,6 +9,7 @@
 #include <dda_sensor.h>
 #include <dda_mode.h>
 #include <event.h>
+#include <dda_protocol.h>
 
 #define USE_CONSOLE //!!!!!!!!!!!
 
@@ -36,6 +37,8 @@ int main()
 	{
 #ifdef USE_CONSOLE
     console_handler();
+#else //USE_CONSOLE
+    protocol_handler();
 #endif //USE_CONSOLE
     sheduler_handler();
     process_events();
@@ -52,6 +55,8 @@ static void init()
   uart_init();
 #ifdef USE_CONSOLE
   console_init();
+#else //USE_CONSOLE
+  protocol_init();
 #endif //USE_CONSOLE
   sys_adc_init();
   //ledInit();

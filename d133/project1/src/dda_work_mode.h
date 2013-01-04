@@ -22,6 +22,16 @@ typedef enum WORK_MODE
   ManualMode
 } work_mode_t;
 
+typedef enum
+{
+  Idle,
+  Calibration,
+  Measuring,
+  NexCasseteWait,
+  Done
+} work_state_t;
+
+
 #ifdef __cplusplus
 extern "C" {
 #endif /*__cplusplus*/
@@ -30,7 +40,7 @@ void work_mode_init();
 void set_work_mode(work_mode_t m);
 work_mode_t work_mode();
 void start_work_menu();
-
+work_state_t work_state();
 
 #ifdef __cplusplus
 } //extern "C"

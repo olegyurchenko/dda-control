@@ -46,15 +46,7 @@ static int measuring_handler(void *data, event_t evt, int param1, void *param2);
 static int mode_item_handler(void *data, event_t evt, int param1, void *param2);
 static int work_item_handler(void *data, event_t evt, int param1, void *param2);
 /*----------------------------------------------------------------------------*/
-typedef enum
-{
-  Idle,
-  Calibration,
-  Measuring,
-  Done
-} STATE;
-
-static STATE state = Idle;
+static work_state_t state = Idle;
 static work_mode_t mode = UnknownMode;
 static int particles = 1;
 static int start_flag = 0;
@@ -83,6 +75,11 @@ void set_work_mode(work_mode_t m)
 work_mode_t work_mode()
 {
   return mode;
+}
+/*----------------------------------------------------------------------------*/
+work_state_t work_state()
+{
+  return state;
 }
 /*----------------------------------------------------------------------------*/
 void start_work_menu()
