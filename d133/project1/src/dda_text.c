@@ -52,6 +52,7 @@ const text_t text_en[] =
 , {STR_WAIT_TOUCH, "Wait touch"}
 , {STR_PRESS_START, "Press START"}
 , {STR_FINISHING, "Finishing"}
+, {STR_WAIT_PROTOCOL, "Waiting protocol"}
 
 };
 /*----------------------------------------------------------------------------*/

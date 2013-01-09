@@ -67,6 +67,21 @@ int lb_push(LOOP_BUFFER *b, uint8_t c)
   return 1;
 }
 /*----------------------------------------------------------------------------*/
+int lb_push_buffer(LOOP_BUFFER *b, const void *buffer, uint16_t size)
+{
+  const uint8_t *p;
+  if(lb_free(b) < size)
+    return 0;
+  p = (const uint8_t *)buffer;
+  while(size)
+  {
+    lb_push(b, *p);
+    p ++;
+    size --;
+  }
+  return 1;
+}
+/*----------------------------------------------------------------------------*/
 int lb_pop(LOOP_BUFFER *b, uint8_t *c)
 {
   if(b->head == b->tail)
@@ -74,6 +89,27 @@ int lb_pop(LOOP_BUFFER *b, uint8_t *c)
   *c = b->buffer[b->tail ++];
   if(b->tail >= b->size)
     b->tail = 0;
+  return 1;
+}
+/*----------------------------------------------------------------------------*/
+int lb_pop_buffer(LOOP_BUFFER *b, void *buffer, uint16_t size)
+{
+  uint8_t c;
+  uint8_t *p;
+  if(lb_size(b) < size)
+    return 0;
+
+  p = (uint8_t *)buffer;
+  while(size)
+  {
+    lb_pop(b, &c);
+    if(buffer != 0)
+    {
+      *p = c;
+      p ++;
+    }
+    size --;
+  }
   return 1;
 }
 /*----------------------------------------------------------------------------*/

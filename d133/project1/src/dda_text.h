@@ -44,6 +44,7 @@
 #define STR_WAIT_TOUCH 26 //"Wait touch"
 #define STR_PRESS_START 27 //"Press START"
 #define STR_FINISHING 28 //"Finishing"
+#define STR_WAIT_PROTOCOL 29 //"Waiting protocol"
 
 #ifdef __cplusplus
 extern "C" {

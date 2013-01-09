@@ -28,6 +28,8 @@
 #include <dda_mesh.h>
 #include <spin_edit.h>
 #include <sys_timer.h>
+#include <dda_protocol.h>
+#include <dda_db.h>
 #define DEBUG
 
 #ifdef DEBUG
@@ -51,7 +53,7 @@ static work_mode_t mode = UnknownMode;
 static int particles = 1;
 static int start_flag = 0;
 static decimal32_t force = {0,0};
-static decimal64_t size = {0,0};
+static decimal32_t size = {0,0};
 /*----------------------------------------------------------------------------*/
 void work_mode_init()
 {
@@ -120,7 +122,7 @@ static void display()
   lcd_put_line(0, state_msg, SCR_ALIGN_CENTER);
 
   decimal32_str(&force, fbuf, sizeof(fbuf));
-  decimal64_str(&size, sbuf, sizeof(sbuf));
+  decimal32_str(&size, sbuf, sizeof(sbuf));
   snprintf(buffer, sizeof(buffer), "f:%-5s s:%-6s", fbuf, sbuf);
   lcd_put_line(1, buffer, SCR_ALIGN_LEFT);
 //  lcd_update();
@@ -151,6 +153,7 @@ static int touch_detect()
 static void set_size_postion()
 {
   umsize(touch_position(), plunger_position(), &size);
+  protocol_push_grain_size(&size);
 }
 /*----------------------------------------------------------------------------*/
 static int destruction_detect()
@@ -164,11 +167,25 @@ static int destruction_detect()
   discrets2force(value, &force); //For display force
   if(decimal32_cmp(&force, &max_force) > 0)
     return 1;
+  protocol_push_current_force(&force);
   return 0;
 }
 /*----------------------------------------------------------------------------*/
 static void set_destruction_position()
 {
+  int value = 0;
+  measure_t measure;
+
+  sys_adc_get_value(&value);
+  discrets2force(value, &force);
+
+  measure.cell = cassette_position();
+  measure.size = size;
+  measure.strength = force;
+
+  protocol_push_strength(db_measure_count(), measure.cell, &force);
+  db_add_measure(&measure);
+
 }
 /*----------------------------------------------------------------------------*/
 /*Use only for return menu position: Auto or Manual mode*/
@@ -317,6 +334,7 @@ static int work_handler(void *data, event_t evt, int param1, void *param2)
     else
     if(res == EVENT_HANDLER_DONE)
     {
+      db_new_session(mesh_index(), particles);
       state = Measuring;
       samples = 0;
       start_flag = mode == AutoMode ? 1 : 0;
@@ -578,7 +596,8 @@ static int measuring_handler(void *data, event_t evt, int param1, void *param2)
     CassetteCatch,
     WaitTouch,
     WaitDestruction,
-    Down
+    Down,
+    WaitProtocol
   } MICRO_STATE;
 
   static MICRO_STATE micro_state = StartState;
@@ -599,7 +618,7 @@ static int measuring_handler(void *data, event_t evt, int param1, void *param2)
       plunger_go_down();
       micro_state = PlungerCatch;
       force = decimal32_init(0,0);
-      size = decimal64_init(0,0);
+      size = decimal32_init(0,0);
       detect = 0;
       //Calculate slow offset
       current_mesh = mesh();
@@ -774,8 +793,8 @@ static int measuring_handler(void *data, event_t evt, int param1, void *param2)
     res = handler_call(&plunger_handler, evt, param1, param2);
     if(res == EVENT_HANDLER_DONE)
     {
-      micro_state = StartState;
-      return EVENT_HANDLER_DONE;
+      micro_state = WaitProtocol;
+      break;
     }
     else
     if(res == PLUNGER_TIMEOUT_ERROR)
@@ -797,6 +816,15 @@ static int measuring_handler(void *data, event_t evt, int param1, void *param2)
       micro_state = StartState;
       show_message(get_text(STR_WARNING), get_text(STR_POS_OPERATION_BREAK), 0);
       return EVENT_HANDLER_FAILED;
+    }
+    break;
+
+  case WaitProtocol:
+    lcd_put_line(1, get_text(STR_WAIT_PROTOCOL), SCR_ALIGN_CENTER);
+    if(is_measure_data_transmitted())
+    {
+      micro_state = StartState;
+      return EVENT_HANDLER_DONE;
     }
     break;
 

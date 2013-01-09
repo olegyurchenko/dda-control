@@ -14,36 +14,36 @@
 /*----------------------------------------------------------------------------*/
 #include "dda_db.h"
 /*----------------------------------------------------------------------------*/
+static int measure_count = 0;
+static measure_t last_measure;
+static session_t current_session;
+
 void db_new_session(int grit_index, int particles)
 {
+  current_session.grit_index = grit_index;
+  current_session.particles = particles;
+  measure_count = 0;
 }
 /*----------------------------------------------------------------------------*/
 void db_current_session(session_t *dst)
 {
+  dst = &current_session;
 }
 /*----------------------------------------------------------------------------*/
 void db_add_measure(const measure_t* measure)
 {
-}
-/*----------------------------------------------------------------------------*/
-void db_add_corrent_force(const measure_t* measure)
-{
+  last_measure = *measure;
+  measure_count++;
 }
 /*----------------------------------------------------------------------------*/
 int db_measure_count()
 {
-}
-/*----------------------------------------------------------------------------*/
-int db_current_force_count()
-{
+  return measure_count;
 }
 /*----------------------------------------------------------------------------*/
 void db_last_measure(measure_t* dst)
 {
-}
-/*----------------------------------------------------------------------------*/
-void db_corrent_force(int index, measure_t* dst)
-{
+  *dst = last_measure;
 }
 /*----------------------------------------------------------------------------*/
 

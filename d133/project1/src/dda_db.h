@@ -39,11 +39,8 @@ extern "C" {
 void db_new_session(int grit_index, int particles);
 void db_current_session(session_t *dst);
 void db_add_measure(const measure_t* measure);
-void db_add_corrent_force(const measure_t* measure);
 int db_measure_count();
-int db_current_force_count();
 void db_last_measure(measure_t* dst);
-void db_corrent_force(int index, measure_t* dst);
 
 
 

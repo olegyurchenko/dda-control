@@ -40,8 +40,13 @@ unsigned lb_free(LOOP_BUFFER *b);
 uint8_t *lb_at(LOOP_BUFFER *b, uint16_t index);
 /**Put byte to buffer. Return 0 if buffer full*/
 int lb_push(LOOP_BUFFER *b, uint8_t c);
+/**Put size count bytes to buffer. Return 0 if buffer full*/
+int lb_push_buffer(LOOP_BUFFER *b, const void *buffer, uint16_t size);
 /**Get byte from buffer. Return 0 if buffer empty*/
 int lb_pop(LOOP_BUFFER *b, uint8_t *c);
+/**Get size count bytes from buffer. Buffer may be NULL. Return 0 if buffer empty*/
+int lb_pop_buffer(LOOP_BUFFER *b, void *buffer, uint16_t size);
+
 /**Clear buffer*/
 void lb_clear(LOOP_BUFFER *b);
 
