@@ -31,6 +31,7 @@
 #define DISPLAY_WIDTH 16
 #define DISPLAY_HEIGHT 2
 #define MAX_SCROLLTEXT_LENGTH 48
+#define START_DELAY 1500 //1.5s
 /*----------------------------------------------------------------------------*/
 struct SCROLLED_TEXT
 {
@@ -121,7 +122,7 @@ static void _init()
   RS(0);
   RW(0);
   DATA(0);
-  sys_sleep(500); /* Wait a bit after power-up */
+  sys_sleep(START_DELAY); /* Wait a bit after power-up */
   lcd_write8(0x30); //Function set ( Interface is 8 bits long. )
   sys_sleep(10);    //Wait for more than 4.1 ms
   lcd_write8(0x30); //Function set ( Interface is 8 bits long. )

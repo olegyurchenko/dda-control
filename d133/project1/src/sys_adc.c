@@ -17,7 +17,6 @@
 #include <stdint.h>
 #include <dda_clib.h>
 /*----------------------------------------------------------------------------*/
-#define USE_CONSOLE //!!!!
 #ifdef USE_CONSOLE
 #include <console.h>
 #include <sys_timer.h>

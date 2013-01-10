@@ -81,6 +81,11 @@ void set_zero_force(int discr)
   zero_force = decimal64_init(discr, 0);
 }
 /*----------------------------------------------------------------------------*/
+int get_zero_force(void)
+{
+  return (int)zero_force.data;
+}
+/*----------------------------------------------------------------------------*/
 int is_touch_force(int discr)
 {
   decimal64_t src, touch;

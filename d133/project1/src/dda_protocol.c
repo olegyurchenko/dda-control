@@ -21,6 +21,12 @@
 #include <dda_db.h>
 #include <dda_clib.h>
 /*----------------------------------------------------------------------------*/
+#ifndef NO_PROTOCOL
+  #ifdef USE_CONSOLE
+    #define NO_PROTOCOL
+  #endif //USE_CONSOLE
+#endif //NO_PROTOCOL
+/*----------------------------------------------------------------------------*/
 #define ENQ 5
 #define ACK 6
 #define NAK 0x15
@@ -100,7 +106,11 @@ void protocol_handler()
 /*----------------------------------------------------------------------------*/
 int is_measure_data_transmitted()
 {
+#ifdef NO_PROTOCOL
+  return 1;
+#else
   return !lb_size(&queue);
+#endif
 }
 /*----------------------------------------------------------------------------*/
 static void send_data(int retry)
@@ -180,11 +190,17 @@ static void receive_data()
 
         if(crc == b)
         {
+          b = ACK;
+          uart_write(&b, 1); //Send ACK
           execute_cmd();
           set_established();
         }
         else
+        {
+          b = NAK;
+          uart_write(&b, 1); //Send NAK
           clr_established();
+        }
 
       }
       lb_push(&rx_buffer, b);
@@ -243,15 +259,18 @@ static void send_measure_data()
 /*----------------------------------------------------------------------------*/
 static void send_packet(char header, const char *data, unsigned size)
 {
-  unsigned char crc;
+  unsigned char crc, b;
   unsigned i;
   if(data != 0 && !size)
     size = strlen(data);
 
+  b = ENQ;
+  uart_write(&b, 1);
+
   uart_write(&header, 1);
   crc = header;
 
-  header = size + 2;
+  header = size + 3;
   uart_write(&header, 1);
   crc += header;
   if(data != 0 && size)

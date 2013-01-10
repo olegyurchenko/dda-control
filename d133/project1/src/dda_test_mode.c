@@ -26,8 +26,8 @@
 #include <dda_cassette.h>
 #include <dda_conv.h>
 #include <dda_text.h>
+#include <sys_timer.h>
 
-#define USE_CONSOLE //!!!!
 #ifdef USE_CONSOLE
 #include <console.h>
 #endif //USE_CONSOLE
@@ -368,14 +368,18 @@ static int top_bottom_handler(void *data, event_t evt, int param1, void *param2)
 /*----------------------------------------------------------------------------*/
 static void display_adc()
 {
-  char buffer[16], fbuf[16];
+  char buffer[20], fbuf[16];
   decimal32_t force;
   int value = 0;
 
   sys_adc_get_value(&value);
   discrets2force(value, &force);
   decimal32_str(&force, fbuf, sizeof(fbuf));
-  snprintf(buffer, sizeof(buffer), "%5s (%03xH %d)", fbuf, value, value);
+
+  snprintf(buffer, sizeof(buffer), "%s", fbuf);
+  lcd_put_line(0, buffer, SCR_ALIGN_RIGHT);
+
+  snprintf(buffer, sizeof(buffer), "%03xH %5d %5d", value, value, value - get_zero_force());
   lcd_put_line(1, buffer, SCR_ALIGN_LEFT);
 //  lcd_update();
 }
@@ -391,6 +395,8 @@ static int adc_handler(void *data, event_t evt, int param1, void *param2)
 {
   int sensors;
   static int dir;
+  static timeout_t timeout;
+#define ADC_TIME 500
 
   (void) data; //Prevent unused warning
   (void) param1;
@@ -399,14 +405,19 @@ static int adc_handler(void *data, event_t evt, int param1, void *param2)
   switch(evt)
   {
   case IDLE_EVENT:
-    dispay_sensors();
-    display_adc();
+    if(timeout_riched(&timeout, sys_tick_count()))
+    {
+      //dispay_sensors();
+      display_adc();
+      timeout_set(&timeout, ADC_TIME, sys_tick_count());
+    }
     break;
   case MODE_SET_EVENT:
     if(!param1) //Mode exit
       return 0;
     lcd_clear();
     set_zero();
+    timeout_set(&timeout, ADC_TIME, sys_tick_count());
     break;
 
   case MENU_EVENT:
@@ -438,6 +449,11 @@ static int adc_handler(void *data, event_t evt, int param1, void *param2)
       sensors = sensors_state();
       if(!(sensors & DOWN_SENSOR))
         motor_start(PlungerMotor, dir, 0);
+    }
+    else
+    if(param1 == KEY_START)
+    {
+      set_zero();
     }
     break;
 

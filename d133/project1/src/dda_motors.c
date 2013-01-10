@@ -14,10 +14,11 @@
 /*----------------------------------------------------------------------------*/
 #include "dda_motors.h"
 #include <stm32f10x.h>
-#define USE_CONSOLE //!!!!
+
 #ifdef USE_CONSOLE
 #include <console.h>
 #endif //USE_CONSOLE
+
 #include <dda_clib.h>
 /*----------------------------------------------------------------------------*/
 #define STP1_EN     GPIO_Pin_10 //PB10
@@ -67,17 +68,22 @@ const unsigned char step_table[256]=
 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x07, 0x07
 };
 /*----------------------------------------------------------------------------*/
-#define STP1_MIN_PERIOD 800 //300//us
-#define STP2_MIN_PERIOD 200 //us
+#define STP1_MIN_PERIOD 600//us
+#define STP2_MIN_PERIOD 400 //us
 #define STOPPAGE_TIME 30000 //us
 /*----------------------------------------------------------------------------*/
-#define ACCELERATION_STEP 4
-#define DECELERATION_STEP 16
-#define CHANGE_RATE_STEP 1
+#define ACCELERATION_STEP1 2
+#define DECELERATION_STEP1 16
+#define CHANGE_RATE_STEP1 1
+/*----------------------------------------------------------------------------*/
+#define ACCELERATION_STEP2 1
+#define DECELERATION_STEP2 4
+#define CHANGE_RATE_STEP2 1
 /*----------------------------------------------------------------------------*/
 static int active_motor = -1;
 static volatile int32_t table_index;
 static volatile int32_t max_index;
+static volatile int32_t table_step;
 static enum MotorState
 {
   Idle,
@@ -335,7 +341,7 @@ void TIM6_IRQHandler()
         TIM_SetAutoreload(TIM6, counter);
         if(motor_state == Accelerate)
         {
-          table_index += ACCELERATION_STEP;
+          table_index += table_step;
           if(table_index >= max_index)
           {
             motor_state = Slewing;
@@ -352,7 +358,7 @@ void TIM6_IRQHandler()
           }
           else
           {
-            table_index -= DECELERATION_STEP;
+            table_index -= table_step;
             if(table_index < 0)
               table_index = 0;
           }
@@ -362,7 +368,7 @@ void TIM6_IRQHandler()
         {
           if(table_index < max_index)
           {
-            table_index += CHANGE_RATE_STEP;
+            table_index += table_step;
             if(table_index >= max_index)
             {
               motor_state = Slewing;
@@ -371,7 +377,7 @@ void TIM6_IRQHandler()
           }
           else
           {
-            table_index -= CHANGE_RATE_STEP;
+            table_index -= table_step;
             if(table_index <= max_index)
             {
               motor_state = Slewing;
@@ -409,9 +415,15 @@ void motor_start(int mr, int dir, unsigned char rate)
   set_enable(0); //Enable to active state
   set_rs(0); //Reset to active state
   if(!mr)
+  {
     min_period = STP1_MIN_PERIOD / 7; //7 - minimal multiplier from step_table
+    table_step = ACCELERATION_STEP1;
+  }
   else
+  {
     min_period = STP2_MIN_PERIOD / 7; //7 - minimal multiplier from step_table
+    table_step = ACCELERATION_STEP2;
+  }
   table_index = 0;
   if(!rate)
     max_index = 255;
@@ -423,7 +435,17 @@ void motor_start(int mr, int dir, unsigned char rate)
 void motor_deceleration()
 {
   if(motor_state == Accelerate || motor_state == Slewing || motor_state == ChangeRate)
+  {
+    if(!active_motor)
+    {
+      table_step = DECELERATION_STEP1;
+    }
+    else
+    {
+      table_step = DECELERATION_STEP2;
+    }
     motor_state = Decelerate;
+  }
 }
 /*----------------------------------------------------------------------------*/
 void motor_change_rate(unsigned char rate)
@@ -435,6 +457,14 @@ void motor_change_rate(unsigned char rate)
     else
       max_index = rate;
 
+    if(!active_motor)
+    {
+      table_step = CHANGE_RATE_STEP1;
+    }
+    else
+    {
+      table_step = CHANGE_RATE_STEP2;
+    }
     motor_state = ChangeRate;
   }
 }
@@ -451,7 +481,11 @@ void motor_stop()
   case ChangeRate:
   case Slewing:
     motor_state = Decelerate;
-    table_index = DECELERATION_STEP;
+    if(!active_motor)
+      table_step = DECELERATION_STEP1;
+    else
+      table_step = DECELERATION_STEP2;
+    table_index = table_step;
     break;
   }
 }

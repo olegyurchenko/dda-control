@@ -11,9 +11,6 @@
 #include <event.h>
 #include <dda_protocol.h>
 
-#define USE_CONSOLE //!!!!!!!!!!!
-
-
 #ifdef USE_CONSOLE
 #include <console.h>
 #endif //USE_CONSOLE

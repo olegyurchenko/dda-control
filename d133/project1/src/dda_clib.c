@@ -273,8 +273,10 @@ static int write_int(writer_t write, void *data, char spec, unsigned src, int wi
   case 'd':
   case 'i':
     if(src & 0x80000000)
+    {
       sign = 1;
-    src &= 0x7fffffff;
+      src = ~src + 1;
+    }
   case 'u':
     base = 10;
     break;
