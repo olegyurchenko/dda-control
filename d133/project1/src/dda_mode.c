@@ -207,6 +207,7 @@ static int splash_handler(void *data, event_t evt, int param1, void *param2)
     if(state == Idle && timeout_riched(&timeout, sys_tick_count()))
     {
       set_work_mode(UnknownMode);
+      start_work();
       return 1;
     }
     break;

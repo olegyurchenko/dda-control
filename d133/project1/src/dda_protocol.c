@@ -20,6 +20,7 @@
 #include <dda_work_mode.h>
 #include <dda_db.h>
 #include <dda_clib.h>
+#include <dda_mesh.h>
 /*----------------------------------------------------------------------------*/
 #ifndef NO_PROTOCOL
   #ifdef USE_CONSOLE
@@ -33,6 +34,7 @@
 #define RX_TIMEOUT 1000
 #define ACK_TIMEOUT 1000
 #define RETRY_COUNT 25
+#define CURRENT_FORCE_PERIOD 20
 /*----------------------------------------------------------------------------*/
 static LOOP_BUFFER rx_buffer;
 static uint8_t protocol_buffer[32];
@@ -60,6 +62,7 @@ typedef enum
 static protocol_state_t protocol_state = SendSerial;
 
 static timeout_t timeout;
+static timeout_t last_force_time = {0, 0};
 static int established = 0;
 static void send_data(int retry);
 static void receive_data();
@@ -85,6 +88,7 @@ void protocol_handler()
   default:
   case TransportIdle:
     transport_state = TxPacket;
+    lb_clear(&rx_buffer);
     send_data(0);
     break;
   case RxPacket:
@@ -95,7 +99,6 @@ void protocol_handler()
     {
       transport_state = WaitAck;
       timeout_set(&timeout, ACK_TIMEOUT, sys_tick_count());
-      lb_clear(&rx_buffer);
     }
     break;
   case WaitAck:
@@ -127,7 +130,8 @@ static void send_data(int retry)
       protocol_state = SendCalibration;
       break;
     case Measuring:
-      protocol_state = SendMeasureData;
+      //protocol_state = SendMeasureData;
+      protocol_state = SendSerial;
       break;
     case NexCasseteWait:
       protocol_state = SendNextCassete;
@@ -171,8 +175,10 @@ static void receive_data()
       lb_push(&rx_buffer, b);
       if(lb_size(&rx_buffer) == 3) //Size received
       {
-        if(b < 4) //Invalid size
+        if(b < 3) //Invalid size
         {
+          b = 0x11;//NAK;
+          uart_write(&b, 1); //Send NAK
           clr_established();
           return;
         }
@@ -194,18 +200,28 @@ static void receive_data()
           uart_write(&b, 1); //Send ACK
           execute_cmd();
           set_established();
+          lb_clear(&rx_buffer);
         }
         else
         {
-          b = NAK;
+          b = 0x12;//NAK;
           uart_write(&b, 1); //Send NAK
           clr_established();
+          lb_clear(&rx_buffer);
         }
 
       }
       lb_push(&rx_buffer, b);
     }
   }
+
+  if(timeout_riched(&timeout, sys_tick_count()))
+  {
+    b = 0x13;//NAK;
+    uart_write(&b, 1); //Send NAK
+    clr_established();
+  }
+
 }
 /*----------------------------------------------------------------------------*/
 static void wait_data()
@@ -222,7 +238,7 @@ static void wait_data()
     if(b == ENQ)
     {
       lb_push(&rx_buffer, b);
-      set_established();
+      timeout_set(&timeout, RX_TIMEOUT, sys_tick_count());
       transport_state = RxPacket;
       return;
     }
@@ -247,7 +263,7 @@ static void send_measure_data()
     uint8_t sz, i;
     uint16_t index = 1;
     char header;
-    char buffer[3];
+    char buffer[32];
     sz = *lb_at(&queue, 0) - 1;
     header = *lb_at(&queue, index ++);
     for(i = 0; i < sz && i < sizeof(buffer); i++)
@@ -280,6 +296,7 @@ static void send_packet(char header, const char *data, unsigned size)
       crc += data[i];
   }
   uart_write(&crc, 1);
+  transport_state = TxPacket;
 }
 /*----------------------------------------------------------------------------*/
 void protocol_push_grain_size(const decimal32_t *size)
@@ -287,6 +304,9 @@ void protocol_push_grain_size(const decimal32_t *size)
   char buffer[16];
   decimal32_t tmp;
   uint8_t sz;
+
+  if(!established)
+    return;
 
   decimal32_math_round(size, 0, &tmp);
   sz = snprintf(buffer, sizeof(buffer), "%4d.", tmp.data);
@@ -303,6 +323,14 @@ void protocol_push_current_force(const decimal32_t *force)
   char buffer1[16], buffer2[16];
   decimal32_t tmp;
   uint8_t size;
+
+  if(!established)
+    return;
+
+  if(!timeout_riched(&last_force_time, sys_tick_count()))
+    return;
+
+  timeout_set(&last_force_time, CURRENT_FORCE_PERIOD, sys_tick_count());
 
   decimal32_math_round(force, 1, &tmp);
   decimal32_str(&tmp, buffer2, sizeof(buffer2));
@@ -321,6 +349,9 @@ void protocol_push_strength(int index, int cell, const decimal32_t *strength)
   decimal32_t tmp;
   uint8_t size;
 
+  if(!established)
+    return;
+
   decimal32_math_round(strength, 2, &tmp);
   decimal32_str(&tmp, buffer2, sizeof(buffer2));
   size = snprintf(buffer1, sizeof(buffer1), "%6s,%2d,%2d", buffer2, index, cell);
@@ -332,12 +363,9 @@ void protocol_push_strength(int index, int cell, const decimal32_t *strength)
   }
 }
 /*----------------------------------------------------------------------------*/
-static void execute_cmd()
-{
-}
-/*----------------------------------------------------------------------------*/
 static void set_established()
 {
+  lb_clear(&rx_buffer);
   if(protocol_state == SendMeasureData && lb_size(&queue))
   {
     uint8_t sz;
@@ -351,6 +379,7 @@ static void set_established()
 /*----------------------------------------------------------------------------*/
 static void clr_established()
 {
+  lb_clear(&rx_buffer);
   transport_state = TxPacket;
   if(established)
     established --;
@@ -358,7 +387,51 @@ static void clr_established()
   if(established)
     send_data(1); //Retry
   else
+  {
     transport_state = TransportIdle;
+    lb_clear(&queue);
+  }
+}
+/*----------------------------------------------------------------------------*/
+static void execute_cmd()
+{
+  uint8_t b, sz;
+
+  lb_pop(&rx_buffer, &b); //ENQ
+  lb_pop(&rx_buffer, &b); //CMD
+  lb_pop(&rx_buffer, &sz); //SIZE
+
+  switch(b)
+  {
+  case 'P':
+    start_work();
+    break;
+  case 'S':
+    set_work_mode(ManualMode);
+    break;
+  case 'L':
+    set_work_mode(AutoMode);
+    break;
+  case 'I':
+  {
+    unsigned _mesh_index, samples;
+    work_mode_t mode;
+
+    lb_pop(&rx_buffer, &b);
+    _mesh_index = b;
+    lb_pop(&rx_buffer, &b);
+    _mesh_index |= (unsigned)b << 8;
+    lb_pop(&rx_buffer, &b);
+    samples = b;
+    lb_pop(&rx_buffer, &b);
+    mode = (b & 2) ? AutoMode : ManualMode;
+    set_mesh_index(_mesh_index);
+    set_samples(samples);
+    set_work_mode(mode);
+  }
+  default:
+    break;
+  }
 }
 /*----------------------------------------------------------------------------*/
 

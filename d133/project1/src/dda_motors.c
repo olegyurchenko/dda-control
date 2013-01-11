@@ -68,11 +68,11 @@ const unsigned char step_table[256]=
 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x07, 0x07
 };
 /*----------------------------------------------------------------------------*/
-#define STP1_MIN_PERIOD 600//us
+#define STP1_MIN_PERIOD 400//us
 #define STP2_MIN_PERIOD 400 //us
 #define STOPPAGE_TIME 30000 //us
 /*----------------------------------------------------------------------------*/
-#define ACCELERATION_STEP1 2
+#define ACCELERATION_STEP1 1
 #define DECELERATION_STEP1 16
 #define CHANGE_RATE_STEP1 1
 /*----------------------------------------------------------------------------*/
@@ -298,6 +298,7 @@ void motors_init()
 /*----------------------------------------------------------------------------*/
 static void start_timer()
 {
+  NVIC_InitTypeDef NVIC_InitStructure;
   RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM6, ENABLE);
 
   TIM_TimeBaseInitTypeDef base_timer;
@@ -310,6 +311,12 @@ static void start_timer()
   TIM_ITConfig(TIM6, TIM_IT_Update, ENABLE);
   TIM_Cmd(TIM6, ENABLE);
 
+  /* Enabling interrupts */
+  NVIC_InitStructure.NVIC_IRQChannel = TIM6_IRQn; // канал
+  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0; // приоритет
+  NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0; // приоритет субгруппы
+  NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE; // включаем канал
+  NVIC_Init(&NVIC_InitStructure); // инициализируем
   NVIC_EnableIRQ(TIM6_IRQn);
 }
 /*----------------------------------------------------------------------------*/

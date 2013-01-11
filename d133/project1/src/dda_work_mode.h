@@ -38,6 +38,8 @@ extern "C" {
 
 void work_mode_init();
 void set_work_mode(work_mode_t m);
+void set_samples(int samples);
+void start_work();
 work_mode_t work_mode();
 void start_work_menu();
 work_state_t work_state();

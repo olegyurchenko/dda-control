@@ -74,7 +74,7 @@ void uart_init()
 
   /* Enabling interrupts */
   NVIC_InitStructure.NVIC_IRQChannel = USART1_IRQn; // канал
-  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 0; // приоритет
+  NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 15; // приоритет
   NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0; // приоритет субгруппы
   NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE; // включаем канал
   NVIC_Init(&NVIC_InitStructure); // инициализируем

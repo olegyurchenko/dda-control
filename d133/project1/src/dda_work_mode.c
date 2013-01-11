@@ -30,7 +30,7 @@
 #include <sys_timer.h>
 #include <dda_protocol.h>
 #include <dda_db.h>
-#define DEBUG
+//#define DEBUG
 
 #ifdef DEBUG
 #include <console.h>
@@ -67,11 +67,37 @@ void work_mode_init()
 /*----------------------------------------------------------------------------*/
 void set_work_mode(work_mode_t m)
 {
-  state = Idle;
   mode = m;
+  if(mode == UnknownMode)
+    state = Idle;
+}
+/*----------------------------------------------------------------------------*/
+void set_samples(int samples)
+{
+  particles = samples;
+}
+/*----------------------------------------------------------------------------*/
+void start_work()
+{
   set_event_handler(work_handler, 0);
   if(mode == UnknownMode)
+  {
+    state = Idle;
     start_menu(&root_itm);
+  }
+  else
+  {
+    if(state == Idle)
+    {
+      state = Calibration;
+      if(mode == AutoMode)
+        start_flag = 1;
+      else
+        start_flag = 0;
+     }
+     else
+      start_flag = 1;
+  }
 }
 /*----------------------------------------------------------------------------*/
 work_mode_t work_mode()

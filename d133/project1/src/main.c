@@ -47,6 +47,9 @@ static void init()
   SystemInit();
   SystemCoreClockUpdate();
   
+  /* Configure the Priority Group to 4 bits */
+  NVIC_PriorityGroupConfig(NVIC_PriorityGroup_4);
+
   sys_timer_init();
   sheduler_init();
   uart_init();

@@ -19,6 +19,8 @@
 #include <dda_sensor.h>
 #include <sys_timer.h>
 /*----------------------------------------------------------------------------*/
+#define NO_CASSETTE //Unkomment if your cassette mechanick in not work
+
 static int position = CASSETTE_UNKNOWN_POSITION;
 static int cassete_pos_handler(void*, event_t evt, int param1, void *param2);
 static int dst_position, direction;
@@ -78,6 +80,7 @@ static int cassete_pos_handler(void *data, event_t evt, int param1, void *param2
   case MODE_SET_EVENT:
     if(!param1) //Mode exit
       return 0;
+#ifndef NO_CASSETTE
     sensors = sensors_real_state();
     state = Idle;
     if(is_cassete_position_unknown())
@@ -108,6 +111,10 @@ static int cassete_pos_handler(void *data, event_t evt, int param1, void *param2
     }
     motor_start(CasseteMotor, direction, 0);
     timeout_set(&timeout, CASSETTE_TIMEOUT, sys_tick_count());
+#else //NO_CASSETTE
+    position = dst_position;
+    state = Idle;
+#endif //NO_CASSETTE
     break;
 
   case IDLE_EVENT:
