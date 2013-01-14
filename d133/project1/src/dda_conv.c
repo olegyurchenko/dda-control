@@ -13,16 +13,14 @@
 */
 /*----------------------------------------------------------------------------*/
 #include "dda_conv.h"
+#include <dda_config.h>
 /*----------------------------------------------------------------------------*/
 //This value must set for every force sensor !!!
 //const decimal32_t force_k = {1, 0}; //1.
 //#define EMPTY
-//static decimal32_t force_k = {1, 0}; //1.
-static decimal64_t force_k = {12195122, 8};//0.12195122
+static decimal64_t force_k = SENSOR_RATIO;
 static decimal64_t zero_force = {0, 0}; //0
-static decimal64_t step_ratio = {714286, 7}; //0.0714286
-/*----------------------------------------------------------------------------*/
-#define TOUCH_DISCRETS 5
+static decimal64_t step_ratio = STEP_RATIO;
 /*----------------------------------------------------------------------------*/
 void discrets2force(int discr, decimal32_t* dst)
 {

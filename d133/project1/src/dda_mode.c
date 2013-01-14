@@ -25,15 +25,14 @@
 #include <dda_message.h>
 #include <dda_motors.h>
 #include <dda_text.h>
+#include <dda_config.h>
 /*----------------------------------------------------------------------------*/
 MENU_ITEM *root_menu = 0;
 static MENU_ITEM root_itm;
 static int root_handler(void *data, event_t evt, int param1, void *param2);
 static int splash_handler(void *data, event_t evt, int param1, void *param2);
 /*----------------------------------------------------------------------------*/
-#define VERSION "0.1.a"
-#define DEVICE_SERIAL "00001"
-#define DEVICE_MODEL "DDA-133"
+#define SPLASH_TIME 3000 //3s
 /*----------------------------------------------------------------------------*/
 const char *version_str()
 {
@@ -49,7 +48,10 @@ const char *device_model_str()
 /*----------------------------------------------------------------------------*/
 const char *device_serial_str()
 {
-  return DEVICE_SERIAL;
+  static char buffer[8] = {'\0'};
+  if(!buffer[0])
+    snprintf(buffer, sizeof(buffer), "%04u", DEVICE_SERIAL);
+  return buffer;
 }
 /*----------------------------------------------------------------------------*/
 void mode_init()
@@ -101,8 +103,6 @@ static int root_handler(void *data, event_t evt, int param1, void *param2)
   }
   return 0;
 }
-/*----------------------------------------------------------------------------*/
-#define SPLASH_TIME 3000 //3s
 /*----------------------------------------------------------------------------*/
 static void draw_splash_screen()
 {

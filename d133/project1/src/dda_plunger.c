@@ -19,8 +19,8 @@
 #include <dda_sensor.h>
 #include <sys_timer.h>
 #include <dda_motors.h>
+#include <dda_config.h>
 /*----------------------------------------------------------------------------*/
-#define PLUNGER_TIMEOUT 40000 //40s
 typedef enum
 {
   Idle,
@@ -37,9 +37,6 @@ static timeout_t timeout;
 static unsigned m_touch_position = 0;
 static unsigned top_position = 0;
 static unsigned zero_step = 0; //Motor step count when DOWN_SENSEOR OFF
-/*----------------------------------------------------------------------------*/
-#define SLOW_DOWN_POSITION 2000
-#define SLOW_RATE 128
 /*----------------------------------------------------------------------------*/
 int is_plunger_down()
 {

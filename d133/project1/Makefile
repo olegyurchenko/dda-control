@@ -58,8 +58,6 @@ LIBRARY_DIRS = -L lib/STM32F10x_StdPeriph_Driver/\
  -L lib/STM32_USB-FS-Device_Driver
 
 
-#uncomment if you want use CONSOLE
-#DEFINES = -D$(DEVICE_TYPE) -DHSE_VALUE=$(HSE_VALUE) $(USE_STDPERIPH_DRIVER) -DUSE_CONSOLE
 DEFINES = -D$(DEVICE_TYPE) -DHSE_VALUE=$(HSE_VALUE) $(USE_STDPERIPH_DRIVER)
 
 export DEFINES
@@ -107,6 +105,7 @@ MAIN_OBJS = $(sort \
  $(patsubst %.c,%.o,$(wildcard lib/CMSIS_CM3/*.c)) \
  $(STARTUP_OBJ))
 
+
 # all
 
 .PHONY: all
@@ -122,6 +121,9 @@ $(MAIN_OBJS): $(wildcard *.h) $(wildcard lib/STM32F10x_StdPeriph_Driver/*.h)\
  $(wildcard lib/STM32F10x_StdPeriph_Driver/inc/*.h)\
  $(wildcard lib/CMSIS_CM3/*.h)\
  $(wildcard lib/STM32_USB-FS-Device_Driver/inc/*.h)
+
+#config file
+$(MAIN_OBJS): $(SRC_DIR)/dda_config.h
 
 
 $(MAIN_BIN): $(MAIN_OUT)

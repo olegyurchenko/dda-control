@@ -18,14 +18,11 @@
 #include <event.h>
 #include <dda_sensor.h>
 #include <sys_timer.h>
+#include <dda_config.h>
 /*----------------------------------------------------------------------------*/
-#define NO_CASSETTE //Unkomment if your cassette mechanick in not work
-
 static int position = CASSETTE_UNKNOWN_POSITION;
 static int cassete_pos_handler(void*, event_t evt, int param1, void *param2);
 static int dst_position, direction;
-/*----------------------------------------------------------------------------*/
-#define CASSETTE_TIMEOUT 10000 //10s
 /*----------------------------------------------------------------------------*/
 typedef enum
 {
@@ -53,11 +50,12 @@ int is_cassete_position_unknown()
 /*----------------------------------------------------------------------------*/
 int cassette_position()
 {
-  return position;
+  return position == CASSETTE_UNKNOWN_POSITION ? CASSETTE_UNKNOWN_POSITION : position / CASSETE_CELL_STEP;
 }
 /*----------------------------------------------------------------------------*/
 void cassete_goto_position(int pos)
 {
+  pos *= CASSETE_CELL_STEP;
   if(pos >= 0 && pos < CASSETTE_MAX_CELL && pos != position)
   {
     dst_position = pos;
@@ -105,7 +103,7 @@ static int cassete_pos_handler(void *data, event_t evt, int param1, void *param2
         state = WaitSensorOn;
 
       if(dst_position > position)
-        direction = PreityClockwise;
+        direction = AntiClockwise;
       else
         direction = Clockwise;
     }
@@ -138,7 +136,7 @@ static int cassete_pos_handler(void *data, event_t evt, int param1, void *param2
     if(param1 == CASSETE_CELL_SENSOR && state == WaitSensorOn)
     {
       state = WaitMotorOff;
-      if(direction == PreityClockwise)
+      if(direction == AntiClockwise)
       {
         position ++;
         if(position >= dst_position)
@@ -174,7 +172,7 @@ static int cassete_pos_handler(void *data, event_t evt, int param1, void *param2
         else
           state = WaitSensorOn;
 
-        direction = PreityClockwise;
+        direction = AntiClockwise;
         motor_start(CasseteMotor, direction, 0);
         timeout_set(&timeout, CASSETTE_TIMEOUT, sys_tick_count());
         break;

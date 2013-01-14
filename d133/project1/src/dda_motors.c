@@ -68,9 +68,10 @@ const unsigned char step_table[256]=
 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x07, 0x07
 };
 /*----------------------------------------------------------------------------*/
-#define STP1_MIN_PERIOD 400//us
+#define STP1_MIN_PERIOD 500//us
 #define STP2_MIN_PERIOD 400 //us
 #define STOPPAGE_TIME 30000 //us
+#define STOPPAGE_COUNT 4
 /*----------------------------------------------------------------------------*/
 #define ACCELERATION_STEP1 1
 #define DECELERATION_STEP1 16
@@ -95,6 +96,7 @@ static enum MotorState
 } motor_state = Idle;
 static volatile uint32_t step_counter = 0;
 static volatile uint16_t min_period;
+static volatile uint16_t stoppage_count;
 /*----------------------------------------------------------------------------*/
 #ifdef USE_CONSOLE
 static CONSOLE_CMD acc_data, dec_data, stop_data, step_data;
@@ -361,6 +363,7 @@ void TIM6_IRQHandler()
           if(table_index <= 0)
           {
             motor_state = Stoppage;
+            stoppage_count = 0;
             TIM_SetAutoreload(TIM6, STOPPAGE_TIME);
           }
           else
@@ -394,11 +397,17 @@ void TIM6_IRQHandler()
         }
       } //if(!(step_counter & 1))
       break;
+
     case Stoppage:
-      set_enable(1); //Enable to inactive state
-      motor_state = Idle;
-      TIM_Cmd(TIM6, DISABLE);
-      NVIC_DisableIRQ(TIM6_IRQn);
+      stoppage_count ++;
+      TIM_SetAutoreload(TIM6, STOPPAGE_TIME);
+      if(stoppage_count >= STOPPAGE_COUNT)
+      {
+        set_enable(1); //Enable to inactive state
+        motor_state = Idle;
+        TIM_Cmd(TIM6, DISABLE);
+        NVIC_DisableIRQ(TIM6_IRQn);
+      }
       break;
 
     }

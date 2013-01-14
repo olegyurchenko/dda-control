@@ -26,7 +26,7 @@ typedef enum
   PlungerUp = 0,
   PlungerDown = 1,
   Clockwise = 0,
-  PreityClockwise = 1
+  AntiClockwise = 1
 } MotorDirection;
 
 typedef enum

@@ -30,7 +30,7 @@ const text_t text_en[] =
 , {STR_PLUNGER_END_KEY, "Plunger end key"}
 , {STR_CASSETTE_TIMEOUT, "Cassette timeout"}
 , {STR_TEST, "Test"}
-, {STR_CASSETTE_MOTOR_TEST, "Cassette motor test"}
+, {STR_CASSETTE_MOTOR_TEST, "Cassette rotation"}
 , {STR_GOTO_0_CELL, "Goto 0 cell"}
 , {STR_GOTO_NEXT_CELL, "Goto next cell"}
 , {STR_PLUNGER_MOTOR_TEST, "Plunger motor test"}
@@ -53,6 +53,9 @@ const text_t text_en[] =
 , {STR_PRESS_START, "Press START"}
 , {STR_FINISHING, "Finishing"}
 , {STR_WAIT_PROTOCOL, "Waiting protocol"}
+, {STR_GOTO_1_CELL, "Goto 1 cell"}
+, {STR_CLOCKWISE, "Clockwise"}
+, {STR_ANTICLOCKWISE, "Anticlockwise"}
 
 };
 /*----------------------------------------------------------------------------*/

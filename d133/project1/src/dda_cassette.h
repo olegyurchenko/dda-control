@@ -19,7 +19,6 @@
 #define CASSETTE_UNKNOWN_POSITION (-1)
 #define CASSETTE_NULL_POSITION 0
 #define CASSETTE_1ST_CELL 1
-#define CASSETTE_MAX_CELL 60
 
 extern handler_t cassete_handler;
 

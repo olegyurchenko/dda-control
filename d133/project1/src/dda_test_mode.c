@@ -27,20 +27,28 @@
 #include <dda_conv.h>
 #include <dda_text.h>
 #include <sys_timer.h>
+#include <dda_message.h>
 
 #ifdef USE_CONSOLE
 #include <console.h>
 #endif //USE_CONSOLE
+typedef enum
+{
+  Cassette0Pos,
+  Cassette1Pos,
+  CasseteClockwise,
+  CasseteAnticlockwise,
+  CasseteNext
+} cassette_test_t;
 /*----------------------------------------------------------------------------*/
 static int test_handler(void*, event_t evt, int param1, void *param2);
 /*----------------------------------------------------------------------------*/
-static int cassete0_handler(void*, event_t evt, int param1, void *param2);
-static int cassete_next_handler(void*, event_t evt, int param1, void *param2);
+static int cassete_test_handler(void*, event_t evt, int param1, void *param2);
 static int top_bottom_handler(void*, event_t evt, int param1, void *param2);
 static int adc_handler(void*, event_t evt, int param1, void *param2);
 /*----------------------------------------------------------------------------*/
 static MENU_ITEM root_itm,
-cassete_motor_itm, cassete0_itm, cassete_next_itm,
+cassete_motor_itm, cassete0_itm, cassete1_itm, clockwise_itm, anticlockwise_itm, cassete_next_itm,
 rod_motor_itm, fulldown_itm, fullup_itm,
 adc_itm;
 /*----------------------------------------------------------------------------*/
@@ -51,9 +59,15 @@ void test_mode_init()
 
   menu_item_init(get_text(STR_CASSETTE_MOTOR_TEST), 0, &cassete_motor_itm);
   menu_item_add_child(&root_itm,  &cassete_motor_itm);
-  menu_item_init(get_text(STR_GOTO_0_CELL), cassete0_handler, &cassete0_itm);
+  menu_item_init(get_text(STR_GOTO_0_CELL), cassete_test_handler, &cassete0_itm);
   menu_item_add_child(&cassete_motor_itm, &cassete0_itm);
-  menu_item_init(get_text(STR_GOTO_NEXT_CELL), cassete_next_handler, &cassete_next_itm);
+  menu_item_init(get_text(STR_GOTO_1_CELL), cassete_test_handler, &cassete1_itm);
+  menu_item_add_child(&cassete_motor_itm, &cassete1_itm);
+  menu_item_init(get_text(STR_CLOCKWISE), cassete_test_handler, &clockwise_itm);
+  menu_item_add_child(&cassete_motor_itm, &clockwise_itm);
+  menu_item_init(get_text(STR_ANTICLOCKWISE), cassete_test_handler, &anticlockwise_itm);
+  menu_item_add_child(&cassete_motor_itm, &anticlockwise_itm);
+  menu_item_init(get_text(STR_GOTO_NEXT_CELL), cassete_test_handler, &cassete_next_itm);
   menu_item_add_child(&cassete_motor_itm, &cassete_next_itm);
 
 
@@ -117,21 +131,13 @@ static void dispay_sensors()
   }
 }
 /*----------------------------------------------------------------------------*/
-static int cassete0_handler(void *data, event_t evt, int param1, void *param2)
+static int cassete_test_handler(void *data, event_t evt, int param1, void *param2)
 {
-  typedef enum
-  {
-    WaitSensorOff,
-    WaitSensorOn,
-    WaitMotorOff
-  } STATE;
-
-  static STATE state;
-  int sensors;
+  static int menu_index;
+  static cassette_test_t test_type;
+  int res;
 
   (void) data; //Prevent unused warning
-  (void) param1;
-  (void) param2;
 
   switch(evt)
   {
@@ -141,20 +147,53 @@ static int cassete0_handler(void *data, event_t evt, int param1, void *param2)
   case MODE_SET_EVENT:
     if(!param1) //Mode exit
       return 0;
-    lcd_clear();
-    sensors = sensors_state();
-    if(sensors & CASSETE_0_SENSOR)
-      state = WaitSensorOff;
-    else
-      state = WaitSensorOn;
-    motor_start(CasseteMotor, state == WaitSensorOff ? PreityClockwise : Clockwise, state == WaitSensorOff ? 100 : 0);
-    reset_cassette_position();
+    switch(test_type)
+    {
+    default:
+    case Cassette0Pos:
+      cassete_goto_position(CASSETTE_NULL_POSITION);
+      break;
+    case Cassette1Pos:
+      cassete_goto_position(CASSETTE_1ST_CELL);
+      break;
+    case CasseteClockwise:
+      motor_start(CasseteMotor, Clockwise, 0);
+      reset_cassette_position();
+      break;
+    case CasseteAnticlockwise:
+      motor_start(CasseteMotor, AntiClockwise, 0);
+      reset_cassette_position();
+      break;
+    case CasseteNext:
+      cassete_goto_position(cassette_position() + 1);
+      break;
+    }
+
     break;
 
   case MENU_EVENT:
-    set_event_handler(cassete0_handler, 0);
+    menu_index = param1;
+    switch(menu_index)
+    {
+    default:
+    case 1:
+      test_type = Cassette0Pos;
+      break;
+    case 2:
+      test_type = Cassette1Pos;
+      break;
+    case 3:
+      test_type = CasseteClockwise;
+      break;
+    case 4:
+      test_type = CasseteAnticlockwise;
+      break;
+    case 5:
+      test_type = CasseteNext;
+      break;
+    }
+    set_event_handler(cassete_test_handler, 0);
     return MENU_OK;
-    break;
 
   case KEY_PRESS_EVENT:
     if(param1 == KEY_MENU || param1 == KEY_STOP)
@@ -162,114 +201,62 @@ static int cassete0_handler(void *data, event_t evt, int param1, void *param2)
       motor_stop();
       set_event_handler(test_handler, 0);
       start_menu(&cassete_motor_itm);
+      set_menu_pos(menu_index - 1);
       return 1;
     }
     break;
 
-  case SENSOR_ON_EVENT:
-    if(param1 == CASSETE_0_SENSOR && state == WaitSensorOn)
+  case KEY_RELEASE_EVENT:
+    switch(test_type)
     {
-      state = WaitMotorOff;
+    case CasseteClockwise:
+    case CasseteAnticlockwise:
       motor_deceleration();
-    }
-    break;
-
-  case SENSOR_OFF_EVENT:
-    if(param1 == CASSETE_0_SENSOR && state == WaitSensorOff)
-      motor_deceleration();
-    break;
-
-  case MOTOR_OFF_EVENT:
-    if(state == WaitSensorOff)
-    {
-      state = WaitSensorOn;
-      motor_start(CasseteMotor, Clockwise, 100);
-    }
-    else
-    {
       set_event_handler(test_handler, 0);
       start_menu(&cassete_motor_itm);
-      return 1;
+      set_menu_pos(menu_index - 1);
+    default:
+      break;
     }
     break;
 
   default:
     break;
   }
-  return 0;
-}
-/*----------------------------------------------------------------------------*/
-static int cassete_next_handler(void *data, event_t evt, int param1, void *param2)
-{
-  typedef enum
+
+  switch(test_type)
   {
-    WaitSensorOff,
-    WaitSensorOn,
-    WaitMotorOff
-  } STATE;
-
-  static STATE state;
-  int sensors;
-
-  (void) data; //Prevent unused warning
-  (void) param1;
-  (void) param2;
-
-  switch(evt)
-  {
-  case IDLE_EVENT:
-    dispay_sensors();
-    break;
-  case MODE_SET_EVENT:
-    if(!param1) //Mode exit
-      return 0;
-    lcd_clear();
-    sensors = sensors_state();
-    if(sensors & CASSETE_CELL_SENSOR)
-      state = WaitSensorOff;
-    else
-      state = WaitSensorOn;
-    motor_start(CasseteMotor, PreityClockwise, 0);
-    reset_cassette_position();
-    break;
-
-  case MENU_EVENT:
-    set_event_handler(cassete_next_handler, 0);
-    return MENU_OK;
-    break;
-
-  case KEY_PRESS_EVENT:
-    if(param1 == KEY_MENU || param1 == KEY_STOP)
+  case Cassette0Pos:
+  case Cassette1Pos:
+  case CasseteNext:
+    res = handler_call(&cassete_handler, evt, param1, param2);
+    if(res == EVENT_HANDLER_DONE)
     {
-      motor_stop();
       set_event_handler(test_handler, 0);
       start_menu(&cassete_motor_itm);
-      set_menu_pos(1);
-      return 1;
+      set_menu_pos(menu_index - 1);
     }
-    break;
-  case SENSOR_ON_EVENT:
-    if(param1 == CASSETE_CELL_SENSOR && state == WaitSensorOn)
+    else
+    if(res == CASSETTE_TIMEOUT_ERROR)
     {
-      state = WaitMotorOff;
-      motor_deceleration();
+      set_event_handler(test_handler, 0);
+      start_menu(&cassete_motor_itm);
+      set_menu_pos(menu_index - 1);
+      show_message(get_text(STR_ERROR), get_text(STR_CASSETTE_TIMEOUT), 0);
+    }
+    else
+    if(res == USER_BREAK)
+    {
+      set_event_handler(test_handler, 0);
+      start_menu(&cassete_motor_itm);
+      set_menu_pos(menu_index - 1);
+      show_message(get_text(STR_WARNING), get_text(STR_POS_OPERATION_BREAK), 0);
     }
     break;
-
-  case SENSOR_OFF_EVENT:
-    if(param1 == CASSETE_CELL_SENSOR && state == WaitSensorOff)
-      state = WaitSensorOn;
-    break;
-
-  case MOTOR_OFF_EVENT:
-    set_event_handler(test_handler, 0);
-    start_menu(&cassete_motor_itm);
-    set_menu_pos(1);
-    break;
-
   default:
     break;
   }
+
   return 0;
 }
 /*----------------------------------------------------------------------------*/

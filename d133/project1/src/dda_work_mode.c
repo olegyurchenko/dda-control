@@ -30,15 +30,14 @@
 #include <sys_timer.h>
 #include <dda_protocol.h>
 #include <dda_db.h>
+#include <dda_config.h>
+
 //#define DEBUG
+
 
 #ifdef DEBUG
 #include <console.h>
 #endif
-/*----------------------------------------------------------------------------*/
-#define SLOW_RATE 128
-#define um_SLOW_OFFSET 1500 //1.5mm
-#define TOUCH_COUNT 3
 /*----------------------------------------------------------------------------*/
 static MENU_ITEM root_itm, auto_itm, manual_itm;
 static int work_handler(void *data, event_t evt, int param1, void *param2);
@@ -184,7 +183,7 @@ static void set_size_postion()
 /*----------------------------------------------------------------------------*/
 static int destruction_detect()
 {
-  static decimal32_t max_force = {50,0}; //!!! 10N
+  static decimal32_t max_force = MAX_FORCE; //!!! 10N
   //!!!!!!!!!!!!!!!!!!!!
   //TODO
   //!!!!!!!!!!!!!!!!!!!!

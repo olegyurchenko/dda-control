@@ -45,6 +45,9 @@
 #define STR_PRESS_START 27 //"Press START"
 #define STR_FINISHING 28 //"Finishing"
 #define STR_WAIT_PROTOCOL 29 //"Waiting protocol"
+#define STR_GOTO_1_CELL 30 //"Goto 1 cell"
+#define STR_CLOCKWISE 31 //"Clockwise"
+#define STR_ANTICLOCKWISE 32 //"Anticlockwise"
 
 #ifdef __cplusplus
 extern "C" {
