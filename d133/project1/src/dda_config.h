@@ -40,7 +40,7 @@
 /*----------------------------------------------------------------------------*/
 #if (DEVICE_SERIAL == 2202)
 #undef SENSOR_RATIO
-#define SENSOR_RATIO {565, 3} //0.575
+#define SENSOR_RATIO {575, 3} //0.575
 #undef CASSETTE_MAX_CELL
 #define CASSETTE_MAX_CELL 30
 #undef CASSETE_CELL_STEP
