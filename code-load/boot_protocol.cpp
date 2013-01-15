@@ -126,8 +126,8 @@ bool BootLoaderProtocol :: getVersionAndAllowedCmd()
     return false;
   }
 
-  if(verbose())
-    printf("Size %02xh\n", (unsigned) size & 0xff);
+//  if(verbose())
+//    printf("Size %02xh\n", (unsigned) size & 0xff);
 
   if(serial_read(m_serial, &m_version, 1, 1000) <= 0)
   {
@@ -145,8 +145,8 @@ bool BootLoaderProtocol :: getVersionAndAllowedCmd()
       m_errorString = "data timeout";
       return false;
     }
-    if(verbose())
-      printf("Allowed command %02xh\n", (unsigned) b & 0xff);
+//    if(verbose())
+//      printf("Allowed command %02xh\n", (unsigned) b & 0xff);
     m_allowedCmd.push_back(b);
     size --;
   }
@@ -194,12 +194,13 @@ bool BootLoaderProtocol :: readMemory(unsigned addr, unsigned short size, unsign
       m_errorString ="Data timeout";
       return false;
     }
-
+/*
     if(verbose())
     {
       for(int i = 0; i < sz; i++)
         printf("Data %02xh\n", (unsigned) dst[index + i] & 0xff);
     }
+*/
     size -= sz;
     index += sz;
   }
@@ -261,6 +262,8 @@ bool BootLoaderProtocol :: eraseFlash(unsigned short pageCount, const unsigned c
   serial_write(m_serial, &cs, 1);
   if(!waitAck())
     return false;
+  if(verbose())
+    printf("Erased %u pages\n", pageCount);
   return true;
 }
 /*----------------------------------------------------------------------------*/

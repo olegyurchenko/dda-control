@@ -7,7 +7,7 @@
 
 #define PRODUCT "DDA code load utility"
 #define VERSION "0.0.1"
-#define COPYRIGHT "(C) DDA team 2012"
+#define COPYRIGHT "(C) DDA team 2012,2013"
 #define BUILD __DATE__
 void help(char *argv0, opt_args *args);
 void version();
@@ -90,10 +90,10 @@ int main(int argc, char **argv)
 
   if(!args.get("check-only"))
   { //Erase flash
-    unsigned short pageCount = fileSize / 1024;
+    unsigned short pageCount = 1 + fileSize / PAGE_SIZE;
     if(pageCount > 256)
     {
-      fprintf(stderr, "Programm not support file grater then 256kb\n");
+      fprintf(stderr, "Programm not support file grater then %dkb\n", (PAGE_SIZE * 256) / 1024);
       return 2;
     }
 

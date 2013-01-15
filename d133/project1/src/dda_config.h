@@ -34,7 +34,7 @@
 #define PLUNGER_TIMEOUT 40000 //40s
 #define SLOW_DOWN_POSITION 2000
 //#define USE_CONSOLE //Uncomment if ouy use console interface
-#define NO_CASSETTE //Unkomment if your cassette mechanick in not work
+#define NO_CASSETTE //Uncomment if your cassette mechanick in not work
 
 
 /*----------------------------------------------------------------------------*/
@@ -45,12 +45,17 @@
 #define CASSETTE_MAX_CELL 30
 #undef CASSETE_CELL_STEP
 #define CASSETE_CELL_STEP 2
+#undef MAX_FORCE
+#define MAX_FORCE {2000, 0} //2000 N
 
 #endif //2202
 /*----------------------------------------------------------------------------*/
 #if (DEVICE_SERIAL == 2203)
 #undef SENSOR_RATIO
 #define SENSOR_RATIO {72, 3} //0.072
+#undef MAX_FORCE
+#define MAX_FORCE {200, 0} //200 N
+
 #endif //2203
 /*----------------------------------------------------------------------------*/
 

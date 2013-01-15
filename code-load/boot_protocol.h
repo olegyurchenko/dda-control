@@ -19,6 +19,7 @@
 #include <string>
 #include <vector>
 
+#define PAGE_SIZE 2048
 class BootLoaderProtocol
 {
 public:
