@@ -56,6 +56,16 @@ const text_t text_en[] =
 , {STR_GOTO_1_CELL, "Goto 1 cell"}
 , {STR_CLOCKWISE, "Clockwise"}
 , {STR_ANTICLOCKWISE, "Anticlockwise"}
+, {STR_DEVICE , "Device"}
+, {STR_GRIT, "Grit"}
+, {STR_SAMPLES, "Samples"}
+, {STR_AVG_STRENGTH, "P avg"}
+, {STR_ST_DEV_STRENGTH, "P dev"}
+, {STR_MAX_STRENGTH, "P max"}
+, {STR_MIN_STRENGTH, "P min"}
+, {STR_AVG_SIZE, "S avg"}
+, {STR_ST_DEV_SIZE, "S dev"}
+, {STR_MEASUREMENTS, "Measurements"}
 
 };
 /*----------------------------------------------------------------------------*/

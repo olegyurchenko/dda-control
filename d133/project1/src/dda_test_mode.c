@@ -44,7 +44,7 @@ typedef enum
 static int test_handler(void*, event_t evt, int param1, void *param2);
 /*----------------------------------------------------------------------------*/
 static int cassete_test_handler(void*, event_t evt, int param1, void *param2);
-static int top_bottom_handler(void*, event_t evt, int param1, void *param2);
+static int plunger_test_handler(void*, event_t evt, int param1, void *param2);
 static int adc_handler(void*, event_t evt, int param1, void *param2);
 /*----------------------------------------------------------------------------*/
 static MENU_ITEM root_itm,
@@ -73,10 +73,10 @@ void test_mode_init()
 
   menu_item_init(get_text(STR_PLUNGER_MOTOR_TEST), 0, &rod_motor_itm);
   menu_item_add_child(&root_itm,  &rod_motor_itm);
-  menu_item_init(get_text(STR_BOTTOM_POSITION), top_bottom_handler, &fulldown_itm);
+  menu_item_init(get_text(STR_BOTTOM_POSITION), plunger_test_handler, &fulldown_itm);
   fulldown_itm.data = (void *)PlungerDown;
   menu_item_add_child(&rod_motor_itm,  &fulldown_itm);
-  menu_item_init(get_text(STR_TOP_POSITION), top_bottom_handler, &fullup_itm);
+  menu_item_init(get_text(STR_TOP_POSITION), plunger_test_handler, &fullup_itm);
   menu_item_add_child(&rod_motor_itm,  &fullup_itm);
   fullup_itm.data = (void *)PlungerUp;
 
@@ -260,7 +260,7 @@ static int cassete_test_handler(void *data, event_t evt, int param1, void *param
   return 0;
 }
 /*----------------------------------------------------------------------------*/
-static int top_bottom_handler(void *data, event_t evt, int param1, void *param2)
+static int plunger_test_handler(void *data, event_t evt, int param1, void *param2)
 {
   static int dir = PlungerDown;
   typedef enum
@@ -302,7 +302,7 @@ static int top_bottom_handler(void *data, event_t evt, int param1, void *param2)
     break;
 
   case MENU_EVENT:
-    set_event_handler(top_bottom_handler, data);
+    set_event_handler(plunger_test_handler, data);
     return MENU_OK;
     break;
 

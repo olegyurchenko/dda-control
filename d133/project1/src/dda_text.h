@@ -48,6 +48,17 @@
 #define STR_GOTO_1_CELL 30 //"Goto 1 cell"
 #define STR_CLOCKWISE 31 //"Clockwise"
 #define STR_ANTICLOCKWISE 32 //"Anticlockwise"
+#define STR_DEVICE 33 //"Device"
+#define STR_GRIT 34 //"Grit"
+#define STR_SAMPLES 35 //"Samples"
+#define STR_AVG_STRENGTH 36 //"Avg. strength"
+#define STR_ST_DEV_STRENGTH 37 //"St. dev. strength"
+#define STR_MAX_STRENGTH 38 //"Max strength"
+#define STR_MIN_STRENGTH 39 //"Min strength"
+#define STR_AVG_SIZE 40 //"Avg. size"
+#define STR_ST_DEV_SIZE 41 //"St. dev. size"
+#define STR_MEASUREMENTS 42 //"Measurements"
+
 
 #ifdef __cplusplus
 extern "C" {

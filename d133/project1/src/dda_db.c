@@ -13,9 +13,10 @@
 */
 /*----------------------------------------------------------------------------*/
 #include "dda_db.h"
+#include <dda_config.h>
 /*----------------------------------------------------------------------------*/
 static int measure_count = 0;
-static measure_t last_measure;
+static measure_t measures[CASSETTE_MAX_CELL];
 static session_t current_session;
 
 void db_new_session(int grit_index, int particles)
@@ -32,8 +33,11 @@ void db_current_session(session_t *dst)
 /*----------------------------------------------------------------------------*/
 void db_add_measure(const measure_t* measure)
 {
-  last_measure = *measure;
-  measure_count++;
+  if((unsigned)measure_count < sizeof(measures)/sizeof(measures[0]))
+  {
+    measures[measure_count] = *measure;
+    measure_count++;
+  }
 }
 /*----------------------------------------------------------------------------*/
 int db_measure_count()
@@ -41,9 +45,10 @@ int db_measure_count()
   return measure_count;
 }
 /*----------------------------------------------------------------------------*/
-void db_last_measure(measure_t* dst)
+void db_measure(int index, measure_t* dst)
 {
-  *dst = last_measure;
+  if((unsigned)index < sizeof(measures)/sizeof(measures[0]) && index < measure_count)
+    *dst = measures[index];
 }
 /*----------------------------------------------------------------------------*/
 

@@ -33,11 +33,27 @@ static int root_handler(void *data, event_t evt, int param1, void *param2);
 static int splash_handler(void *data, event_t evt, int param1, void *param2);
 /*----------------------------------------------------------------------------*/
 #define SPLASH_TIME 3000 //3s
+//"Apr  1 2011"
+/*----------------------------------------------------------------------------*/
+#define YEAR (((__DATE__ [9]-'0'))*10+(__DATE__ [10]-'0'))
+/*----------------------------------------------------------------------------*/
+/* Month: 1 - 12 */
+#define MONTH (__DATE__ [2] == 'n' ? (__DATE__[1] == 'a' ?1 : 6) \
+              : __DATE__ [2] == 'b' ? 2 \
+              : __DATE__ [2] == 'r' ? (__DATE__[0] == 'M' ? 3 : 4) \
+              : __DATE__ [2] == 'y' ? 5 \
+              : __DATE__ [2] == 'l' ? 7 \
+              : __DATE__ [2] == 'g' ? 8 \
+              : __DATE__ [2] == 'p' ? 9 \
+              : __DATE__ [2] == 't' ? 10 \
+              : __DATE__ [2] == 'v' ? 11 : 12)
+/*----------------------------------------------------------------------------*/
+#define DAY ((__DATE__ [4]==' ' ? 0 : __DATE__[4]-'0')*10+(__DATE__[5]-'0'))
 /*----------------------------------------------------------------------------*/
 const char *version_str()
 {
   static char buffer[32];
-  snprintf(buffer, sizeof(buffer), "v%s (build %s)",VERSION, __DATE__);
+  snprintf(buffer, sizeof(buffer), "v%s (%02d-%02d-%02d)",VERSION, YEAR < 2000 ? 2000 + YEAR : YEAR, MONTH, DAY);
   return buffer;
 }
 /*----------------------------------------------------------------------------*/

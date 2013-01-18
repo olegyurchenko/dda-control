@@ -31,6 +31,7 @@
 #include <dda_protocol.h>
 #include <dda_db.h>
 #include <dda_config.h>
+#include <dda_result_view.h>
 
 //#define DEBUG
 
@@ -396,15 +397,12 @@ static int work_handler(void *data, event_t evt, int param1, void *param2)
 
   case Done:
     res = done_handler(data, evt, param1, param2);
-    if(res < 0)
+    if(res < 0 || res == EVENT_HANDLER_DONE)
     {
       state = Idle;
       start_flag = 0;
-    }
-    else
-    if(res == EVENT_HANDLER_DONE)
-    {
-      state = Idle;
+      if(db_measure_count())
+        view_result();
     }
     break;
 
@@ -761,12 +759,12 @@ static int measuring_handler(void *data, event_t evt, int param1, void *param2)
 
       if(touch_detect())
       {
-        if(motor_rate() > SLOW_RATE)
-          motor_change_rate(SLOW_RATE);
         touch_count ++;
 
         if(touch_count > TOUCH_COUNT)
         {
+          if(motor_rate() > SLOW_RATE)
+            motor_change_rate(SLOW_RATE);
           micro_state = WaitDestruction;
           set_size_postion();
         }

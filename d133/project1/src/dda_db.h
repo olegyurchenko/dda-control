@@ -40,7 +40,7 @@ void db_new_session(int grit_index, int particles);
 void db_current_session(session_t *dst);
 void db_add_measure(const measure_t* measure);
 int db_measure_count();
-void db_last_measure(measure_t* dst);
+void db_measure(int index, measure_t* dst);
 
 
 
