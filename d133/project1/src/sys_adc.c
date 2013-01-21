@@ -16,6 +16,7 @@
 #include "stm32f10x.h"
 #include <stdint.h>
 #include <dda_clib.h>
+#include <dda_config.h>
 /*----------------------------------------------------------------------------*/
 #ifdef USE_CONSOLE
 #include <console.h>

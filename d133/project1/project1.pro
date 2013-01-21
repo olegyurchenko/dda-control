@@ -32,7 +32,8 @@ HEADERS += \
     src/dda_cassette.h \
     src/console.h \
     src/view.h \
-    src/dda_result_view.h
+    src/dda_result_view.h \
+    src/sys_flash.h
 
 SOURCES += \
     src/sys_timer.c \
@@ -64,7 +65,8 @@ SOURCES += \
     src/dda_cassette.c \
     src/console.c \
     src/view.c \
-    src/dda_result_view.c
+    src/dda_result_view.c \
+    src/sys_flash.c
 
 INCLUDEPATH += \
 ../lib/CMSIS_CM3 \

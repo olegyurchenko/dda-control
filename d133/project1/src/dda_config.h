@@ -33,7 +33,7 @@
 #define TOUCH_COUNT 3
 #define PLUNGER_TIMEOUT 40000 //40s
 #define SLOW_DOWN_POSITION 2000
-//#define USE_CONSOLE //Uncomment if ouy use console interface
+#define USE_CONSOLE //Uncomment if ouy use console interface
 #define NO_CASSETTE //Uncomment if your cassette mechanick in not work
 
 

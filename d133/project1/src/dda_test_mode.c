@@ -28,6 +28,7 @@
 #include <dda_text.h>
 #include <sys_timer.h>
 #include <dda_message.h>
+#include <dda_config.h>
 
 #ifdef USE_CONSOLE
 #include <console.h>

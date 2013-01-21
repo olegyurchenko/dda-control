@@ -21,6 +21,7 @@
 #include <dda_db.h>
 #include <dda_clib.h>
 #include <dda_mesh.h>
+#include <dda_config.h>
 /*----------------------------------------------------------------------------*/
 #ifndef NO_PROTOCOL
   #ifdef USE_CONSOLE

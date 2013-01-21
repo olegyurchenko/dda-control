@@ -10,6 +10,8 @@
 #include <dda_mode.h>
 #include <event.h>
 #include <dda_protocol.h>
+#include <sys_flash.h>
+#include <dda_config.h>
 
 #ifdef USE_CONSOLE
 #include <console.h>
@@ -20,10 +22,6 @@ static void init();
 int main()
 {
   init();
-  lcd_put_line(0, "Test", SCR_ALIGN_CENTER);
-  lcd_add_scroll_text(1, 0, 16, "DDA is part of a software-hardware system");
-  lcd_put_line(1, "1234567890123456", SCR_ALIGN_LEFT);
-  lcd_update();
 
   //!!!!!!!!!!!!!!!!!!!!!!
   mode_init(); //STart of work
@@ -64,5 +62,6 @@ static void init()
   lcd_init();
   keys_init();
   sensors_init();
+  sflash_init();
 }
 /*----------------------------------------------------------------------------*/

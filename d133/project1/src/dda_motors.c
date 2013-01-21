@@ -14,6 +14,7 @@
 /*----------------------------------------------------------------------------*/
 #include "dda_motors.h"
 #include <stm32f10x.h>
+#include <dda_config.h>
 
 #ifdef USE_CONSOLE
 #include <console.h>
