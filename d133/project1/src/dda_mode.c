@@ -53,7 +53,7 @@ static int splash_handler(void *data, event_t evt, int param1, void *param2);
 const char *version_str()
 {
   static char buffer[32];
-  snprintf(buffer, sizeof(buffer), "v%s (%02d-%02d-%02d)",VERSION, YEAR < 2000 ? 2000 + YEAR : YEAR, MONTH, DAY);
+  snprintf(buffer, sizeof(buffer), "v%s (%02d-%02d-%02d)",VERSION, YEAR, MONTH, DAY);
   return buffer;
 }
 /*----------------------------------------------------------------------------*/
