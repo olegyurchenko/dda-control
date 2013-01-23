@@ -20,11 +20,14 @@
 /*----------------------------------------------------------------------------*/
 #ifdef USE_CONSOLE
 #include <console.h>
+#include <dda_uart.h>
 #define FLASH_DEBUG
 
-static CONSOLE_CMD flash_console1, flash_console2;
+static CONSOLE_CMD flash_console1, flash_console2, flash_console3, flash_console4;
 static int flash_cmd1(int argc, char **argv);
 static int flash_cmd2(int argc, char **argv);
+static int flash_cmd3(int argc, char **argv);
+static int flash_cmd4(int argc, char **argv);
 #endif //USE_CONSOLE
 /*----------------------------------------------------------------------------*/
 #ifdef FLASH_DEBUG
@@ -33,12 +36,17 @@ static int flash_cmd2(int argc, char **argv);
 #define FLASH_TRACE(...)
 #endif /**< #ifdef FLASH_DEBUG */
 /*----------------------------------------------------------------------------*/
-static uint32_t bytes_per_sector = 256; /* Page Erase (256 Bytes) */
-static uint32_t sector_count = 512*8;   /* 8-Mbit / 8 / 256 = 4096 */
-static uint32_t block_size = 1024*2;    /* Block Erase (2-Kbytes) */
+static int32_t bytes_per_page = 256; /* Page Erase (256 Bytes) */
+static int32_t page_count = 512*8;   /* 8-Mbit / 8 / 256 = 4096 */
+static int32_t block_size = 1024*2;    /* Block Erase (2-Kbytes) */
 /*----------------------------------------------------------------------------*/
-static flash_op_t flash_mode = SF_CLOSED;
-static uint8_t sflash_buffer[256];
+//flash_mode flags
+#define FLASH_READ 1
+#define FLASH_WRITE 2
+#define FLASH_MODIFIED 4
+/*----------------------------------------------------------------------------*/
+static int flash_mode = 0;
+static uint8_t sflash_buffer[1024];
 static off_t sflash_offset = 0;
 /*----------------------------------------------------------------------------*/
 static int send_byte(uint8_t byte, void *dst);
@@ -195,6 +203,20 @@ void sflash_init()
   flash_console2.help = "fid - Read FLASH status";
   flash_console2.handler = flash_cmd2;
   console_add_cmd(&flash_console2);
+
+  console_cmd_init(&flash_console3);
+  flash_console3.cmd = "fd";
+  flash_console3.help = "fd [<start addr> [<size>]] - Dump flash memory";
+  flash_console3.handler = flash_cmd3;
+  console_add_cmd(&flash_console3);
+
+  console_cmd_init(&flash_console4);
+  flash_console4.cmd = "ff";
+  flash_console4.help = "ff <start addr> <value> [<size>] - Fill <value> into flash memory";
+  flash_console4.handler = flash_cmd4;
+  console_add_cmd(&flash_console4);
+
+
 #endif //USE_CONSOLE
 }
 /*----------------------------------------------------------------------------*/
@@ -315,9 +337,9 @@ static int wait_busy(void)
     }
     /*!< Send a dummy byte to generate the clock needed by the FLASH
     and put the value of the status register in FLASH_Status variable */
-    flashstatus = send_byte(sFLASH_DUMMY_BYTE, &flashstatus);
+    send_byte(sFLASH_DUMMY_BYTE, &flashstatus);
   }
-  while (flashstatus & 0x80); /* Write in progress */
+  while (!(flashstatus & 0x80)); /* Write in progress */
 
   cs_high();
   return 1;
@@ -351,56 +373,56 @@ static void sflash_setup(void)
   {
     /**< AT45DB011D Density Code : 00010 = 1-Mbit */
     FLASH_TRACE("AT45DB011D detection\r\n");
-    bytes_per_sector = 256; /* Page Erase (256 Bytes) */
-    sector_count = 512;     /* 1-Mbit / 8 / 256 = 512 */
+    bytes_per_page = 256; /* Page Erase (256 Bytes) */
+    page_count = 512;     /* 1-Mbit / 8 / 256 = 512 */
     block_size = 1024*2;    /* Block Erase (2-Kbytes) */
   }
   else if(JEDEC_ID->density_code == DENSITY_CODE_021D)
   {
     /**< AT45DB021D Density Code : 00011 = 2-Mbit */
     FLASH_TRACE("AT45DB021D detection\r\n");
-    bytes_per_sector = 256; /* Page Erase (256 Bytes) */
-    sector_count = 512*2;   /* 2-Mbit / 8 / 256 = 1024 */
+    bytes_per_page = 256; /* Page Erase (256 Bytes) */
+    page_count = 512*2;   /* 2-Mbit / 8 / 256 = 1024 */
     block_size = 1024*2;    /* Block Erase (2-Kbytes) */
   }
   else if(JEDEC_ID->density_code == DENSITY_CODE_041D)
   {
     /**< AT45DB041D Density Code : 00100 = 4-Mbit */
     FLASH_TRACE("AT45DB041D detection\r\n");
-    bytes_per_sector = 256; /* Page Erase (256 Bytes) */
-    sector_count = 512*4;   /* 4-Mbit / 8 / 256 = 2048 */
+    bytes_per_page = 256; /* Page Erase (256 Bytes) */
+    page_count = 512*4;   /* 4-Mbit / 8 / 256 = 2048 */
     block_size = 1024*2;    /* Block Erase (2-Kbytes) */
   }
   else if(JEDEC_ID->density_code == DENSITY_CODE_081D)
   {
     /**< AT45DB081D Density Code : 00101 = 8-Mbit */
     FLASH_TRACE("AT45DB081D detection\r\n");
-    bytes_per_sector = 256; /* Page Erase (256 Bytes) */
-    sector_count = 512*8;   /* 8-Mbit / 8 / 256 = 4096 */
+    bytes_per_page = 256; /* Page Erase (256 Bytes) */
+    page_count = 512*8;   /* 8-Mbit / 8 / 256 = 4096 */
     block_size = 1024*2;    /* Block Erase (2-Kbytes) */
   }
   else if(JEDEC_ID->density_code == DENSITY_CODE_161D)
   {
     /**< AT45DB161D Density Code : 00110 = 16-Mbit */
     FLASH_TRACE("AT45DB161D detection\r\n");
-    bytes_per_sector = 512; /* Page Erase (512 Bytes) */
-    sector_count = 256*16;  /* 16-Mbit / 8 / 512 = 4096 */
+    bytes_per_page = 512; /* Page Erase (512 Bytes) */
+    page_count = 256*16;  /* 16-Mbit / 8 / 512 = 4096 */
     block_size = 1024*4;    /* Block Erase (4-Kbytes) */
   }
   else if(JEDEC_ID->density_code == DENSITY_CODE_321D)
   {
     /**< AT45DB321D Density Code : 00111 = 32-Mbit */
     FLASH_TRACE("AT45DB321D detection\r\n");
-    bytes_per_sector = 512; /* Page Erase (512 Bytes) */
-    sector_count = 256*32;  /* 32-Mbit / 8 / 512 = 8192 */
+    bytes_per_page = 512; /* Page Erase (512 Bytes) */
+    page_count = 256*32;  /* 32-Mbit / 8 / 512 = 8192 */
     block_size = 1024*4;    /* Block Erase (4-Kbytes) */
   }
   else if(JEDEC_ID->density_code == DENSITY_CODE_642D)
   {
     /**< AT45DB642D Density Code : 01000 = 64-Mbit */
     FLASH_TRACE("AT45DB642D detection\r\n");
-    bytes_per_sector = 1024; /* Page Erase (1 Kbyte) */
-    sector_count = 128*64;   /* 64-Mbit / 8 / 1024 = 8192 */
+    bytes_per_page = 1024; /* Page Erase (1 Kbyte) */
+    page_count = 128*64;   /* 64-Mbit / 8 / 1024 = 8192 */
     block_size = 1024*8;     /* Block Erase (8 Kbytes) */
   }
   else
@@ -432,6 +454,7 @@ static size_t AT45DB_flash_read_page_256(off_t pos, void* buffer, size_t size)
     uint8_t *read_buffer = buffer;
     uint32_t page = pos;
 
+    //FLASH_TRACE("AT45DB_flash_read_page_256(%04x)\r\n", page);
     nr = size;
 
     for (index = 0; index < nr; index++)
@@ -528,6 +551,7 @@ static size_t AT45DB_flash_write_page_256(off_t pos, const void* buffer, size_t 
     const uint8_t * write_buffer = buffer;
     uint32_t  page = pos;
 
+    //FLASH_TRACE("AT45DB_flash_write_page_256(%04x)\r\n", page);
     nr = size;
 
     for (index = 0; index < nr; index++)
@@ -667,31 +691,88 @@ int sflash_page_read(unsigned page, void *dst)
   return sflash_page_reader(page, dst, 1);
 }
 /*----------------------------------------------------------------------------*/
-#define INVALID_FLASH_ADDR(a) ((a) & 0xfff00000)
-#define VALID_FLASH_ADDR(a) (!INVALID_FLASH_ADDR(a))
-/*----------------------------------------------------------------------------*/
 /**Open flash for read or write*/
-int sflash_open(flash_op_t op)
+int sflash_open(int mode)
 {
-  flash_mode = op;
-  sflash_offset = 0xffffff00;
+  flash_mode = mode;
+  sflash_offset = 0xffffffff;
   sflash_seek(0, SEEK_SET);
   return 1;
 }
 /*----------------------------------------------------------------------------*/
+static unsigned page_mask()
+{
+  return bytes_per_page == 1024 ? 0x3ff : (bytes_per_page == 512 ? 0x1ff : 0xff);
+}
+/*----------------------------------------------------------------------------*/
+static unsigned addr_page(unsigned addr)
+{
+  switch(bytes_per_page)
+  {
+  case 1024:
+    return addr >> 10;
+  case 512:
+    return addr >> 9;
+  }
+  return addr >> 8;
+}
+/*----------------------------------------------------------------------------*/
+#define valid_page(p) ((p) >= 0 && (p) < page_count)
+/*----------------------------------------------------------------------------*/
 /**Close flash*/
 void sflash_close()
 {
-  if(flash_mode == SF_WRITE)
+  if((flash_mode & FLASH_WRITE) && (flash_mode & FLASH_MODIFIED))
   {
-    if((sflash_offset & 0xff) & VALID_FLASH_ADDR(sflash_offset))
-      sflash_page_write(sflash_offset >> 8, sflash_buffer);
+    sflash_page_writer(addr_page(sflash_offset), sflash_buffer, 1);
   }
-  flash_mode = SF_CLOSED;
+  flash_mode = 0;
+}
+/*----------------------------------------------------------------------------*/
+static int change_page(off_t old_page, off_t new_page)
+{
+  //FLASH_TRACE("Change_page(%04x, %04x)\r\n", old_page, new_page);
+  if(old_page == new_page)
+    return 1;
+
+  if(valid_page(old_page) && (flash_mode & FLASH_WRITE) && (flash_mode & FLASH_MODIFIED) && !sflash_page_writer(old_page, sflash_buffer, 1))
+    return 0;
+  flash_mode &= ~FLASH_MODIFIED;
+  if(!valid_page(new_page))
+    return 0;
+  if((flash_mode & FLASH_READ) && !sflash_page_reader(new_page, sflash_buffer, 1))
+    return 0;
+  if(!(flash_mode & FLASH_READ))
+    memset(sflash_buffer, 0xff, bytes_per_page);
+  return 1;
 }
 /*----------------------------------------------------------------------------*/
 off_t sflash_seek(off_t offset, int whence)
 {
+  off_t addr;
+  off_t flash_size;
+
+  flash_size = page_count * bytes_per_page;
+
+  addr = offset;
+  switch(whence)
+  {
+  case SEEK_CUR:
+    addr = sflash_offset + offset;
+    break;
+  case SEEK_END:
+    addr = flash_size + offset;
+    break;
+  }
+
+  if(addr >= 0 && addr < flash_size)
+  {
+    off_t page = addr_page(addr);
+    if(!change_page(addr_page(sflash_offset), page))
+      return -1;
+    sflash_offset = addr;
+  }
+  return sflash_tell();
 }
 /*----------------------------------------------------------------------------*/
 off_t sflash_tell()
@@ -702,11 +783,60 @@ off_t sflash_tell()
 /**Write flash*/
 int sflash_write(const void *src, unsigned size)
 {
+  unsigned i;
+  const uint8_t *p;
+  if(!(flash_mode & FLASH_WRITE))
+    return -1;
+  p = (const uint8_t *) src;
+  for(i = 0; i < size; i++)
+  {
+    off_t offset = sflash_offset & page_mask();
+    if(sflash_buffer[offset] != *p || !(flash_mode & FLASH_READ))
+    {
+      sflash_buffer[offset] = *p;
+      flash_mode |= FLASH_MODIFIED;
+    }
+
+    offset ++;
+    p ++;
+
+    if(offset >= bytes_per_page)
+    {
+      off_t page;
+      page = addr_page(sflash_offset);
+      if(!change_page(page, page+1) && i < size - 1)
+        return i;
+    }
+    sflash_offset ++;
+  }
+  return i;
 }
 /*----------------------------------------------------------------------------*/
 /**Read from flash*/
 int sflash_read(void *dst, unsigned size)
 {
+  unsigned i;
+  uint8_t *p;
+  if(!(flash_mode & FLASH_READ))
+    return -1;
+  p = (uint8_t *) dst;
+  for(i = 0; i < size; i++)
+  {
+    off_t offset = sflash_offset & page_mask();
+    *p = sflash_buffer[offset];
+    offset ++;
+    p ++;
+
+    if(offset >= bytes_per_page)
+    {
+      off_t page;
+      page = addr_page(sflash_offset);
+      if(!change_page(page, page+1) && i < size - 1)
+        return i;
+    }
+    sflash_offset ++;
+  }
+  return i;
 }
 /*----------------------------------------------------------------------------*/
 #ifdef USE_CONSOLE
@@ -738,6 +868,90 @@ static int flash_cmd2(int argc, char **argv)
   {
     console_printf("\r\nStatus:%02xh\r\n", (unsigned)status & 0xff);
   }
+
+  return CONSOLE_OK;
+}
+/*----------------------------------------------------------------------------*/
+static int flash_cmd3(int argc, char **argv)
+{
+  off_t start = 0;
+  size_t size = 256, i;
+
+  if(argc > 1)
+    start = str2int(argv[1]);
+  if(argc > 2)
+    size = str2int(argv[2]);
+
+  sflash_open(O_RDONLY);
+  sflash_seek(start, SEEK_SET);
+
+  for(i = 0; i < size; i += 16)
+  {
+    uint8_t buf[16];
+    unsigned tm;
+    int j;
+
+    while(uart_tx_size())
+    {
+    }
+
+    tm = sys_tick_count();
+    if(sflash_read(buf, 16) != 16)
+    {
+      console_printf("\r\nError read flash");
+      break;
+    }
+    tm = sys_tick_count() - tm;
+    if(!i)
+      console_printf("\r\n");
+
+    console_printf("%06x ", start + i);
+    for(j = 0; j < 16; j++)
+      console_printf("%02x ", (unsigned)buf[j] & 0xff);
+
+    for(j = 0; j < 16; j++)
+      console_printf("%c", (buf[j] >= 0x20 && buf[j] < 0x80) ? buf[j] : '.');
+    console_printf(" (%ums)\r\n", tm);
+  }
+  sflash_close();
+
+  return CONSOLE_OK;
+}
+/*----------------------------------------------------------------------------*/
+static int flash_cmd4(int argc, char **argv)
+{
+  off_t start = 0;
+  size_t size = 256;
+  uint8_t value = 0;
+  uint8_t buf[16];
+  unsigned tm;
+
+  if(argc > 1)
+    start = str2int(argv[1]);
+  if(argc > 2)
+    value = str2int(argv[2]);
+  if(argc > 3)
+    size = str2int(argv[3]);
+
+  memset(buf, value, 16);
+  sflash_open(O_WRONLY);
+  tm = sys_tick_count();
+  sflash_seek(start, SEEK_SET);
+  while(size)
+  {
+    unsigned sz = 16;
+    if(sz > size)
+      sz = size;
+    if(sflash_write(buf, sz) != (int)sz)
+    {
+      console_printf("\r\nError write flash");
+      break;
+    }
+    size -= sz;
+  }
+  sflash_close();
+  tm = sys_tick_count() - tm;
+  console_printf("\r\nTime elapsed:%ums", tm);
 
   return CONSOLE_OK;
 }

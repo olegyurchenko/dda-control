@@ -18,12 +18,12 @@
 #include <stdint.h>
 
 #ifndef SIZE_T_DEFINED
-typedef unsigned size_t;
+typedef uint32_t size_t;
 #define SIZE_T_DEFINED
 #endif
 
 #ifndef OFF_T_DEFINED
-typedef unsigned off_t;
+typedef int32_t off_t;
 #define OFF_T_DEFINED
 #endif
 
@@ -34,13 +34,10 @@ typedef unsigned off_t;
 #define SEEK_END 2 //The offset is set to the size of the file plus offset bytes.
 #endif
 
-typedef enum
-{
-  SF_CLOSED = 0,
-  SF_READ = 1,
-  SF_WRITE = 2
-
-} flash_op_t;
+//open mode values
+#define O_RDONLY 1
+#define O_WRONLY 2
+#define O_RDWR 3
 
 #ifdef __cplusplus
 extern "C" {
@@ -50,7 +47,7 @@ void sflash_init();
 int sflash_read_id(int32_t *dst);
 
 /**Open flash for read or write*/
-int sflash_open(flash_op_t op);
+int sflash_open(int mode);
 /**Close flash*/
 void sflash_close();
 
