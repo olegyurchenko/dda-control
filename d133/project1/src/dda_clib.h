@@ -16,6 +16,9 @@
 #ifndef DDA_CLIB_H_1355057303
 #define DDA_CLIB_H_1355057303
 
+#define sys_tolower(c)       ((c>='A' && c<='Z') ? (c+('a'-'A')) : c)
+#define sys_toupper(c)       ((c>='a' && c<='z') ? (c-('a'-'A')) : c)
+
 #ifdef __cplusplus
 extern "C" {
 #endif /*__cplusplus*/
@@ -47,6 +50,8 @@ int sys_snprintf(char *buf, unsigned buf_size, const char *fmt, ...);
 #define memcmp sys_memcmp
 #define sprintf sys_sprintf
 #define snprintf sys_snprintf
+#define tolower sys_tolower
+#define toupper sys_toupper
 #endif
 /*----------------------------------------------------------------------------*/
 #endif /*DDA_CLIB_H_1355057303*/

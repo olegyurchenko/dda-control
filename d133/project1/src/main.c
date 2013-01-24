@@ -11,6 +11,7 @@
 #include <event.h>
 #include <dda_protocol.h>
 #include <sys_flash.h>
+#include <dda_settings.h>
 #include <dda_config.h>
 
 #ifdef USE_CONSOLE
@@ -63,5 +64,6 @@ static void init()
   keys_init();
   sensors_init();
   sflash_init();
+  settings_init();
 }
 /*----------------------------------------------------------------------------*/

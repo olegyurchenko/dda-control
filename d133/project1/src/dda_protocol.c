@@ -38,7 +38,7 @@
 #define CURRENT_FORCE_PERIOD 20
 /*----------------------------------------------------------------------------*/
 static LOOP_BUFFER rx_buffer;
-static uint8_t protocol_buffer[32];
+static uint8_t protocol_buffer[128];
 /*----------------------------------------------------------------------------*/
 static LOOP_BUFFER queue;
 static uint8_t queue_buffer[1024];
@@ -178,7 +178,7 @@ static void receive_data()
       {
         if(b < 3) //Invalid size
         {
-          b = 0x11;//NAK;
+          b = NAK;
           uart_write(&b, 1); //Send NAK
           clr_established();
           return;
@@ -205,12 +205,12 @@ static void receive_data()
         }
         else
         {
-          b = 0x12;//NAK;
+          b = NAK;
           uart_write(&b, 1); //Send NAK
           clr_established();
           lb_clear(&rx_buffer);
         }
-
+        return;
       }
       lb_push(&rx_buffer, b);
     }
@@ -218,7 +218,7 @@ static void receive_data()
 
   if(timeout_riched(&timeout, sys_tick_count()))
   {
-    b = 0x13;//NAK;
+    b = NAK;
     uart_write(&b, 1); //Send NAK
     clr_established();
   }

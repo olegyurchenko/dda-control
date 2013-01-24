@@ -179,8 +179,8 @@ void sflash_init()
   //SPI_InitStructure.SPI_CPHA = SPI_CPHA_1Edge;
 
   SPI_InitStructure.SPI_NSS = SPI_NSS_Soft;
-  //SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_2;
-  SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_4;
+  SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_2;
+  //SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_4;
   //SPI_InitStructure.SPI_BaudRatePrescaler = SPI_BaudRatePrescaler_16;
 
   SPI_InitStructure.SPI_FirstBit = SPI_FirstBit_MSB;
@@ -694,7 +694,7 @@ int sflash_page_read(unsigned page, void *dst)
 /**Open flash for read or write*/
 int sflash_open(int mode)
 {
-  flash_mode = mode;
+  flash_mode = mode & (FLASH_READ | FLASH_WRITE);
   sflash_offset = 0xffffffff;
   sflash_seek(0, SEEK_SET);
   return 1;
@@ -738,9 +738,7 @@ static int change_page(off_t old_page, off_t new_page)
   if(valid_page(old_page) && (flash_mode & FLASH_WRITE) && (flash_mode & FLASH_MODIFIED) && !sflash_page_writer(old_page, sflash_buffer, 1))
     return 0;
   flash_mode &= ~FLASH_MODIFIED;
-  if(!valid_page(new_page))
-    return 0;
-  if((flash_mode & FLASH_READ) && !sflash_page_reader(new_page, sflash_buffer, 1))
+  if(valid_page(new_page) && (flash_mode & FLASH_READ) && !sflash_page_reader(new_page, sflash_buffer, 1))
     return 0;
   if(!(flash_mode & FLASH_READ))
     memset(sflash_buffer, 0xff, bytes_per_page);
@@ -785,12 +783,16 @@ int sflash_write(const void *src, unsigned size)
 {
   unsigned i;
   const uint8_t *p;
+  off_t flash_size;
+
+  flash_size = page_count * bytes_per_page;
   if(!(flash_mode & FLASH_WRITE))
     return -1;
   p = (const uint8_t *) src;
-  for(i = 0; i < size; i++)
+  for(i = 0; i < size && sflash_offset < flash_size; i++)
   {
-    off_t offset = sflash_offset & page_mask();
+    off_t offset;
+    offset = sflash_offset & page_mask();
     if(sflash_buffer[offset] != *p || !(flash_mode & FLASH_READ))
     {
       sflash_buffer[offset] = *p;
@@ -804,7 +806,7 @@ int sflash_write(const void *src, unsigned size)
     {
       off_t page;
       page = addr_page(sflash_offset);
-      if(!change_page(page, page+1) && i < size - 1)
+      if(!change_page(page, page+1))
         return i;
     }
     sflash_offset ++;
@@ -817,12 +819,18 @@ int sflash_read(void *dst, unsigned size)
 {
   unsigned i;
   uint8_t *p;
+  off_t flash_size;
+
+  flash_size = page_count * bytes_per_page;
+
   if(!(flash_mode & FLASH_READ))
     return -1;
+
   p = (uint8_t *) dst;
-  for(i = 0; i < size; i++)
+  for(i = 0; i < size && sflash_offset < flash_size; i++)
   {
-    off_t offset = sflash_offset & page_mask();
+    off_t offset;
+    offset = sflash_offset & page_mask();
     *p = sflash_buffer[offset];
     offset ++;
     p ++;
@@ -831,7 +839,7 @@ int sflash_read(void *dst, unsigned size)
     {
       off_t page;
       page = addr_page(sflash_offset);
-      if(!change_page(page, page+1) && i < size - 1)
+      if(!change_page(page, page+1))
         return i;
     }
     sflash_offset ++;
