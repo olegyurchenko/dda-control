@@ -13,6 +13,7 @@
 */
 /*----------------------------------------------------------------------------*/
 #include "dda_plunger.h"
+#include <dda_clib.h>
 #include <dda_motors.h>
 #include <dda_key.h>
 #include <event.h>
@@ -20,6 +21,7 @@
 #include <sys_timer.h>
 #include <dda_motors.h>
 #include <dda_config.h>
+#include <dda_settings.h>
 /*----------------------------------------------------------------------------*/
 typedef enum
 {
@@ -37,6 +39,25 @@ static timeout_t timeout;
 static unsigned m_touch_position = 0;
 static unsigned top_position = 0;
 static unsigned zero_step = 0; //Motor step count when DOWN_SENSEOR OFF
+static int is_init = 0;
+static unsigned plunger_timeout = PLUNGER_TIMEOUT;
+static uint8_t slow_rate = SLOW_RATE;
+/*----------------------------------------------------------------------------*/
+static void init()
+{
+  if(!is_init)
+  {
+    const char *v;
+    v = setting_get(S_PLUNGER_TIMEOUT);
+    if(v && *v)
+      plunger_timeout = atoi(v);
+    v = setting_get(S_SLOW_RATE);
+    if(v && *v)
+      slow_rate = atoi(v);
+
+    is_init = 1;
+  }
+}
 /*----------------------------------------------------------------------------*/
 int is_plunger_down()
 {
@@ -71,6 +92,7 @@ void set_touch_position()
 /*----------------------------------------------------------------------------*/
 void plunger_go_down()
 {
+  init();
   plunger_handler.handler = plunger_go_handler;
   plunger_handler.data = 0;
   direction = PlungerDown;
@@ -79,6 +101,7 @@ void plunger_go_down()
 /*----------------------------------------------------------------------------*/
 void plunger_go_up()
 {
+  init();
   plunger_handler.handler = plunger_go_handler;
   plunger_handler.data = 0;
   direction = PlungerUp;
@@ -123,7 +146,7 @@ static int plunger_go_handler(void *data, event_t evt, int param1, void *param2)
 
     state = WaitSensorOn;
     motor_start(PlungerMotor, direction, 0);
-    timeout_set(&timeout, PLUNGER_TIMEOUT, sys_tick_count());
+    timeout_set(&timeout, plunger_timeout, sys_tick_count());
     break;
 
   case IDLE_EVENT:
@@ -136,8 +159,8 @@ static int plunger_go_handler(void *data, event_t evt, int param1, void *param2)
 
     if(direction == PlungerDown && top_position)
     {
-      if(motor_rate() > SLOW_RATE && plunger_position() <= SLOW_DOWN_POSITION)
-        motor_change_rate(SLOW_RATE);
+      if(motor_rate() > slow_rate && plunger_position() <= SLOW_DOWN_POSITION)
+        motor_change_rate(slow_rate);
     }
     break;
 

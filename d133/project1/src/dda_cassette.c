@@ -19,10 +19,15 @@
 #include <dda_sensor.h>
 #include <sys_timer.h>
 #include <dda_config.h>
+#include <dda_settings.h>
+#include <dda_clib.h>
 /*----------------------------------------------------------------------------*/
 static int position = CASSETTE_UNKNOWN_POSITION;
-static int cassete_pos_handler(void*, event_t evt, int param1, void *param2);
+static int cassette_pos_handler(void*, event_t evt, int param1, void *param2);
 static int dst_position, direction;
+static int is_init = 0;
+static int cassete_cell_step = CASSETE_CELL_STEP;
+static unsigned cassette_timeout = CASSETTE_TIMEOUT;
 /*----------------------------------------------------------------------------*/
 typedef enum
 {
@@ -35,8 +40,30 @@ typedef enum
 
 static STATE state = Idle;
 /*----------------------------------------------------------------------------*/
-handler_t cassete_handler = {cassete_pos_handler, 0};
+handler_t cassette_handler = {cassette_pos_handler, 0};
 static timeout_t timeout;
+/*----------------------------------------------------------------------------*/
+static void init()
+{
+  if(!is_init)
+  {
+    const char *v;
+
+    v = setting_get(S_CELL_STEP);
+    if(v && *v)
+    {
+      cassete_cell_step = atoi(v);
+      if(!cassete_cell_step)
+        cassete_cell_step = 1;
+    }
+
+    v = setting_get(S_C_TIMEOUT);
+    if(v && *v)
+      cassette_timeout = atoi(v);
+
+    is_init = 1;
+  }
+}
 /*----------------------------------------------------------------------------*/
 void reset_cassette_position()
 {
@@ -50,22 +77,24 @@ int is_cassete_position_unknown()
 /*----------------------------------------------------------------------------*/
 int cassette_position()
 {
-  return position == CASSETTE_UNKNOWN_POSITION ? CASSETTE_UNKNOWN_POSITION : position / CASSETE_CELL_STEP;
+  init();
+  return position == CASSETTE_UNKNOWN_POSITION ? CASSETTE_UNKNOWN_POSITION : position / cassete_cell_step;
 }
 /*----------------------------------------------------------------------------*/
 void cassete_goto_position(int pos)
 {
-  pos *= CASSETE_CELL_STEP;
+  init();
+  pos *= cassete_cell_step;
   if(pos >= 0 && pos < CASSETTE_MAX_CELL && pos != position)
   {
     dst_position = pos;
-    cassete_handler.handler = cassete_pos_handler;
-    cassete_handler.data = 0;
-    handler_call(&cassete_handler, MODE_SET_EVENT, 1, 0);
+    cassette_handler.handler = cassette_pos_handler;
+    cassette_handler.data = 0;
+    handler_call(&cassette_handler, MODE_SET_EVENT, 1, 0);
   }
 }
 /*----------------------------------------------------------------------------*/
-static int cassete_pos_handler(void *data, event_t evt, int param1, void *param2)
+static int cassette_pos_handler(void *data, event_t evt, int param1, void *param2)
 {
   int sensors;
 
@@ -108,7 +137,7 @@ static int cassete_pos_handler(void *data, event_t evt, int param1, void *param2
         direction = Clockwise;
     }
     motor_start(CasseteMotor, direction, 0);
-    timeout_set(&timeout, CASSETTE_TIMEOUT, sys_tick_count());
+    timeout_set(&timeout, cassette_timeout, sys_tick_count());
 #else //NO_CASSETTE
     position = dst_position;
     state = Idle;
@@ -128,7 +157,7 @@ static int cassete_pos_handler(void *data, event_t evt, int param1, void *param2
   case SENSOR_ON_EVENT:
     if(param1 == CASSETE_0_SENSOR && state == WaitNullSensor)
     {
-      timeout_set(&timeout, CASSETTE_TIMEOUT, sys_tick_count());
+      timeout_set(&timeout, cassette_timeout, sys_tick_count());
       motor_deceleration();
       break;
     }
@@ -174,7 +203,7 @@ static int cassete_pos_handler(void *data, event_t evt, int param1, void *param2
 
         direction = AntiClockwise;
         motor_start(CasseteMotor, direction, 0);
-        timeout_set(&timeout, CASSETTE_TIMEOUT, sys_tick_count());
+        timeout_set(&timeout, cassette_timeout, sys_tick_count());
         break;
       }
     }

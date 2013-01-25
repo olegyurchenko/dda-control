@@ -184,14 +184,13 @@ static void set_size_postion()
 /*----------------------------------------------------------------------------*/
 static int destruction_detect()
 {
-  static decimal32_t max_force = MAX_FORCE; //!!! 10N
   //!!!!!!!!!!!!!!!!!!!!
   //TODO
   //!!!!!!!!!!!!!!!!!!!!
   int value = 0;
   sys_adc_get_value(&value);
   discrets2force(value, &force); //For display force
-  if(decimal32_cmp(&force, &max_force) > 0)
+  if(decimal32_cmp(&force, get_max_force()) > 0)
     return 1;
   protocol_push_current_force(&force);
   return 0;
@@ -494,7 +493,7 @@ static int calibrarion_handler(void *data, event_t evt, int param1, void *param2
 
   case CassetteCatch:
     lcd_put_line(1, get_text(STR_CASSETTE_GO_HOME), SCR_ALIGN_CENTER);
-    res = handler_call(&cassete_handler, evt, param1, param2);
+    res = handler_call(&cassette_handler, evt, param1, param2);
     if(res == EVENT_HANDLER_DONE)
     {
       set_zero();
@@ -704,7 +703,7 @@ static int measuring_handler(void *data, event_t evt, int param1, void *param2)
 
   case CassetteCatch:
     //lcd_put_line(1, get_text(STR_CASSETTE_GO_HOME), SCR_ALIGN_CENTER);
-    res = handler_call(&cassete_handler, evt, param1, param2);
+    res = handler_call(&cassette_handler, evt, param1, param2);
     if(res == EVENT_HANDLER_DONE)
     {
       //set_zero();
@@ -911,7 +910,7 @@ static int done_handler(void *data, event_t evt, int param1, void *param2)
 
   case CassetteCatch:
     lcd_put_line(1, get_text(STR_CASSETTE_GO_HOME), SCR_ALIGN_CENTER);
-    res = handler_call(&cassete_handler, evt, param1, param2);
+    res = handler_call(&cassette_handler, evt, param1, param2);
     if(res == EVENT_HANDLER_DONE)
     {
       micro_state = StartState;

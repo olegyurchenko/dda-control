@@ -230,7 +230,7 @@ static int cassete_test_handler(void *data, event_t evt, int param1, void *param
   case Cassette0Pos:
   case Cassette1Pos:
   case CasseteNext:
-    res = handler_call(&cassete_handler, evt, param1, param2);
+    res = handler_call(&cassette_handler, evt, param1, param2);
     if(res == EVENT_HANDLER_DONE)
     {
       set_event_handler(test_handler, 0);

@@ -14,7 +14,9 @@
 /*----------------------------------------------------------------------------*/
 #include "dda_motors.h"
 #include <stm32f10x.h>
+#include <dda_clib.h>
 #include <dda_config.h>
+#include <dda_settings.h>
 
 #ifdef USE_CONSOLE
 #include <console.h>
@@ -69,19 +71,6 @@ const unsigned char step_table[256]=
 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x07, 0x07
 };
 /*----------------------------------------------------------------------------*/
-#define STP1_MIN_PERIOD 500//us
-#define STP2_MIN_PERIOD 400 //us
-#define STOPPAGE_TIME 30000 //us
-#define STOPPAGE_COUNT 4
-/*----------------------------------------------------------------------------*/
-#define ACCELERATION_STEP1 1
-#define DECELERATION_STEP1 16
-#define CHANGE_RATE_STEP1 1
-/*----------------------------------------------------------------------------*/
-#define ACCELERATION_STEP2 1
-#define DECELERATION_STEP2 4
-#define CHANGE_RATE_STEP2 1
-/*----------------------------------------------------------------------------*/
 static int active_motor = -1;
 static volatile int32_t table_index;
 static volatile int32_t max_index;
@@ -97,7 +86,17 @@ static enum MotorState
 } motor_state = Idle;
 static volatile uint32_t step_counter = 0;
 static volatile uint16_t min_period;
-static volatile uint16_t stoppage_count;
+static volatile uint32_t stoppage_count;
+static volatile uint32_t max_stoppage_count = STOPPAGE_COUNT;
+
+static volatile int32_t stp_min_period1 = STP_MIN_PERIOD1;
+static volatile int32_t stp_min_period2 = STP_MIN_PERIOD2;
+static volatile int32_t acceleration_step1 = ACCELERATION_STEP1;
+static volatile int32_t deceleration_step1 = DECELERATION_STEP1;
+static volatile int32_t change_rate_step1 = CHANGE_RATE_STEP1;
+static volatile int32_t acceleration_step2 = ACCELERATION_STEP2;
+static volatile int32_t deceleration_step2 = DECELERATION_STEP2;
+static volatile int32_t change_rate_step2 = CHANGE_RATE_STEP2;
 /*----------------------------------------------------------------------------*/
 #ifdef USE_CONSOLE
 static CONSOLE_CMD acc_data, dec_data, stop_data, step_data;
@@ -402,7 +401,7 @@ void TIM6_IRQHandler()
     case Stoppage:
       stoppage_count ++;
       TIM_SetAutoreload(TIM6, STOPPAGE_TIME);
-      if(stoppage_count >= STOPPAGE_COUNT)
+      if(stoppage_count >= max_stoppage_count)
       {
         set_enable(1); //Enable to inactive state
         motor_state = Idle;
@@ -420,8 +419,52 @@ unsigned char motor_rate()
   return (unsigned char) max_index;
 }
 /*----------------------------------------------------------------------------*/
+static void get_const()
+{
+  const char *v;
+
+  max_stoppage_count = STOPPAGE_COUNT;
+  stp_min_period1 = STP_MIN_PERIOD1;
+  stp_min_period2 = STP_MIN_PERIOD2;
+  acceleration_step1 = ACCELERATION_STEP1;
+  deceleration_step1 = DECELERATION_STEP1;
+  change_rate_step1 = CHANGE_RATE_STEP1;
+  acceleration_step2 = ACCELERATION_STEP2;
+  deceleration_step2 = DECELERATION_STEP2;
+  change_rate_step2 = CHANGE_RATE_STEP2;
+
+  v = setting_get(S_STOPPAGE_COUNT);
+  if(v && *v)
+    max_stoppage_count = atoi(v);
+  v = setting_get(S_STP_MIN_PERIOD1);
+  if(v && *v)
+    stp_min_period1 = atoi(v);
+  v = setting_get(S_STP_MIN_PERIOD2);
+  if(v && *v)
+    stp_min_period2 = atoi(v);
+  v = setting_get(S_ACCELERATION_STEP1);
+  if(v && *v)
+    acceleration_step1 = atoi(v);
+  v = setting_get(S_DECELERATION_STEP1);
+  if(v && *v)
+    deceleration_step1 = atoi(v);
+  v = setting_get(S_CHANGE_RATE_STEP1);
+  if(v && *v)
+    change_rate_step1 = atoi(v);
+  v = setting_get(S_ACCELERATION_STEP2);
+  if(v && *v)
+    acceleration_step2 = atoi(v);
+  v = setting_get(S_DECELERATION_STEP2);
+  if(v && *v)
+    deceleration_step2 = atoi(v);
+  v = setting_get(S_CHANGE_RATE_STEP2);
+  if(v && *v)
+    change_rate_step2 = atoi(v);
+}
+/*----------------------------------------------------------------------------*/
 void motor_start(int mr, int dir, unsigned char rate)
 {
+  get_const();
   if(mr < 0
      || mr > 1
      || motor_state != Idle)
@@ -433,14 +476,15 @@ void motor_start(int mr, int dir, unsigned char rate)
   set_rs(0); //Reset to active state
   if(!mr)
   {
-    min_period = STP1_MIN_PERIOD / 7; //7 - minimal multiplier from step_table
-    table_step = ACCELERATION_STEP1;
+    min_period = stp_min_period1;
+    table_step = acceleration_step1;
   }
   else
   {
-    min_period = STP2_MIN_PERIOD / 7; //7 - minimal multiplier from step_table
-    table_step = ACCELERATION_STEP2;
+    min_period = stp_min_period2;
+    table_step = acceleration_step2;
   }
+  min_period /= 7; //7 - minimal multiplier from step_table
   table_index = 0;
   if(!rate)
     max_index = 255;
@@ -455,11 +499,11 @@ void motor_deceleration()
   {
     if(!active_motor)
     {
-      table_step = DECELERATION_STEP1;
+      table_step = deceleration_step1;
     }
     else
     {
-      table_step = DECELERATION_STEP2;
+      table_step = deceleration_step2;
     }
     motor_state = Decelerate;
   }
@@ -476,11 +520,11 @@ void motor_change_rate(unsigned char rate)
 
     if(!active_motor)
     {
-      table_step = CHANGE_RATE_STEP1;
+      table_step = change_rate_step1;
     }
     else
     {
-      table_step = CHANGE_RATE_STEP2;
+      table_step = change_rate_step2;
     }
     motor_state = ChangeRate;
   }
@@ -499,9 +543,9 @@ void motor_stop()
   case Slewing:
     motor_state = Decelerate;
     if(!active_motor)
-      table_step = DECELERATION_STEP1;
+      table_step = deceleration_step1;
     else
-      table_step = DECELERATION_STEP2;
+      table_step = deceleration_step2;
     table_index = table_step;
     break;
   }

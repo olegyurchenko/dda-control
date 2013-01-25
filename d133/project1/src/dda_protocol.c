@@ -22,6 +22,7 @@
 #include <dda_clib.h>
 #include <dda_mesh.h>
 #include <dda_config.h>
+#include <dda_settings.h>
 /*----------------------------------------------------------------------------*/
 #ifndef NO_PROTOCOL
   #ifdef USE_CONSOLE
@@ -56,7 +57,7 @@ typedef enum
 {
   SendSerial,
   SendCalibration,
-  SendMeasureData,
+  SendQueueData,
   SendNextCassete,
   SendEndOfTest
 } protocol_state_t;
@@ -69,7 +70,7 @@ static void send_data(int retry);
 static void receive_data();
 static void wait_data();
 static void send_packet(char header, const char *data /*=0*/, unsigned size /*=0*/);
-static void send_measure_data();
+static void send_queue_data();
 static void set_established();
 static void clr_established();
 static void execute_cmd();
@@ -143,7 +144,7 @@ static void send_data(int retry)
     }
 
     if(lb_size(&queue))
-      protocol_state = SendMeasureData;
+      protocol_state = SendQueueData;
   }
 
   switch(protocol_state)
@@ -154,8 +155,8 @@ static void send_data(int retry)
   case SendCalibration:
     send_packet('A', "000000", 6);
     break;
-  case SendMeasureData:
-    send_measure_data();
+  case SendQueueData:
+    send_queue_data();
     break;
   case SendNextCassete:
     send_packet('C', 0, 0);
@@ -255,7 +256,7 @@ static void wait_data()
     clr_established();
 }
 /*----------------------------------------------------------------------------*/
-static void send_measure_data()
+static void send_queue_data()
 {
   if(!lb_size(&queue))
     send_packet('N', device_serial_str(), 0);
@@ -367,7 +368,7 @@ void protocol_push_strength(int index, int cell, const decimal32_t *strength)
 static void set_established()
 {
   lb_clear(&rx_buffer);
-  if(protocol_state == SendMeasureData && lb_size(&queue))
+  if(protocol_state == SendQueueData && lb_size(&queue))
   {
     uint8_t sz;
     lb_pop(&queue, &sz);
@@ -429,6 +430,84 @@ static void execute_cmd()
     set_mesh_index(_mesh_index);
     set_samples(samples);
     set_work_mode(mode);
+    break;
+  }
+
+  case 'R': //Read parameter request
+  {
+    char name[16], buffer[32];
+    const char *value;
+    int i, count, index = 0;
+
+    sz -= 3;
+    while(sz && index < (int) sizeof(name) - 1)
+    {
+      lb_pop(&rx_buffer, &b);
+      name[index ++] = b;
+      sz --;
+    }
+    name[index] = '\0';
+    if(index)
+    {
+      value = setting_get(name);
+      index = snprintf(buffer, sizeof(buffer), "%s=%s", name, value);
+      lb_push(&queue, index + 1);
+      lb_push(&queue, 'R');
+      lb_push_buffer(&queue, buffer, index);
+    }
+    else
+    {
+      count = setting_count();
+      for(i = 0; i < count; i++)
+      {
+        const DDA_SETTING *s;
+        s = setting(i);
+        index = snprintf(buffer, sizeof(buffer), "%s=%s", s->name, s->value);
+        lb_push(&queue, index + 1);
+        lb_push(&queue, 'R');
+        lb_push_buffer(&queue, buffer, index);
+      }
+    }
+    lb_push(&queue, 1); //Empty R packet after all parameters
+    lb_push(&queue, 'R');
+    break;
+  }
+
+  case 'W': //Write parameter request
+  {
+    char buffer[32];
+    char *value = 0;
+    int op = -1;
+    int index = 0;
+
+    sz -= 3;
+    if(sz) //Operation
+    {
+      lb_pop(&rx_buffer, &b);
+      op = b;
+      sz --;
+    }
+
+    while(sz && index < (int) sizeof(buffer) - 1)
+    {
+      lb_pop(&rx_buffer, &b);
+      buffer[index] = b;
+      if(b == '=')
+      {
+        buffer[index] = '\0';
+        value = &buffer[index + 1];
+      }
+      index ++;
+      sz --;
+    }
+    buffer[index] = '\0';
+    if(op == 1) //Erase table
+      settings_clear();
+    if(index && value)
+      setting_set(buffer, value);
+    if(op == 2 && setting_modified()) //Write table
+      settings_write();
+    break;
   }
   default:
     break;

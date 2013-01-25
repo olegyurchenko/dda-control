@@ -26,6 +26,7 @@
 #include <dda_motors.h>
 #include <dda_text.h>
 #include <dda_config.h>
+#include <dda_settings.h>
 /*----------------------------------------------------------------------------*/
 MENU_ITEM *root_menu = 0;
 static MENU_ITEM root_itm;
@@ -53,25 +54,32 @@ static int splash_handler(void *data, event_t evt, int param1, void *param2);
 const char *version_str()
 {
   static char buffer[32];
-  snprintf(buffer, sizeof(buffer), "v%s (%02d-%02d-%02d)",VERSION, YEAR, MONTH, DAY);
+  snprintf(buffer, sizeof(buffer), "v%s (%02d%02d%02d)",VERSION, YEAR, MONTH, DAY);
   return buffer;
 }
 /*----------------------------------------------------------------------------*/
 const char *device_model_str()
 {
-  return DEVICE_MODEL;
+  const char *v;
+  v = setting_get(S_MODEL);
+  if(v == 0 || !*v)
+    return DEVICE_MODEL;
+  return v;
 }
 /*----------------------------------------------------------------------------*/
 const char *device_serial_str()
 {
-  static char buffer[8] = {'\0'};
-  if(!buffer[0])
-    snprintf(buffer, sizeof(buffer), "%04u", DEVICE_SERIAL);
-  return buffer;
+  const char *v;
+  v = setting_get(S_SERIAL);
+  if(v == 0 || !*v)
+    return "????";
+  return v;
 }
 /*----------------------------------------------------------------------------*/
 void mode_init()
 {
+  settings_read(); ///// REad settings from flash
+
   menu_item_init("/", 0, &root_itm);
   root_menu = &root_itm;
   work_mode_init();
@@ -180,7 +188,7 @@ static int splash_handler(void *data, event_t evt, int param1, void *param2)
     }
     break;
   case CasseteCatch:
-    res = handler_call(&cassete_handler, evt, param1, param2);
+    res = handler_call(&cassette_handler, evt, param1, param2);
     if(res == EVENT_HANDLER_DONE)
     {
       state = Idle;

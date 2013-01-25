@@ -29,10 +29,14 @@ void umsize(unsigned empty_touch, unsigned touch, decimal32_t* dst);
 void set_zero_force(int discr);
 int get_zero_force(void);
 int is_touch_force(int discr);
+const decimal32_t* get_max_force();
 
 #ifdef __cplusplus
 } //extern "C"
 #endif /*__cplusplus*/
+
+
+
 /*----------------------------------------------------------------------------*/
 #endif /*DDA_CONV_H_1356079362*/
 

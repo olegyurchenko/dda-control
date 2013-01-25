@@ -109,6 +109,12 @@ void setting_set_modified(int m)
   m_setting_modified = m;
 }
 /*----------------------------------------------------------------------------*/
+void settings_clear()
+{
+  m_setting_modified = m_setting_modified | m_setting_count;
+  m_setting_count = 0;
+}
+/*----------------------------------------------------------------------------*/
 int settings_read()
 {
   char buffer[sizeof(DDA_SETTING) + 4];

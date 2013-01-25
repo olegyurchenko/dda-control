@@ -13,7 +13,9 @@
 */
 /*----------------------------------------------------------------------------*/
 #include "dda_conv.h"
+#include <dda_clib.h>
 #include <dda_config.h>
+#include <dda_settings.h>
 /*----------------------------------------------------------------------------*/
 //This value must set for every force sensor !!!
 //const decimal32_t force_k = {1, 0}; //1.
@@ -21,11 +23,41 @@
 static decimal64_t force_k = SENSOR_RATIO;
 static decimal64_t zero_force = {0, 0}; //0
 static decimal64_t step_ratio = STEP_RATIO;
+static decimal32_t max_force = MAX_FORCE;
+static int is_init = 0;
+static int touch_discrets = TOUCH_DISCRETS;
+/*----------------------------------------------------------------------------*/
+static void init()
+{
+  if(!is_init)
+  {
+    const char *value;
+
+    value = setting_get(S_SENSOR_RATIO);
+    if(value != 0 && *value)
+      str_decimal64(value, &force_k);
+
+    value = setting_get(S_STEP_RATIO);
+    if(value != 0 && *value)
+      str_decimal64(value, &step_ratio);
+
+    value = setting_get(S_MAX_FORCE);
+    if(value != 0 && *value)
+      str_decimal32(value, &max_force);
+
+    value = setting_get(S_TOUCH_DISCRETS);
+    if(value != 0 && *value)
+      touch_discrets = atoi(value);
+
+    is_init = 1;
+  }
+}
 /*----------------------------------------------------------------------------*/
 void discrets2force(int discr, decimal32_t* dst)
 {
   decimal64_t src, f;
 
+  init();
   /*dst = (discr - zero_force) * force_k */
   //set_fast_division(1); //!!!!!!!!!!!!
   *dst = decimal32_init(discr, 0);
@@ -43,6 +75,8 @@ void discrets2force(int discr, decimal32_t* dst)
 void steps2um(unsigned step, decimal32_t* dst)
 {
   decimal64_t src, um;
+
+  init();
   //set_fast_division(1); //!!!!!!!!!!!!
   src = decimal64_init(step, 0);
   decimal64_mul(&src, &step_ratio, &um);
@@ -55,6 +89,8 @@ int um2steps(int um)
 {
   decimal64_t src, stp;
   decimal32_t dst;
+
+  init();
   src = decimal64_init(um, 0);
   decimal64_div(&src, &step_ratio, &stp);
   decimal64_math_round(&stp, 0, &stp);
@@ -66,6 +102,8 @@ int um2steps(int um)
 void umsize(unsigned empty_touch, unsigned touch, decimal32_t* dst)
 {
   decimal64_t d1, d2;
+
+  init();
   d1 = decimal64_init(touch, 0);
   d2 = decimal64_init(empty_touch, 0);
   decimal64_sub(&d2, &d1, &d1);
@@ -87,10 +125,18 @@ int get_zero_force(void)
 int is_touch_force(int discr)
 {
   decimal64_t src, touch;
+
+  init();
   src = decimal64_init(discr, 0);
-  touch = decimal64_init(TOUCH_DISCRETS, 0);
+  touch = decimal64_init(touch_discrets, 0);
   decimal64_sub(&src, &zero_force, &src);
   return decimal64_cmp(&src, &touch) > 0;
+}
+/*----------------------------------------------------------------------------*/
+const decimal32_t* get_max_force()
+{
+  init();
+  return &max_force;
 }
 /*----------------------------------------------------------------------------*/
 

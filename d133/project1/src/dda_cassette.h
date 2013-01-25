@@ -20,7 +20,7 @@
 #define CASSETTE_NULL_POSITION 0
 #define CASSETTE_1ST_CELL 1
 
-extern handler_t cassete_handler;
+extern handler_t cassette_handler;
 
 #define CASSETTE_TIMEOUT_ERROR (-1)
 
