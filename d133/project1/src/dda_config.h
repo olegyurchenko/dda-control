@@ -48,7 +48,7 @@
 /*----------------------------------------------------------------------------*/
 
 
-#define USE_CONSOLE //Uncomment if ouy use console interface
+//#define USE_CONSOLE //Uncomment if ouy use console interface
 #define NO_CASSETTE //Uncomment if your cassette mechanick in not work
 
 /*----------------------------------------------------------------------------*/

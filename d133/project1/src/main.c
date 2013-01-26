@@ -14,15 +14,17 @@
 #include <dda_settings.h>
 #include <dda_config.h>
 
-#ifdef USE_CONSOLE
+//#ifdef USE_CONSOLE
 #include <console.h>
-#endif //USE_CONSOLE
+//#endif //USE_CONSOLE
 /*----------------------------------------------------------------------------*/
 static void init();
 /*----------------------------------------------------------------------------*/
 int main()
 {
   init();
+  //console_printf("AT45DB011D detection\r\n");
+  console_printf("");
 
   //!!!!!!!!!!!!!!!!!!!!!!
   mode_init(); //STart of work

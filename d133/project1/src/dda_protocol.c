@@ -150,7 +150,8 @@ static void send_data(int retry)
   switch(protocol_state)
   {
   case SendSerial:
-    send_packet('N', device_serial_str(), 0);
+    send_packet('N', device_serial_str(), 0); ///!!!!!
+    //send_packet('N', "0000", 4); ///!!!!!
     break;
   case SendCalibration:
     send_packet('A', "000000", 6);
@@ -271,7 +272,7 @@ static void send_queue_data()
     for(i = 0; i < sz && i < sizeof(buffer); i++)
       buffer[i] = *lb_at(&queue, index ++);
 
-    send_packet(header, buffer, sz);
+    send_packet(header, sz ? buffer : 0, sz);
   }
 }
 /*----------------------------------------------------------------------------*/

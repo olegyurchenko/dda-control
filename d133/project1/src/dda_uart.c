@@ -89,6 +89,7 @@ int uart_write(const void *data, uint32_t size)
   int res = 0;
 
   buffer = (const uint8_t *)data;
+  USART_ITConfig(USART1, USART_IT_TXE, DISABLE);
   while(size && lb_push(&uart_buffer.tx, *buffer))
   {
     buffer ++;
