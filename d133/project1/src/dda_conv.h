@@ -29,7 +29,11 @@ void umsize(unsigned empty_touch, unsigned touch, decimal32_t* dst);
 void set_zero_force(int discr);
 int get_zero_force(void);
 int is_touch_force(int discr);
+
+void set_calibration_data(int steps, int discr);
+
 const decimal32_t* get_max_force();
+const decimal32_t* get_calibration_force();
 
 #ifdef __cplusplus
 } //extern "C"

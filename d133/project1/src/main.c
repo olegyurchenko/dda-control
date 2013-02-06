@@ -23,7 +23,6 @@ static void init();
 int main()
 {
   init();
-  //console_printf("AT45DB011D detection\r\n");
   console_printf("");
 
   //!!!!!!!!!!!!!!!!!!!!!!

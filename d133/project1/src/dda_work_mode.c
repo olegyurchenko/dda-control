@@ -176,6 +176,23 @@ static int touch_detect()
   return is_touch_force(value);
 }
 /*----------------------------------------------------------------------------*/
+static int calibration_force_riched()
+{
+  int value = 0;
+  sys_adc_get_value(&value);
+  discrets2force(value, &force); //For display force
+  if(decimal32_cmp(&force, get_calibration_force()) > 0)
+    return 1;
+  return 0;
+}
+/*----------------------------------------------------------------------------*/
+static void calc_calibration_results() //Calculate calibration results
+{
+  int value = 0;
+  sys_adc_get_value(&value);
+  set_calibration_data(plunger_position() - touch_position(), value);
+}
+/*----------------------------------------------------------------------------*/
 static void set_size_postion()
 {
   umsize(touch_position(), plunger_position(), &size);
@@ -419,13 +436,14 @@ static int calibrarion_handler(void *data, event_t evt, int param1, void *param2
     PlungerCatch,
     CassetteCatch,
     WaitTouch,
+    CalibrationForce,
     Down
   } MICRO_STATE;
 
   static MICRO_STATE micro_state = StartState;
   static timeout_t timeout = {0, 0};
   static int cursor = 0;
-  static int detect;
+  static int calibration_finish;
   static int slow_offset;
   static int touch_count = 0;
   int res;
@@ -438,7 +456,7 @@ static int calibrarion_handler(void *data, event_t evt, int param1, void *param2
     {
       plunger_go_down();
       micro_state = PlungerCatch;
-      detect = 0;
+      calibration_finish = 0;
       slow_offset = um2steps(um_SLOW_OFFSET);
       touch_count = 0;
     }
@@ -521,6 +539,60 @@ static int calibrarion_handler(void *data, event_t evt, int param1, void *param2
     res = handler_call(&plunger_handler, evt, param1, param2);
     if(res == EVENT_HANDLER_DONE)
     {
+      //plunger_go_down();
+      //micro_state = Down;
+      //Undefined behavior: Inpossible state
+      return EVENT_HANDLER_FAILED;
+    }
+    else
+    if(res == PLUNGER_TIMEOUT_ERROR)
+    {
+      micro_state = StartState;
+      show_message(get_text(STR_ERROR), get_text(STR_PLUNGER_TIMEOUT), 0);
+      return EVENT_HANDLER_FAILED;
+    }
+    else
+    if(res == PLUNGER_END_POS_ERROR)
+    {
+      micro_state = StartState;
+      show_message(get_text(STR_ERROR), get_text(STR_PLUNGER_END_KEY), 0);
+      return EVENT_HANDLER_FAILED;
+    }
+    else
+    if(res == USER_BREAK)
+    {
+      micro_state = StartState;
+      show_message(get_text(STR_WARNING), get_text(STR_POS_OPERATION_BREAK), 0);
+      return EVENT_HANDLER_FAILED;
+    }
+    else
+    {
+      if(motor_rate() > SLOW_RATE && (int)plunger_position() > slow_offset)
+      {
+        motor_change_rate(SLOW_RATE);
+        set_zero();
+      }
+
+      if(touch_detect())
+      {
+        touch_count ++;
+        if(touch_count > TOUCH_COUNT)
+        {
+          set_touch_position();
+          micro_state = CalibrationForce;
+        }
+      }
+      else
+        touch_count = 0;
+    }
+    break;
+
+  case CalibrationForce:
+    //lcd_put_line(1, get_text(STR_WAIT_TOUCH), SCR_ALIGN_CENTER);
+    res = handler_call(&plunger_handler, evt, param1, param2);
+    if(res == EVENT_HANDLER_DONE)
+    {
+      calc_calibration_results();
       plunger_go_down();
       micro_state = Down;
     }
@@ -546,29 +618,15 @@ static int calibrarion_handler(void *data, event_t evt, int param1, void *param2
       return EVENT_HANDLER_FAILED;
     }
     else
-    if(!detect)
+    if(!calibration_finish)
     {
-      if(motor_rate() > SLOW_RATE && (int)plunger_position() > slow_offset)
+      if(calibration_force_riched())
       {
-        motor_change_rate(SLOW_RATE);
-        set_zero();
+        calibration_finish = 1;
+        plunger_stop();
       }
-
-      if(touch_detect())
-      {
-        touch_count ++;
-        if(touch_count > TOUCH_COUNT)
-        {
-          set_touch_position();
-          detect = 1;
-          plunger_stop();
-        }
-      }
-      else
-        touch_count = 0;
-
     }
-    break;
+
 
   case Down:
     lcd_put_line(1, get_text(STR_PLUNGER_GO_HOME), SCR_ALIGN_CENTER);

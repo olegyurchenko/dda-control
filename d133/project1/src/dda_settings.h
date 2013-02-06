@@ -50,6 +50,7 @@ void setting_set_modified(int m);
 #define S_CELL_STEP "cellStep"
 #define S_C_TIMEOUT "cTimeout"
 #define S_TOUCH_DISCRETS "dTouch"
+#define S_CALIBRATION_FORCE "fCalibr"
 #define S_MAX_FORCE "maxForce"
 #define S_SLOW_RATE "slowRate"
 #define S_um_SLOW_OFFSET "umSlow"

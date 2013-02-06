@@ -16,6 +16,12 @@
 #include <dda_clib.h>
 #include <dda_config.h>
 #include <dda_settings.h>
+#include <dda_mesh.h>
+#define DEBUG
+
+#ifdef DEBUG
+#include <console.h>
+#endif
 /*----------------------------------------------------------------------------*/
 //This value must set for every force sensor !!!
 //const decimal32_t force_k = {1, 0}; //1.
@@ -24,8 +30,13 @@ static decimal64_t force_k = SENSOR_RATIO;
 static decimal64_t zero_force = {0, 0}; //0
 static decimal64_t step_ratio = STEP_RATIO;
 static decimal32_t max_force = MAX_FORCE;
+static decimal32_t calibration_force = CALIBRATION_FORCE;
 static int is_init = 0;
 static int touch_discrets = TOUCH_DISCRETS;
+/*----------------------------------------------------------------------------*/
+static decimal32_t k_force_to_steps;
+static decimal32_t k_discrets_to_steps;
+static int delta_discrets;
 /*----------------------------------------------------------------------------*/
 static void init()
 {
@@ -48,6 +59,10 @@ static void init()
     value = setting_get(S_TOUCH_DISCRETS);
     if(value != 0 && *value)
       touch_discrets = atoi(value);
+
+    value = setting_get(S_CALIBRATION_FORCE);
+    if(value != 0 && *value)
+      str_decimal32(value, &calibration_force);
 
     is_init = 1;
   }
@@ -139,5 +154,46 @@ const decimal32_t* get_max_force()
   return &max_force;
 }
 /*----------------------------------------------------------------------------*/
+const decimal32_t* get_calibration_force()
+{
+  init();
+  return &calibration_force;
+}
+/*----------------------------------------------------------------------------*/
+void set_calibration_data(int steps, int discr)
+{
+  decimal32_t f, s;
 
+  s = decimal32_init(steps, 0);
+  k_force_to_steps = decimal32_init(1, 0); //Do not live it uninitialised
+  k_discrets_to_steps = decimal32_init(1, 0); //Do not live it uninitialised
+  discrets2force(discr - touch_discrets, &f);
+  decimal32_div(&f, &s, &k_force_to_steps); //k_force_to_steps = force / steps
+  f = decimal32_init(discr - touch_discrets, 0);
+  decimal32_div(&f, &s, &k_discrets_to_steps); //k_discrets_to_steps = descr / steps
+
+  /**
+    XC := round(k_discrets_to_steps * size[grain] / ratio * relative_size_deviation);
+    XC := round(k_discrets_to_steps * steps * relative_size_deviation);
+  */
+  s = decimal32_init(um2steps(mesh()->min), 0);
+  decimal32_mul(&s, relative_size_deviation(), &s);
+  decimal32_mul(&s, &k_discrets_to_steps, &s);
+  decimal32_math_round(&s, 0, &s);
+  decimal32_abs(&s, &s);
+  delta_discrets = s.data; //XC
+
+#ifdef DEBUG
+  {
+    char buffer[32];
+    decimal32_str(&k_discrets_to_steps, buffer, sizeof(buffer));
+    console_printf("\r\nk_discrets_to_steps=%s", buffer);
+    console_printf("\r\ndelta_discrets=%d", delta_discrets);
+    decimal32_str(&k_force_to_steps, buffer, sizeof(buffer));
+    console_printf("\r\nk_force_to_steps=%s", buffer);
+  }
+#endif //DEBUG
+
+}
+/*----------------------------------------------------------------------------*/
 

@@ -23,7 +23,8 @@
 #define CASSETE_CELL_STEP 1
 #define CASSETTE_TIMEOUT 10000 //10s
 #define TOUCH_DISCRETS 5
-#define MAX_FORCE {50,0} //50N
+#define CALIBRATION_FORCE {50,0} //50N
+#define MAX_FORCE {200,0} //200N
 #define SLOW_RATE 128
 #define um_SLOW_OFFSET 1500 //1.5mm
 #define TOUCH_COUNT 3
@@ -48,7 +49,7 @@
 /*----------------------------------------------------------------------------*/
 
 
-//#define USE_CONSOLE //Uncomment if ouy use console interface
+#define USE_CONSOLE //Uncomment if ouy use console interface
 #define NO_CASSETTE //Uncomment if your cassette mechanick in not work
 
 /*----------------------------------------------------------------------------*/
