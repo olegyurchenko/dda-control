@@ -26,13 +26,20 @@ static int position = CASSETTE_UNKNOWN_POSITION;
 static int cassette_pos_handler(void*, event_t evt, int param1, void *param2);
 static int dst_position, direction;
 static int is_init = 0;
+static int max_cell = CASSETTE_MAX_CELL;
 static int cassete_cell_step = CASSETE_CELL_STEP;
 static unsigned cassette_timeout = CASSETTE_TIMEOUT;
+/*----------------------------------------------------------------------------*/
+//#define CASSETTE_0_DIRECTION AntiClockwise
+//#define CASSETTE_DIRECTION AntiClockwise
+#define CASSETTE_0_DIRECTION Clockwise
+#define CASSETTE_DIRECTION Clockwise
 /*----------------------------------------------------------------------------*/
 typedef enum
 {
   Idle = 0,
-  WaitNullSensor,
+  WaitNullSensorOn,
+  WaitNullSensorOff,
   WaitSensorOff,
   WaitSensorOn,
   WaitMotorOff
@@ -55,6 +62,7 @@ static void init()
       cassete_cell_step = atoi(v);
       if(!cassete_cell_step)
         cassete_cell_step = 1;
+      max_cell = CASSETTE_MAX_CELL/cassete_cell_step;
     }
 
     v = setting_get(S_C_TIMEOUT);
@@ -79,6 +87,12 @@ int cassette_position()
 {
   init();
   return position == CASSETTE_UNKNOWN_POSITION ? CASSETTE_UNKNOWN_POSITION : position / cassete_cell_step;
+}
+/*----------------------------------------------------------------------------*/
+int cassete_max_cell()
+{
+  init();
+  return CASSETTE_MAX_CELL/cassete_cell_step;
 }
 /*----------------------------------------------------------------------------*/
 void cassete_goto_position(int pos)
@@ -110,14 +124,15 @@ static int cassette_pos_handler(void *data, event_t evt, int param1, void *param
 #ifndef NO_CASSETTE
     sensors = sensors_real_state();
     state = Idle;
-    if(is_cassete_position_unknown())
+    if(is_cassete_position_unknown()
+      || (dst_position != position && dst_position == CASSETTE_NULL_POSITION))
     {
+      state = WaitNullSensorOn;
+      direction = CASSETTE_0_DIRECTION;
       if(sensors & CASSETE_0_SENSOR)
-        position = 0;
-      else
       {
-        state = WaitNullSensor;
-        direction = Clockwise;
+        direction = ! CASSETTE_0_DIRECTION;
+        state = WaitNullSensorOff;
       }
     }
 
@@ -132,9 +147,9 @@ static int cassette_pos_handler(void *data, event_t evt, int param1, void *param
         state = WaitSensorOn;
 
       if(dst_position > position)
-        direction = AntiClockwise;
+        direction = CASSETTE_DIRECTION;
       else
-        direction = Clockwise;
+        direction = !CASSETTE_DIRECTION;
     }
     motor_start(CasseteMotor, direction, 0);
     timeout_set(&timeout, cassette_timeout, sys_tick_count());
@@ -155,7 +170,7 @@ static int cassette_pos_handler(void *data, event_t evt, int param1, void *param
     break;
 
   case SENSOR_ON_EVENT:
-    if(param1 == CASSETE_0_SENSOR && state == WaitNullSensor)
+    if(param1 == CASSETE_0_SENSOR && state == WaitNullSensorOn)
     {
       timeout_set(&timeout, cassette_timeout, sys_tick_count());
       motor_deceleration();
@@ -165,7 +180,7 @@ static int cassette_pos_handler(void *data, event_t evt, int param1, void *param
     if(param1 == CASSETE_CELL_SENSOR && state == WaitSensorOn)
     {
       state = WaitMotorOff;
-      if(direction == AntiClockwise)
+      if(direction == CASSETTE_DIRECTION)
       {
         position ++;
         if(position >= dst_position)
@@ -187,10 +202,17 @@ static int cassette_pos_handler(void *data, event_t evt, int param1, void *param
   case SENSOR_OFF_EVENT:
     if(param1 == CASSETE_CELL_SENSOR && state == WaitSensorOff)
       state = WaitSensorOn;
+    else
+    if(param1 == CASSETE_0_SENSOR && state == WaitNullSensorOff)
+    {
+      timeout_set(&timeout, cassette_timeout, sys_tick_count());
+      motor_deceleration();
+      break;
+    }
     break;
 
   case MOTOR_OFF_EVENT:
-    if(state == WaitNullSensor)
+    if(state == WaitNullSensorOn)
     {
       position = 0;
       if(dst_position != position)
@@ -201,12 +223,22 @@ static int cassette_pos_handler(void *data, event_t evt, int param1, void *param
         else
           state = WaitSensorOn;
 
-        direction = AntiClockwise;
+        direction = CASSETTE_DIRECTION;
         motor_start(CasseteMotor, direction, 0);
         timeout_set(&timeout, cassette_timeout, sys_tick_count());
         break;
       }
     }
+
+    if(state == WaitNullSensorOff)
+    {
+      direction = CASSETTE_0_DIRECTION;
+      state = WaitNullSensorOn;
+      motor_start(CasseteMotor, direction, 0);
+      timeout_set(&timeout, cassette_timeout, sys_tick_count());
+      break;
+    }
+
     state = Idle;
     break;
 

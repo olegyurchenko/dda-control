@@ -7,8 +7,8 @@ ROOT = $(MAKEDIR)\..
 #------------------------------------------------------------------------------
 BC=$(ROOT)
 
-EXEFILE = code-load.exe
-OBJFILES = main.obj boot_protocol.obj ..\dda_ctrl\get_opts.obj ..\dda_ctrl\pc_serial.obj
+EXEFILE = dda_settings.exe
+OBJFILES = main.obj dda_protocol.obj ..\dda_ctrl\get_opts.obj ..\dda_ctrl\pc_serial.obj ..\dda_ctrl\logfile.obj
 INCLUDE_PATH = -I. -I$(BC)\include -I..\dda_ctrl
 LIB_PATH = -L$(BC)\lib
 
@@ -17,7 +17,7 @@ BCC32   = bcc32
 ILINK32 = ilink32
 BRC32   = brc32
 
-CFLAGS  = -Vx -Ve -X- -r- -a8 -b- -k -y -v -vi- -tWC -tWM -c $(INCLUDE_PATH)
+CFLAGS  = -Vx -Ve -X- -r- -a8 -b- -k -y -v -vi- -tWC -tWM -DWIN32 -c $(INCLUDE_PATH)
 LFLAGS  = -ap -Tpe -x -Gn -v
 RFLAGS  = -X -R 
 STDOBJS = c0x32.obj

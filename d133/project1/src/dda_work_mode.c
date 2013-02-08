@@ -290,7 +290,7 @@ static int mode_item_handler(void *data, event_t evt, int param1, void *param2)
     set_event_handler(work_handler, 0);
     if(mode == AutoMode)
     {
-      spin_edit_start(get_text(STR_NUMBER_OF_SAMPLES), &particles, CASSETTE_MAX_CELL, 1, 1);
+      spin_edit_start(get_text(STR_NUMBER_OF_SAMPLES), &particles, cassete_max_cell(), 1, 1);
       start_flag = 1;
     }
     else
@@ -626,7 +626,7 @@ static int calibrarion_handler(void *data, event_t evt, int param1, void *param2
         plunger_stop();
       }
     }
-
+    break;
 
   case Down:
     lcd_put_line(1, get_text(STR_PLUNGER_GO_HOME), SCR_ALIGN_CENTER);

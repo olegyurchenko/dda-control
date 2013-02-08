@@ -35,7 +35,7 @@
 /**dda_motors config*/
 /*----------------------------------------------------------------------------*/
 #define STP_MIN_PERIOD1 500//us
-#define STP_MIN_PERIOD2 400 //us
+#define STP_MIN_PERIOD2 300 //us
 #define STOPPAGE_TIME 30000 //us
 #define STOPPAGE_COUNT 4
 /*----------------------------------------------------------------------------*/
@@ -50,7 +50,7 @@
 
 
 #define USE_CONSOLE //Uncomment if you use console interface
-// #define NO_CASSETTE //Uncomment if your cassette mechanick in not work
+//#define NO_CASSETTE //Uncomment if your cassette mechanick in not work
 
 /*----------------------------------------------------------------------------*/
 #endif /*DDA_CONFIG_H_1358153982*/

@@ -33,6 +33,7 @@ void reset_cassette_position();
 int is_cassete_position_unknown();
 int cassette_position();
 void cassete_goto_position(int pos);
+int cassete_max_cell();
 
 #ifdef __cplusplus
 } //extern "C"
