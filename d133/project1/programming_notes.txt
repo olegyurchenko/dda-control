@@ -1,0 +1,116 @@
+======== 1. Subversion
+При svn update (обновлении файлов из репозитория) рядом с каждым файлом выводится буква модификатор
+oleg@olegstation:~/work/pts$ svn update
+U    api/c/include/pts_protocols.h
+D    api/Delphi/examples/board/board.dpr.cbk
+A    api/Delphi/examples/board/libpts.dll
+
+U - update - файл просто обновился
+A - add - добавился
+D - delete - удалился
+C - conflict !!!! - файл в состоянии кофликта (см. ниже)
+G - resolved confict - локальные модификации и модификации в репозитории в разных строках. Вносятся только строки 
+  с модификациями из репозитория
+  
+Конфликт возникает, если встречаются локальные модификации и модификации в репозитории (достаточно одной строки).
+Напр. В репозитории ктото изменил строку файла dda_config.h:37:#define STP_MIN_PERIOD1 500//us
+а ты тоже изменил эту строку: dda_config.h:37:#define STP_MIN_PERIOD1 300//us
+В этом случае более новые версии SVN задают вопрос, типа
+В чью пользу решить конфликт: в мою, в его или оставить конфликт.
+Соответвенно если решается "в мою сторону" - локальный файл не изменяется
+"в его сторону" - локальный заменяется файлом из репозитория,
+если кофликт остается - появляются два модифицированный файла с расширениями r<rev> где rev - номер ревизии,
+напр. 
+dda_config.h.r310
+dda_config.h.r312
+Для решения конфликта нужно удалить один из файлов, а у второго убрать расширение r<rev>
+
+======== 2. Консоль
+
+Прибор может работать в протокольном и консольном режиме.
+Протокольный режим - режим в котором последовательный порт DDA обслуживает интерфейс обмена с PC (в соответсвии 
+со спецификацией DDA-PCprot.doc).
+Консольный режим - отладочный режим, в котором последовательный порт DDA обслуживает консоль. При запуске
+терминальной программы на PC (напр. гипертерминал), при включении будет выведено:
+>AT45DB081D detection
+
+Set new: 'sensRatio'='1.0'=2752101309
+Set new: 'serial'='2203'=461651653
+
+Console v1 build: Feb  7 2013 20:31:59
+SystemCoreClock:23040000 Hz
+
+>
+Доступные команды можно получить по команде help:
+>help
+Available commands:
+help                 This help
+.....
+write                write - Write settings to flash
+и т.п.
+Режим задается в файле dda_config.h строкой
+#define USE_CONSOLE //Uncomment if you use console interface
+Если макрос USE_CONSOLE не закоментирован - работает консольный режим, иначе - протокольный.
+Типичный сценарий использование консоли - в модулях добавление вывода отладочной информации и добавление
+различный команда, напр. в файле dda_settings.c:
+#include <dda_config.h>
+/*----------------------------------------------------------------------------*/
+#ifdef USE_CONSOLE
+#include <console.h>
+#include <sys_timer.h>
+
+#define DEBUG
+
+static CONSOLE_CMD console1, console2, console3, console4;
+static int cmd1(int argc, char **argv);
+static int cmd2(int argc, char **argv);
+static int cmd3(int argc, char **argv);
+static int cmd4(int argc, char **argv);
+
+#endif
+/*----------------------------------------------------------------------------*/
+#ifdef DEBUG
+#define TRACE         console_printf
+#else
+#define TRACE(...)
+#endif /**< #ifdef DEBUG */
+/*----------------------------------------------------------------------------*/
+...
+/*----------------------------------------------------------------------------*/
+void settings_init()
+{
+#ifdef USE_CONSOLE
+  console_cmd_init(&console1);
+  console1.cmd = "set";
+  console1.help = "set <name> <value> - Set setting value";
+  console1.handler = cmd1;
+  console_add_cmd(&console1);
+
+  console_cmd_init(&console2);
+  console2.cmd = "get";
+  console2.help = "get <name> - Get setting value";
+  console2.handler = cmd2;
+  console_add_cmd(&console2);
+
+  console_cmd_init(&console3);
+  console3.cmd = "read";
+  console3.help = "read - Read settings from flash";
+  console3.handler = cmd3;
+  console_add_cmd(&console3);
+
+  console_cmd_init(&console4);
+  console4.cmd = "write";
+  console4.help = "write - Write settings to flash";
+  console4.handler = cmd4;
+  console_add_cmd(&console4);
+
+#endif //USE_CONSOLE
+}
+/*----------------------------------------------------------------------------*/
+Т.е. для консольного режима мы добавили вывод отладки в макросе TRACE через ф-цию console_printf
+и добавили 4 консольные команды
+
+======== 3. Настройки (settings)
+
+С 2013-01-24 в прибор было добавлено поддержку настроек, характерных для конкретного экземпляра, напр.
+серийный номер (раньше для каждого экземпляра прибора 

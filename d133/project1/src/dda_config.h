@@ -21,7 +21,7 @@
 #define STEP_RATIO {714286, 7} //0.0714286
 #define CASSETTE_MAX_CELL 60
 #define CASSETE_CELL_STEP 1
-#define CASSETTE_TIMEOUT 10000 //10s
+#define CASSETTE_TIMEOUT 20000 //ms
 #define TOUCH_DISCRETS 5
 #define CALIBRATION_FORCE {50,0} //50N
 #define MAX_FORCE {200,0} //200N
@@ -49,8 +49,8 @@
 /*----------------------------------------------------------------------------*/
 
 
-#define USE_CONSOLE //Uncomment if ouy use console interface
-#define NO_CASSETTE //Uncomment if your cassette mechanick in not work
+#define USE_CONSOLE //Uncomment if you use console interface
+// #define NO_CASSETTE //Uncomment if your cassette mechanick in not work
 
 /*----------------------------------------------------------------------------*/
 #endif /*DDA_CONFIG_H_1358153982*/

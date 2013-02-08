@@ -126,9 +126,9 @@ static void _init()
   lcd_write8(0x30); //Function set ( Interface is 8 bits long. )
   sys_sleep(10);    //Wait for more than 4.1 ms
   lcd_write8(0x30); //Function set ( Interface is 8 bits long. )
-  sys_usleep(500);  //Wait for more than 100 μs
+  sys_usleep(5000); // Було 500. Тепер LCD starts ok, no problem.(PM) (Must > 100 μs)
   lcd_write8(0x30); //Function set ( Interface is 8 bits long. )
-  sys_usleep(500);
+  sys_usleep(5000); // Було 500. Тепер LCD starts ok, no problem. (PM)
   lcd_write8(0x20); //Function set ( Set interface to be 4 bits long. ) Interface is 8 bits in length.
   lcd_write4(0x2c); // 0x28 - 5x8 font Function set ( Interface is 4 bits long. Specify
   //the number of display lines and character font. )
