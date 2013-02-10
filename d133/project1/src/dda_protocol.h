@@ -23,6 +23,7 @@ extern "C" {
 void protocol_init();
 void protocol_handler();
 void protocol_push_grain_size(const decimal32_t *size);
+void protocol_push_no_particle();
 void protocol_push_current_force(const decimal32_t *force);
 void protocol_push_strength(int index, int cell, const decimal32_t *strength);
 int is_measure_data_transmitted();

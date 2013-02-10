@@ -24,7 +24,7 @@ HSE_VALUE = 8000000L
 #HSE_VALUE = 25000000L
 
 # Enable debug compilation
-#DEBUG = 1
+DEBUG = 1
 
 # [OPTIONAL] Set the serial details for bootloading
 STM32LDR_PORT = /dev/ttyUSB0

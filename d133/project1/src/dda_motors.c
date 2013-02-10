@@ -115,12 +115,16 @@ static int acc_cmd(int argc, char **argv)
 /*----------------------------------------------------------------------------*/
 static int dec_cmd(int argc, char **argv)
 {
+  (void) argc; //Prevent unused warning
+  (void) argv;
   motor_deceleration();
   return CONSOLE_OK;
 }
 /*----------------------------------------------------------------------------*/
 static int stop_cmd(int argc, char **argv)
 {
+  (void) argc; //Prevent unused warning
+  (void) argv;
   motor_stop();
   return CONSOLE_OK;
 }
@@ -130,6 +134,8 @@ static int steps_cmd(int argc, char **argv)
   const char *state = "????";
   uint16_t counter;
 
+  (void) argc; //Prevent unused warning
+  (void) argv;
   counter = min_period;
   counter *= step_table[table_index];
   switch(motor_state)

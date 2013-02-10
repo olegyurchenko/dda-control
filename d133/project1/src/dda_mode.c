@@ -142,7 +142,7 @@ static int splash_handler(void *data, event_t evt, int param1, void *param2)
   static timeout_t timeout;
   typedef enum
   {
-    Idle,
+    SplahIdle,
     PlungerCatch,
     CasseteCatch
   } STATE;
@@ -156,7 +156,7 @@ static int splash_handler(void *data, event_t evt, int param1, void *param2)
 
   switch(state)
   {
-  case Idle:
+  case SplahIdle:
     break;
   case PlungerCatch:
     res = handler_call(&plunger_handler, evt, param1, param2);
@@ -168,21 +168,21 @@ static int splash_handler(void *data, event_t evt, int param1, void *param2)
     else
     if(res == PLUNGER_TIMEOUT_ERROR)
     {
-      state = Idle;
+      state = SplahIdle;
       show_message(get_text(STR_ERROR), get_text(STR_PLUNGER_TIMEOUT), 0);
       return -1;
     }
     else
     if(res == PLUNGER_END_POS_ERROR)
     {
-      state = Idle;
+      state = SplahIdle;
       show_message(get_text(STR_ERROR), get_text(STR_PLUNGER_END_KEY), 0);
       return -1;
     }
     else
     if(res == USER_BREAK)
     {
-      state = Idle;
+      state = SplahIdle;
       start_root_menu();
       return -1;
     }
@@ -191,19 +191,19 @@ static int splash_handler(void *data, event_t evt, int param1, void *param2)
     res = handler_call(&cassette_handler, evt, param1, param2);
     if(res == EVENT_HANDLER_DONE)
     {
-      state = Idle;
+      state = SplahIdle;
     }
     else
     if(res == CASSETTE_TIMEOUT_ERROR)
     {
-      state = Idle;
+      state = SplahIdle;
       show_message(get_text(STR_ERROR), get_text(STR_CASSETTE_TIMEOUT), 0);
       return -1;
     }
     else
     if(res == USER_BREAK)
     {
-      state = Idle;
+      state = SplahIdle;
       start_root_menu();
       return -1;
     }
@@ -228,7 +228,7 @@ static int splash_handler(void *data, event_t evt, int param1, void *param2)
     }
 
   default:
-    if(state == Idle && timeout_riched(&timeout, sys_tick_count()))
+    if(state == SplahIdle && timeout_riched(&timeout, sys_tick_count()))
     {
       set_work_mode(UnknownMode);
       start_work();

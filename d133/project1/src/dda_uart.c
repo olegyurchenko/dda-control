@@ -30,14 +30,6 @@ typedef struct
 static uint8_t tx[TX_BUFFER_SIZE], rx[RX_BUFFER_SIZE];
 static UART_BUFFER uart_buffer;
 /*----------------------------------------------------------------------------*/
-static void lock_buffer()
-{
-}
-/*----------------------------------------------------------------------------*/
-static void unlock_buffer()
-{
-}
-/*----------------------------------------------------------------------------*/
 void uart_init()
 {
   GPIO_InitTypeDef  GPIO_InitStructure;

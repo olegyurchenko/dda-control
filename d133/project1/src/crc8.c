@@ -61,8 +61,8 @@ unsigned char calc_crc_8(unsigned char crc, unsigned char ch)
 /*---------------------------------------------------------------------------*/
 unsigned char get_crc_8( unsigned char crc, const void *data, int size)
 {
-  unsigned char *buf;
-  buf = (unsigned char *)data;
+  const unsigned char *buf;
+  buf = (const unsigned char *)data;
   while (size--)
     crc = CALC_CRC_8(crc, *(buf++));
   return crc;

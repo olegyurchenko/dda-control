@@ -33,12 +33,11 @@
 #include <dda_config.h>
 #include <dda_result_view.h>
 
-//#define DEBUG
-
-
-#ifdef DEBUG
+#ifdef USE_CONSOLE
 #include <console.h>
+#define DEBUG
 #endif
+
 /*----------------------------------------------------------------------------*/
 static MENU_ITEM root_itm, auto_itm, manual_itm;
 static int work_handler(void *data, event_t evt, int param1, void *param2);
@@ -53,7 +52,9 @@ static work_mode_t mode = UnknownMode;
 static int particles = 1;
 static int start_flag = 0;
 static decimal32_t force = {0,0};
+static decimal32_t result_force = {0,0};
 static decimal32_t size = {0,0};
+static unsigned measure_touch_position;
 /*----------------------------------------------------------------------------*/
 void work_mode_init()
 {
@@ -83,7 +84,7 @@ void start_work()
   if(mode == UnknownMode)
   {
     state = Idle;
-    start_menu(&root_itm);
+    //start_menu(&root_itm);
   }
   else
   {
@@ -131,27 +132,32 @@ static void display()
   if(mode == ManualMode)
     state_msg = get_text(STR_MANUAL_MODE);
 
+  buffer[0] = '\0';
   switch(state)
   {
   case Idle:
     break;
   case Calibration:
     state_msg = get_text(STR_CALIBRATION);
+    decimal32_str(&force, fbuf, sizeof(fbuf));
+    snprintf(buffer, sizeof(buffer), "f:%-5s", fbuf);
     break;
   case Measuring:
     state_msg = get_text(STR_MEASURING);
+    decimal32_str(&force, fbuf, sizeof(fbuf));
+    decimal32_str(&size, sbuf, sizeof(sbuf));
+    snprintf(buffer, sizeof(buffer), "f:%-5s s:%-6s", fbuf, sbuf);
+    break;
+  case NexCasseteWait:
+    state_msg = get_text(STR_CASSETTE_WAIT);
     break;
   case Done:
     state_msg = get_text(STR_FINISHING);
     break;
   }
   lcd_put_line(0, state_msg, SCR_ALIGN_CENTER);
-
-  decimal32_str(&force, fbuf, sizeof(fbuf));
-  decimal32_str(&size, sbuf, sizeof(sbuf));
-  snprintf(buffer, sizeof(buffer), "f:%-5s s:%-6s", fbuf, sbuf);
-  lcd_put_line(1, buffer, SCR_ALIGN_LEFT);
-//  lcd_update();
+  if(buffer[0])
+    lcd_put_line(1, buffer, SCR_ALIGN_LEFT);
 }
 /*----------------------------------------------------------------------------*/
 static void set_zero()
@@ -193,24 +199,46 @@ static void calc_calibration_results() //Calculate calibration results
   set_calibration_data(plunger_position() - touch_position(), value);
 }
 /*----------------------------------------------------------------------------*/
-static void set_size_postion()
+/**Return 0 if no particle*/
+static int set_size_postion()
 {
-  umsize(touch_position(), plunger_position(), &size);
+  static decimal32_t min_size, k;
+  unsigned pos;
+
+  pos = plunger_position();
+
+  umsize(touch_position(), pos, &size);
+  min_size = decimal32_init(mesh()->min, 0);
+  k = decimal32_init(1, 0);
+  decimal32_sub(&k, relative_size_deviation(), &k); //k = 1 - 0.25;
+  decimal32_mul(&min_size, &k, &min_size);
+  if(decimal32_cmp(&size, &min_size) <= 0) //size <= min_size
+  {
+    protocol_push_no_particle();
+    return 0;
+  }
+
+  result_force = decimal32_init(0, 0);
+  measure_touch_position = pos;
   protocol_push_grain_size(&size);
+  return 1;
 }
 /*----------------------------------------------------------------------------*/
 static int destruction_detect()
 {
-  //!!!!!!!!!!!!!!!!!!!!
-  //TODO
-  //!!!!!!!!!!!!!!!!!!!!
   int value = 0;
   sys_adc_get_value(&value);
   discrets2force(value, &force); //For display force
+  protocol_push_current_force(&force);
+  if(decimal32_cmp(&force, &result_force) > 0)
+    result_force = force;
+
   if(decimal32_cmp(&force, get_max_force()) > 0)
     return 1;
-  protocol_push_current_force(&force);
-  return 0;
+  return is_destruction(touch_position() - measure_touch_position,
+                        plunger_position() - measure_touch_position,
+                        value
+                        );
 }
 /*----------------------------------------------------------------------------*/
 static void set_destruction_position()
@@ -223,11 +251,20 @@ static void set_destruction_position()
 
   measure.cell = cassette_position();
   measure.size = size;
-  measure.strength = force;
+  measure.strength = result_force;
 
-  protocol_push_strength(db_measure_count(), measure.cell, &force);
+  protocol_push_strength(db_measure_count(), measure.cell, &result_force);
   db_add_measure(&measure);
-
+#ifdef DEBUG
+  {
+    char buffer[32];
+    decimal32_str(&force, buffer, sizeof(buffer));
+    console_printf("\r\ncur:%s result:", buffer);
+    decimal32_str(&result_force, buffer, sizeof(buffer));
+    console_printf("%s\r\n", buffer);
+  }
+#endif
+  force = result_force;
 }
 /*----------------------------------------------------------------------------*/
 /*Use only for return menu position: Auto or Manual mode*/
@@ -330,7 +367,7 @@ static int work_handler(void *data, event_t evt, int param1, void *param2)
     lcd_clear();
     lcd_put_line(0, get_text(STR_WORK), SCR_ALIGN_CENTER);
     set_zero();
-    break;
+    return 0;
 
 
   case KEY_PRESS_EVENT:
@@ -359,6 +396,7 @@ static int work_handler(void *data, event_t evt, int param1, void *param2)
   switch(state)
   {
   case Idle:
+    start_work_menu();
     break;
 
   case Calibration:
@@ -443,6 +481,7 @@ static int calibrarion_handler(void *data, event_t evt, int param1, void *param2
   static MICRO_STATE micro_state = StartState;
   static timeout_t timeout = {0, 0};
   static int cursor = 0;
+  static int work_area;
   static int calibration_finish;
   static int slow_offset;
   static int touch_count = 0;
@@ -459,6 +498,7 @@ static int calibrarion_handler(void *data, event_t evt, int param1, void *param2
       calibration_finish = 0;
       slow_offset = um2steps(um_SLOW_OFFSET);
       touch_count = 0;
+      work_area = 0;
     }
     else
     {
@@ -567,23 +607,29 @@ static int calibrarion_handler(void *data, event_t evt, int param1, void *param2
     }
     else
     {
-      if(motor_rate() > SLOW_RATE && (int)plunger_position() > slow_offset)
+      if(!work_area)
       {
-        motor_change_rate(SLOW_RATE);
-        set_zero();
-      }
-
-      if(touch_detect())
-      {
-        touch_count ++;
-        if(touch_count > TOUCH_COUNT)
+        if((int)plunger_position() > slow_offset)
         {
-          set_touch_position();
-          micro_state = CalibrationForce;
+          motor_change_rate(SLOW_RATE);
+          set_zero();
+          work_area = 1;
         }
       }
       else
-        touch_count = 0;
+      { //work_area
+        if(touch_detect())
+        {
+          touch_count ++;
+          if(touch_count >= TOUCH_COUNT)
+          {
+            set_touch_position();
+            micro_state = CalibrationForce;
+          }
+        }
+        else
+          touch_count = 0;
+      }
     }
     break;
 
@@ -684,8 +730,10 @@ static int measuring_handler(void *data, event_t evt, int param1, void *param2)
   static timeout_t timeout = {0, 0};
   static int cursor = 0;
   static int detect;
+  static int work_area;
   static int slow_offset;
-  static int touch_count = 0;
+  static int detect_count = 0;
+  static int no_particle;
   int res;
 
   (void) data; //Prevent unused warning
@@ -700,6 +748,7 @@ static int measuring_handler(void *data, event_t evt, int param1, void *param2)
       force = decimal32_init(0,0);
       size = decimal32_init(0,0);
       detect = 0;
+      work_area = 0;
       //Calculate slow offset
       current_mesh = mesh();
       if(current_mesh == 0)
@@ -708,7 +757,8 @@ static int measuring_handler(void *data, event_t evt, int param1, void *param2)
       {
         slow_offset = (int)touch_position() - um2steps(current_mesh->max) - 500;//(255 - SLOW_RATE);
       }
-      touch_count = 0;
+      detect_count = 0;
+      no_particle = 0;
     }
     else
     {
@@ -786,6 +836,13 @@ static int measuring_handler(void *data, event_t evt, int param1, void *param2)
 
   case WaitTouch:
     res = handler_call(&plunger_handler, evt, param1, param2);
+    if(res == EVENT_HANDLER_DONE)
+    {
+      plunger_go_down();
+      micro_state = Down;
+      break;
+    }
+    else
     if(res == PLUNGER_TIMEOUT_ERROR)
     {
       micro_state = StartState;
@@ -808,26 +865,48 @@ static int measuring_handler(void *data, event_t evt, int param1, void *param2)
     }
     else
     {
-      if(motor_rate() > SLOW_RATE && (int)plunger_position() >= slow_offset)
+      if(!work_area)
       {
-        motor_change_rate(SLOW_RATE);
-        //set_zero();
-      }
-
-      if(touch_detect())
-      {
-        touch_count ++;
-
-        if(touch_count > TOUCH_COUNT)
+        lcd_put_line(1, get_text(STR_WAIT_TOUCH), SCR_ALIGN_CENTER);
+        if((int)plunger_position() >= slow_offset)
         {
-          if(motor_rate() > SLOW_RATE)
-            motor_change_rate(SLOW_RATE);
-          micro_state = WaitDestruction;
-          set_size_postion();
+          motor_change_rate(SLOW_RATE);
+          set_zero();
+          work_area = 1;
         }
       }
       else
-        touch_count = 0;
+      { //work_area
+        if(touch_detect())
+        {
+          detect_count ++;
+
+          if(detect_count >= TOUCH_COUNT)
+          {
+            if(motor_rate() > SLOW_RATE)
+              motor_change_rate(SLOW_RATE);
+            if(set_size_postion())
+            {
+              micro_state = WaitDestruction;
+              detect_count = 0;
+            }
+            else
+            {
+              plunger_stop();
+              no_particle = 1;
+            }
+          }
+        }
+        else
+        {
+          detect_count = 0;
+          if(plunger_position() > touch_position()) //No tablet
+          {
+            plunger_stop();
+            no_particle = 1;
+          }
+        }
+      } //work_area
     }
     break;
 
@@ -860,16 +939,28 @@ static int measuring_handler(void *data, event_t evt, int param1, void *param2)
       return EVENT_HANDLER_FAILED;
     }
     else
-    if(!detect && destruction_detect())
+    if(!detect)
     {
-      detect = 1;
-      set_destruction_position();
-      plunger_stop();
+      if(destruction_detect())
+      {
+        detect_count ++;
+        if(detect_count >= DESTRUCTION_DETECT_COUNT)
+        {
+          detect = 1;
+          set_destruction_position();
+          plunger_stop();
+        }
+      }
+      else
+        detect_count = 0;
     }
     break;
 
   case Down:
     //lcd_put_line(1, get_text(STR_PLUNGER_GO_HOME), SCR_ALIGN_CENTER);
+    if(no_particle)
+      lcd_put_line(1, get_text(STR_NO_PARTICLE), SCR_ALIGN_CENTER);
+
     res = handler_call(&plunger_handler, evt, param1, param2);
     if(res == EVENT_HANDLER_DONE)
     {

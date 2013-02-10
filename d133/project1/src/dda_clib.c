@@ -445,7 +445,7 @@ int sys_snprintf(char *buf, unsigned buf_size, const char *fmt, ...)
   data.size = buf_size;
   r = sys_nvprintf(buf_write, &data, fmt, ap);
   va_end(ap);
-  if(r < buf_size)
+  if(r < (int)buf_size)
     buf[r] = '\0';
   else
     buf[buf_size - 1] = '\0';

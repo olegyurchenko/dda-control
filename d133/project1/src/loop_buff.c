@@ -94,7 +94,7 @@ int lb_pop(LOOP_BUFFER *b, uint8_t *c)
 /*----------------------------------------------------------------------------*/
 int lb_pop_buffer(LOOP_BUFFER *b, void *buffer, uint16_t size)
 {
-  uint8_t c;
+  uint8_t c = 0;
   uint8_t *p;
   if(lb_size(b) < size)
     return 0;

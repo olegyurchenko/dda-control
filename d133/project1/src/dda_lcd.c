@@ -180,6 +180,7 @@ void _lcd_move(char n)
   lcd_write4(n | 0x80);
 }
 /*----------------------------------------------------------------------------*/
+#if 0
 static void lcd_out(int pos, const char *text, int size)
 {
   if(pos >= DISPLAY_WIDTH)
@@ -195,6 +196,7 @@ static void lcd_out(int pos, const char *text, int size)
     size --;
   }
 }
+#endif
 /*----------------------------------------------------------------------------*/
 //Hi level
 /*----------------------------------------------------------------------------*/

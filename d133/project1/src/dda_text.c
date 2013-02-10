@@ -43,8 +43,8 @@ const text_t text_en[] =
 , {STR_WORK_MODE, "Work mode"}
 , {STR_AUTO_MODE, "Auto mode"}
 , {STR_MANUAL_MODE, "Manual mode"}
-, {STR_PLUNGER_GO_HOME, "Plunger go home"}
-, {STR_CASSETTE_GO_HOME, "Cassette go home"}
+, {STR_PLUNGER_GO_HOME, "Plunger return"}
+, {STR_CASSETTE_GO_HOME, "Cassette return"}
 , {STR_POS_OPERATION_BREAK, "Positioning operation break !"}
 , {STR_NUMBER_OF_SAMPLES, "Samples count"}
 , {STR_CALIBRATION, "Calibration"}
@@ -66,6 +66,9 @@ const text_t text_en[] =
 , {STR_AVG_SIZE, "S avg"}
 , {STR_ST_DEV_SIZE, "S dev"}
 , {STR_MEASUREMENTS, "Measurements"}
+, {STR_NO_PARTICLE, "No particle"}
+, {STR_CASSETTE_WAIT, "Cassette wait"}
+, {STR_SESSION_RESULTS, "Session results"}
 
 };
 /*----------------------------------------------------------------------------*/

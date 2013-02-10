@@ -22,7 +22,8 @@
 /*----------------------------------------------------------------------------*/
 enum ReportString
 {
-  DeviceString = 0,
+  HeadString = 0,
+  DeviceString,
   MeshString,
   ParticlesString,
   AvgStrengthString,
@@ -179,11 +180,14 @@ static void result_get(void *data, int index, char **dst, SCR_ALIGN *align)
   *align = SCR_ALIGN_LEFT;
   switch(index)
   {
+  case HeadString:
+    snprintf(buffer, sizeof(buffer), "%s", get_text(STR_SESSION_RESULTS));
+    break;
   case DeviceString:
     snprintf(buffer, sizeof(buffer), "%-9s%6s", get_text(STR_DEVICE), device_serial_str());
     break;
   case MeshString:
-    snprintf(buffer, sizeof(buffer), "%-9s%6s", get_text(STR_GRIT), mesh()->caption);
+    snprintf(buffer, sizeof(buffer), "%-7s%8s", get_text(STR_GRIT), mesh()->caption);
     break;
   case ParticlesString:
     snprintf(buffer, sizeof(buffer), "%-9s%6d", get_text(STR_SAMPLES), db_measure_count());

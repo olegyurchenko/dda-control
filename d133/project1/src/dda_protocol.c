@@ -321,6 +321,23 @@ void protocol_push_grain_size(const decimal32_t *size)
   }
 }
 /*----------------------------------------------------------------------------*/
+void protocol_push_no_particle()
+{
+  char buffer[16];
+  uint8_t sz;
+
+  if(!established)
+    return;
+
+  sz = snprintf(buffer, sizeof(buffer), "-1    ");
+  if(lb_free(&queue) >= (unsigned)sz + 2)
+  {
+    lb_push(&queue, sz + 1);
+    lb_push(&queue, 'G');
+    lb_push_buffer(&queue, buffer, sz);
+  }
+}
+/*----------------------------------------------------------------------------*/
 void protocol_push_current_force(const decimal32_t *force)
 {
   char buffer1[16], buffer2[16];

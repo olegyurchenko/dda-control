@@ -58,7 +58,9 @@
 #define STR_AVG_SIZE 40 //"Avg. size"
 #define STR_ST_DEV_SIZE 41 //"St. dev. size"
 #define STR_MEASUREMENTS 42 //"Measurements"
-
+#define STR_NO_PARTICLE 43 //"No particle"
+#define STR_CASSETTE_WAIT 44 //"Please, insert next cassette"
+#define STR_SESSION_RESULTS 45 //"Session results"
 
 #ifdef __cplusplus
 extern "C" {
