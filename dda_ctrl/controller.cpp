@@ -240,7 +240,7 @@ bool DDAController :: rxPacket(int serial)
       m_rxData.push_back(rx);
       if(m_rxData.size() == 3) //Pack length received
       {
-        if(rx < 4) //Invalid packet length
+        if(rx < 3) //Invalid packet length
         {
           m_log->Exception("Invalid packet length (%d)", rx);
           if(m_status == Idle)

@@ -50,7 +50,7 @@
 /*----------------------------------------------------------------------------*/
 
 
-#define USE_CONSOLE //Uncomment if you use console interface
+//#define USE_CONSOLE //Uncomment if you use console interface
 //#define NO_CASSETTE //Uncomment if your cassette mechanick in not work
 
 /*----------------------------------------------------------------------------*/

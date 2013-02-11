@@ -876,6 +876,7 @@ static int measuring_handler(void *data, event_t evt, int param1, void *param2)
         }
       }
       else
+      if(!no_particle) //if no particle - prevent continue detect
       { //work_area
         if(touch_detect())
         {
@@ -902,6 +903,7 @@ static int measuring_handler(void *data, event_t evt, int param1, void *param2)
           detect_count = 0;
           if(plunger_position() > touch_position()) //No tablet
           {
+            protocol_push_no_particle();
             plunger_stop();
             no_particle = 1;
           }

@@ -333,7 +333,7 @@ void protocol_push_no_particle()
   if(lb_free(&queue) >= (unsigned)sz + 2)
   {
     lb_push(&queue, sz + 1);
-    lb_push(&queue, 'G');
+    lb_push(&queue, 'M');
     lb_push_buffer(&queue, buffer, sz);
   }
 }

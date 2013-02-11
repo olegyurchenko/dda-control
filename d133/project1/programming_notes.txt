@@ -143,5 +143,43 @@ Modify: 'serial'='2201'=461651653
 Write resiult:2 Elapsed 13 ms
 >
 
+======== 4. Принцип функционирования
+
+Инициализация и основной цикл программы находится в main.c
+Основной цикл программы выглядит так:
+  while(1)
+  {
+#ifdef USE_CONSOLE
+    console_handler();
+#else //USE_CONSOLE
+    protocol_handler();
+#endif //USE_CONSOLE
+    sheduler_handler();
+    process_events();
+  }
+Как видно, основной цикл обслуживает:
+    console_handler() или protocol_handler() - обслуживание протокола обмена или консоли
+    sheduler_handler() - обслуживание планировщика
+    process_events() - обслуживание событий
+    
+В фоне выполняются
+1. Прервыание (таймер и СОМ порт) dda_uart.c, dda_motors.c
+2. АЦП преобразование - DMA sys_adc.c
+
+Шедулер обрабатывает вызовы:
+1. Обновления индикатора dda_lcd.c
+2. Фильтрацию клавиатуры dda_key.c
+
+Обработчик событий обрабатывает
+1. Рабочий режим dda_work_mode.c
+2. Режим теста dda_test_mode.c
+3. Меню menu.c
+4. Ввод целого spin_edit.c
+5. Просмотр текста (результаты) view.c
 
 
+    
+    
+
+
+  
