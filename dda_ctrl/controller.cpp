@@ -345,7 +345,9 @@ void DDAController :: handleData(const ByteVector& data)
   int sz = data.size();
   if(sz < 3)
     return;
-  QString s = QByteArray((const char *)&data[3], sz - 3);
+  QString s;
+  if(sz > 3)
+    s = QByteArray((const char *)&data[3], sz - 3);
   switch(data[1]) //Header
   {
   case 'N':

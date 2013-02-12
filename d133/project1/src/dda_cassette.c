@@ -29,11 +29,12 @@ static int is_init = 0;
 static int max_cell = CASSETTE_MAX_CELL;
 static int cassete_cell_step = CASSETE_CELL_STEP;
 static unsigned cassette_timeout = CASSETTE_TIMEOUT;
+#define CELL_SHIFT 1
 /*----------------------------------------------------------------------------*/
-//#define CASSETTE_0_DIRECTION AntiClockwise
-//#define CASSETTE_DIRECTION AntiClockwise
-#define CASSETTE_0_DIRECTION Clockwise
-#define CASSETTE_DIRECTION Clockwise
+#define CASSETTE_0_DIRECTION AntiClockwise
+#define CASSETTE_DIRECTION AntiClockwise
+//#define CASSETTE_0_DIRECTION Clockwise
+//#define CASSETTE_DIRECTION Clockwise
 /*----------------------------------------------------------------------------*/
 typedef enum
 {
@@ -42,13 +43,17 @@ typedef enum
   WaitNullSensorOff,
   WaitSensorOff,
   WaitSensorOn,
-  WaitMotorOff
+  WaitMotorOff,
+  Mileage,
+  EndMileage
 } STATE;
 
 static STATE state = Idle;
 /*----------------------------------------------------------------------------*/
 handler_t cassette_handler = {cassette_pos_handler, 0};
 static timeout_t timeout;
+/*----------------------------------------------------------------------------*/
+#define MILEAGE_STEPS 5000
 /*----------------------------------------------------------------------------*/
 static void init()
 {
@@ -86,7 +91,9 @@ int is_cassete_position_unknown()
 int cassette_position()
 {
   init();
-  return position == CASSETTE_UNKNOWN_POSITION ? CASSETTE_UNKNOWN_POSITION : position / cassete_cell_step;
+  return position == CASSETTE_UNKNOWN_POSITION ? CASSETTE_UNKNOWN_POSITION :
+                                                 (position ? (position - CELL_SHIFT) / cassete_cell_step :
+                                                            position);
 }
 /*----------------------------------------------------------------------------*/
 int cassete_max_cell()
@@ -98,7 +105,12 @@ int cassete_max_cell()
 void cassete_goto_position(int pos)
 {
   init();
-  pos *= cassete_cell_step;
+  if(pos)
+  {
+    pos *= cassete_cell_step;
+    pos += CELL_SHIFT;
+  }
+
   if(pos >= 0 && pos < CASSETTE_MAX_CELL && pos != position)
   {
     dst_position = pos;
@@ -167,6 +179,15 @@ static int cassette_pos_handler(void *data, event_t evt, int param1, void *param
       state = Idle;
       return CASSETTE_TIMEOUT_ERROR;
     }
+
+    if(state == Mileage)
+    {
+      if(motor_step_count() >= MILEAGE_STEPS)
+      {
+        motor_deceleration();
+        state = EndMileage;
+      }
+    }
     break;
 
   case SENSOR_ON_EVENT:
@@ -206,8 +227,8 @@ static int cassette_pos_handler(void *data, event_t evt, int param1, void *param
     if(param1 == CASSETE_0_SENSOR && state == WaitNullSensorOff)
     {
       timeout_set(&timeout, cassette_timeout, sys_tick_count());
-      motor_deceleration();
-      break;
+      //motor_deceleration();
+      state = Mileage;
     }
     break;
 
@@ -230,7 +251,7 @@ static int cassette_pos_handler(void *data, event_t evt, int param1, void *param
       }
     }
 
-    if(state == WaitNullSensorOff)
+    if(state == EndMileage)
     {
       direction = CASSETTE_0_DIRECTION;
       state = WaitNullSensorOn;

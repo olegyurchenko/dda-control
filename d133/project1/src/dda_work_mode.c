@@ -182,12 +182,12 @@ static int touch_detect()
   return is_touch_force(value);
 }
 /*----------------------------------------------------------------------------*/
-static int calibration_force_riched()
+static int calibration_steps_riched()
 {
   int value = 0;
   sys_adc_get_value(&value);
   discrets2force(value, &force); //For display force
-  if(decimal32_cmp(&force, get_calibration_force()) > 0)
+  if(plunger_position() - touch_position() >= CALIBRATION_STEPS)
     return 1;
   return 0;
 }
@@ -666,7 +666,7 @@ static int calibrarion_handler(void *data, event_t evt, int param1, void *param2
     else
     if(!calibration_finish)
     {
-      if(calibration_force_riched())
+      if(calibration_steps_riched())
       {
         calibration_finish = 1;
         plunger_stop();

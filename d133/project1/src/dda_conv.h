@@ -34,7 +34,6 @@ void set_calibration_data(int steps, int discr);
 int is_destruction(int size, int steps, int discr);
 
 const decimal32_t* get_max_force();
-const decimal32_t* get_calibration_force();
 
 #ifdef __cplusplus
 } //extern "C"

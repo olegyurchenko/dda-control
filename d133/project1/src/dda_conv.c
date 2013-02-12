@@ -31,7 +31,6 @@ static decimal64_t force_k = SENSOR_RATIO;
 static decimal64_t zero_force = {0, 0}; //0
 static decimal64_t step_ratio = STEP_RATIO;
 static decimal32_t max_force = MAX_FORCE;
-static decimal32_t calibration_force = CALIBRATION_FORCE;
 static int is_init = 0;
 static int touch_discrets = TOUCH_DISCRETS;
 /*----------------------------------------------------------------------------*/
@@ -59,10 +58,6 @@ static void init()
     value = setting_get(S_TOUCH_DISCRETS);
     if(value != 0 && *value)
       touch_discrets = atoi(value);
-
-    value = setting_get(S_CALIBRATION_FORCE);
-    if(value != 0 && *value)
-      str_decimal32(value, &calibration_force);
 
     is_init = 1;
   }
@@ -152,12 +147,6 @@ const decimal32_t* get_max_force()
 {
   init();
   return &max_force;
-}
-/*----------------------------------------------------------------------------*/
-const decimal32_t* get_calibration_force()
-{
-  init();
-  return &calibration_force;
 }
 /*----------------------------------------------------------------------------*/
 void set_calibration_data(int steps, int discr)

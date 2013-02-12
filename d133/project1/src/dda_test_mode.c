@@ -152,6 +152,7 @@ static int cassete_test_handler(void *data, event_t evt, int param1, void *param
     {
     default:
     case Cassette0Pos:
+      reset_cassette_position();
       cassete_goto_position(CASSETTE_NULL_POSITION);
       break;
     case Cassette1Pos:
