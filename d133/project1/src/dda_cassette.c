@@ -111,7 +111,7 @@ void cassete_goto_position(int pos)
     pos += CELL_SHIFT;
   }
 
-  if(pos >= 0 && pos < CASSETTE_MAX_CELL && pos != position)
+  if(pos >= 0 && pos < CASSETTE_MAX_CELL + CELL_SHIFT && pos != position)
   {
     dst_position = pos;
     cassette_handler.handler = cassette_pos_handler;

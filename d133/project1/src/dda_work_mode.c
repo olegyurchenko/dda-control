@@ -76,6 +76,8 @@ void set_work_mode(work_mode_t m)
 void set_samples(int samples)
 {
   particles = samples;
+  if(particles >= cassete_max_cell())
+    particles = cassete_max_cell() - 1;
 }
 /*----------------------------------------------------------------------------*/
 void start_work()

@@ -24,6 +24,7 @@
 #include <menu.h>
 #include <dda_mode.h>
 #include <dda_cassette.h>
+#include <dda_plunger.h>
 #include <dda_conv.h>
 #include <dda_text.h>
 #include <sys_timer.h>
@@ -136,7 +137,9 @@ static int cassete_test_handler(void *data, event_t evt, int param1, void *param
 {
   static int menu_index;
   static cassette_test_t test_type;
+  static int plunger_catch;
   int res;
+  char buffer[20];
 
   (void) data; //Prevent unused warning
 
@@ -144,31 +147,42 @@ static int cassete_test_handler(void *data, event_t evt, int param1, void *param
   {
   case IDLE_EVENT:
     dispay_sensors();
+    snprintf(buffer, sizeof(buffer), "%-2d%14u", cassette_position(), motor_step_count());
+    lcd_put_line(1, buffer, SCR_ALIGN_LEFT);
     break;
   case MODE_SET_EVENT:
     if(!param1) //Mode exit
       return 0;
-    switch(test_type)
+    plunger_catch = !(sensors_real_state() & DOWN_SENSOR);
+
+    if(plunger_catch)
     {
-    default:
-    case Cassette0Pos:
-      reset_cassette_position();
-      cassete_goto_position(CASSETTE_NULL_POSITION);
-      break;
-    case Cassette1Pos:
-      cassete_goto_position(CASSETTE_1ST_CELL);
-      break;
-    case CasseteClockwise:
-      motor_start(CasseteMotor, Clockwise, 0);
-      reset_cassette_position();
-      break;
-    case CasseteAnticlockwise:
-      motor_start(CasseteMotor, AntiClockwise, 0);
-      reset_cassette_position();
-      break;
-    case CasseteNext:
-      cassete_goto_position(cassette_position() + 1);
-      break;
+      plunger_go_down();
+    }
+    else
+    {
+      switch(test_type)
+      {
+      default:
+      case Cassette0Pos:
+        reset_cassette_position();
+        cassete_goto_position(CASSETTE_NULL_POSITION);
+        break;
+      case Cassette1Pos:
+        cassete_goto_position(CASSETTE_1ST_CELL);
+        break;
+      case CasseteClockwise:
+        motor_start(CasseteMotor, Clockwise, 0);
+        reset_cassette_position();
+        break;
+      case CasseteAnticlockwise:
+        motor_start(CasseteMotor, AntiClockwise, 0);
+        reset_cassette_position();
+        break;
+      case CasseteNext:
+        cassete_goto_position(cassette_position() + 1);
+        break;
+      }
     }
 
     break;
@@ -226,39 +240,83 @@ static int cassete_test_handler(void *data, event_t evt, int param1, void *param
     break;
   }
 
-  switch(test_type)
+  if(plunger_catch)
   {
-  case Cassette0Pos:
-  case Cassette1Pos:
-  case CasseteNext:
-    res = handler_call(&cassette_handler, evt, param1, param2);
+    lcd_put_line(1, get_text(STR_PLUNGER_GO_HOME), SCR_ALIGN_CENTER);
+    res = handler_call(&plunger_handler, evt, param1, param2);
     if(res == EVENT_HANDLER_DONE)
     {
-      set_event_handler(test_handler, 0);
-      start_menu(&cassete_motor_itm);
-      set_menu_pos(menu_index - 1);
+      plunger_catch = 0;
+      switch(test_type)
+      {
+      default:
+      case Cassette0Pos:
+        reset_cassette_position();
+        cassete_goto_position(CASSETTE_NULL_POSITION);
+        break;
+      case Cassette1Pos:
+        cassete_goto_position(CASSETTE_1ST_CELL);
+        break;
+      case CasseteClockwise:
+        motor_start(CasseteMotor, Clockwise, 0);
+        reset_cassette_position();
+        break;
+      case CasseteAnticlockwise:
+        motor_start(CasseteMotor, AntiClockwise, 0);
+        reset_cassette_position();
+        break;
+      case CasseteNext:
+        cassete_goto_position(cassette_position() + 1);
+        break;
+      }
     }
     else
-    if(res == CASSETTE_TIMEOUT_ERROR)
-    {
-      set_event_handler(test_handler, 0);
-      start_menu(&cassete_motor_itm);
-      set_menu_pos(menu_index - 1);
-      show_message(get_text(STR_ERROR), get_text(STR_CASSETTE_TIMEOUT), 0);
-    }
-    else
-    if(res == USER_BREAK)
-    {
-      set_event_handler(test_handler, 0);
-      start_menu(&cassete_motor_itm);
-      set_menu_pos(menu_index - 1);
-      show_message(get_text(STR_WARNING), get_text(STR_POS_OPERATION_BREAK), 0);
-    }
-    break;
-  default:
-    break;
+      if(res == PLUNGER_TIMEOUT_ERROR
+         || res == PLUNGER_END_POS_ERROR
+         || res == USER_BREAK
+         )
+      {
+        set_event_handler(test_handler, 0);
+        start_menu(&cassete_motor_itm);
+        set_menu_pos(menu_index - 1);
+        show_message(get_text(STR_ERROR), get_text(STR_PLUNGER_ERROR), 0);
+      }
   }
-
+  else
+  {
+    switch(test_type)
+    {
+    case Cassette0Pos:
+    case Cassette1Pos:
+    case CasseteNext:
+      res = handler_call(&cassette_handler, evt, param1, param2);
+      if(res == EVENT_HANDLER_DONE)
+      {
+        set_event_handler(test_handler, 0);
+        start_menu(&cassete_motor_itm);
+        set_menu_pos(menu_index - 1);
+      }
+      else
+        if(res == CASSETTE_TIMEOUT_ERROR)
+        {
+          set_event_handler(test_handler, 0);
+          start_menu(&cassete_motor_itm);
+          set_menu_pos(menu_index - 1);
+          show_message(get_text(STR_ERROR), get_text(STR_CASSETTE_TIMEOUT), 0);
+        }
+        else
+          if(res == USER_BREAK)
+          {
+            set_event_handler(test_handler, 0);
+            start_menu(&cassete_motor_itm);
+            set_menu_pos(menu_index - 1);
+            show_message(get_text(STR_WARNING), get_text(STR_POS_OPERATION_BREAK), 0);
+          }
+      break;
+    default:
+      break;
+    }
+  }
   return 0;
 }
 /*----------------------------------------------------------------------------*/

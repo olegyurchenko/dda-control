@@ -61,6 +61,7 @@
 #define STR_NO_PARTICLE 43 //"No particle"
 #define STR_CASSETTE_WAIT 44 //"Please, insert next cassette"
 #define STR_SESSION_RESULTS 45 //"Session results"
+#define STR_PLUNGER_ERROR 46 //"Plunger error"
 
 #ifdef __cplusplus
 extern "C" {

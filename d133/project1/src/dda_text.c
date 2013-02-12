@@ -69,6 +69,7 @@ const text_t text_en[] =
 , {STR_NO_PARTICLE, "No particle"}
 , {STR_CASSETTE_WAIT, "Cassette wait"}
 , {STR_SESSION_RESULTS, "Session results"}
+, {STR_PLUNGER_ERROR, "Plunger error"}
 
 };
 /*----------------------------------------------------------------------------*/
