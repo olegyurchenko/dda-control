@@ -15,7 +15,7 @@
 /*----------------------------------------------------------------------------*/
 #include "version.h"
 /*----------------------------------------------------------------------------*/
-#define VERSION "0.19.b"
+#define VERSION "0.20.b"
 QString versionStr()
 {
   return QString("v%1 (build date %2)").arg(VERSION).arg(__DATE__);
