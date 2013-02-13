@@ -26,7 +26,7 @@ extern "C" {
   void mode_init();
   void set_root_mode();
   void start_root_menu();
-  void splash_screen();
+  void device_startup();
 
   const char *device_version_str();
   const char *device_model_str();

@@ -31,7 +31,7 @@
 #define DESTRUCTION_DETECT_COUNT 3
 #define PLUNGER_TIMEOUT 40000 //40s
 #define SLOW_DOWN_POSITION 2000
-
+#define MAX_SAMLES_COUNT 64
 /*----------------------------------------------------------------------------*/
 /**dda_motors config*/
 /*----------------------------------------------------------------------------*/

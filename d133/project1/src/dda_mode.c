@@ -99,7 +99,7 @@ void start_root_menu()
   start_menu(root_menu);
 }
 /*----------------------------------------------------------------------------*/
-void splash_screen()
+void device_startup()
 {
   set_event_handler(splash_handler, 0);
 }

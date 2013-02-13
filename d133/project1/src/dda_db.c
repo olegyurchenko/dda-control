@@ -16,7 +16,7 @@
 #include <dda_config.h>
 /*----------------------------------------------------------------------------*/
 static int measure_count = 0;
-static measure_t measures[CASSETTE_MAX_CELL];
+static measure_t measures[MAX_SAMLES_COUNT];
 static session_t current_session;
 
 void db_new_session(int grit_index, int particles)

@@ -277,7 +277,7 @@ static int work_item_handler(void *data, event_t evt, int param1, void *param2)
   {
   case MENU_EVENT:
     //return MENU_CONTINUE;
-    splash_screen(); //!!!!!!!!!!!!!!
+    device_startup(); //!!!!!!!!!!!!!!
     return MENU_OK;
 
   case MENU_GET_POSITION:
@@ -329,7 +329,7 @@ static int mode_item_handler(void *data, event_t evt, int param1, void *param2)
     set_event_handler(work_handler, 0);
     if(mode == AutoMode)
     {
-      spin_edit_start(get_text(STR_NUMBER_OF_SAMPLES), &particles, cassete_max_cell() - 2, 1, 1);
+      spin_edit_start(get_text(STR_NUMBER_OF_SAMPLES), &particles, MAX_SAMLES_COUNT, 1, 1);
       start_flag = 1;
     }
     else
