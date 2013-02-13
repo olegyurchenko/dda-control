@@ -1074,7 +1074,7 @@ void DDADatabase :: measure(double strength, double size, int)
 /*----------------------------------------------------------------------------*/
 void DDADatabase :: onEndOfMeasuring()
 {
-  updateCurrentSession();
+  //updateCurrentSession();
 }
 /*----------------------------------------------------------------------------*/
 void DDADatabase :: onNoParticle()
