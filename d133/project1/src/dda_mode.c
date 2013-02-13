@@ -99,6 +99,11 @@ void start_root_menu()
   start_menu(root_menu);
 }
 /*----------------------------------------------------------------------------*/
+void splash_screen()
+{
+  set_event_handler(splash_handler, 0);
+}
+/*----------------------------------------------------------------------------*/
 static int root_handler(void *data, event_t evt, int param1, void *param2)
 {
   (void) data; //Prevent unused warning
@@ -162,6 +167,7 @@ static int splash_handler(void *data, event_t evt, int param1, void *param2)
     res = handler_call(&plunger_handler, evt, param1, param2);
     if(res == EVENT_HANDLER_DONE)
     {
+      reset_cassette_position();
       cassete_goto_position(CASSETTE_NULL_POSITION);
       state = CasseteCatch;
     }
@@ -216,7 +222,10 @@ static int splash_handler(void *data, event_t evt, int param1, void *param2)
     if(!param1) //Mode exit
       return 0;
     draw_splash_screen();
+    state = PlungerCatch;
     timeout_set(&timeout, SPLASH_TIME, sys_tick_count());
+    reset_plunger_position();
+    plunger_go_down();
     break;
 
   case KEY_PRESS_EVENT:

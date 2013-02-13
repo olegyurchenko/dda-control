@@ -62,6 +62,8 @@
 #define STR_CASSETTE_WAIT 44 //"Please, insert next cassette"
 #define STR_SESSION_RESULTS 45 //"Session results"
 #define STR_PLUNGER_ERROR 46 //"Plunger error"
+#define STR_CASSETTE_SERVING 47 //"Cassette serving"
+#define STR_PLUNGER_SERVING 48 //"Plunger serving"
 
 #ifdef __cplusplus
 extern "C" {

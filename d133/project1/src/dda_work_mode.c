@@ -76,8 +76,6 @@ void set_work_mode(work_mode_t m)
 void set_samples(int samples)
 {
   particles = samples;
-  if(particles >= cassete_max_cell())
-    particles = cassete_max_cell() - 1;
 }
 /*----------------------------------------------------------------------------*/
 void start_work()
@@ -278,7 +276,9 @@ static int work_item_handler(void *data, event_t evt, int param1, void *param2)
   switch(evt)
   {
   case MENU_EVENT:
-    return MENU_CONTINUE;
+    //return MENU_CONTINUE;
+    splash_screen(); //!!!!!!!!!!!!!!
+    return MENU_OK;
 
   case MENU_GET_POSITION:
     switch(work_mode())
@@ -329,7 +329,7 @@ static int mode_item_handler(void *data, event_t evt, int param1, void *param2)
     set_event_handler(work_handler, 0);
     if(mode == AutoMode)
     {
-      spin_edit_start(get_text(STR_NUMBER_OF_SAMPLES), &particles, cassete_max_cell(), 1, 1);
+      spin_edit_start(get_text(STR_NUMBER_OF_SAMPLES), &particles, cassete_max_cell() - 2, 1, 1);
       start_flag = 1;
     }
     else
@@ -356,6 +356,7 @@ static int work_handler(void *data, event_t evt, int param1, void *param2)
 {
   int res;
   static int samples = 0;
+  static int wait_cassete_stage;
 
   switch(evt)
   {
@@ -399,41 +400,28 @@ static int work_handler(void *data, event_t evt, int param1, void *param2)
   {
   case Idle:
     start_work_menu();
+    samples = 0;
     break;
 
   case Calibration:
     res = calibrarion_handler(data, evt, param1, param2);
-    if(res == USER_BREAK)
+    if(res == USER_BREAK || res < 0)
     {
       state = Done;
     }
     else
-    if(res < 0)
-    {
-      state = Idle;
-      start_flag = 0;
-    }
-    else
     if(res == EVENT_HANDLER_DONE)
     {
-      db_new_session(mesh_index(), particles);
       state = Measuring;
-      samples = 0;
       start_flag = mode == AutoMode ? 1 : 0;
     }
     break;
 
   case Measuring:
     res = measuring_handler(data, evt, param1, param2);
-    if(res == USER_BREAK)
+    if(res == USER_BREAK || res < 0)
     {
       state = Done;
-    }
-    else
-    if(res < 0)
-    {
-      state = Idle;
-      start_flag = 0;
     }
     else
     if(res == EVENT_HANDLER_DONE)
@@ -447,13 +435,45 @@ static int work_handler(void *data, event_t evt, int param1, void *param2)
         }
       }
 
-      start_flag = mode == AutoMode ? 1 : 0;
+      if(cassette_position() >= cassete_max_cell() - 1)
+      {
+        state = NexCasseteWait;
+        reset_cassette_position();
+        wait_cassete_stage = 0;
+      }
+      else
+        start_flag = mode == AutoMode ? 1 : 0;
     }
     break;
 
   case Done:
     res = done_handler(data, evt, param1, param2);
     if(res < 0 || res == EVENT_HANDLER_DONE)
+    {
+      state = Idle;
+      start_flag = 0;
+      if(db_measure_count())
+        view_result();
+    }
+    break;
+
+  case NexCasseteWait:
+    if(wait_cassete_stage)
+      res = calibrarion_handler(data, evt, param1, param2);
+    else
+      res = done_handler(data, evt, param1, param2);
+    if(res == EVENT_HANDLER_DONE)
+    {
+      wait_cassete_stage ++;
+      start_flag = 0;
+      if(wait_cassete_stage > 1)
+      {
+        state = Measuring;
+        start_flag = mode == AutoMode ? 1 : 0;
+      }
+    }
+    else
+    if(res < 0)
     {
       state = Idle;
       start_flag = 0;
@@ -501,6 +521,10 @@ static int calibrarion_handler(void *data, event_t evt, int param1, void *param2
       slow_offset = um2steps(um_SLOW_OFFSET);
       touch_count = 0;
       work_area = 0;
+      if(state == Calibration)
+        db_new_session(mesh_index(), particles);
+      else
+        state = Calibration;
     }
     else
     {
@@ -781,7 +805,7 @@ static int measuring_handler(void *data, event_t evt, int param1, void *param2)
     break;
 
   case PlungerCatch:
-    //lcd_put_line(1, get_text(STR_PLUNGER_GO_HOME), SCR_ALIGN_CENTER);
+    lcd_put_line(1, get_text(STR_PLUNGER_GO_HOME), SCR_ALIGN_CENTER);
     res = handler_call(&plunger_handler, evt, param1, param2);
     if(res == EVENT_HANDLER_DONE)
     {
@@ -812,7 +836,7 @@ static int measuring_handler(void *data, event_t evt, int param1, void *param2)
     break;
 
   case CassetteCatch:
-    //lcd_put_line(1, get_text(STR_CASSETTE_GO_HOME), SCR_ALIGN_CENTER);
+    lcd_put_line(1, get_text(STR_CASSETTE_SERVING), SCR_ALIGN_CENTER);
     res = handler_call(&cassette_handler, evt, param1, param2);
     if(res == EVENT_HANDLER_DONE)
     {
@@ -869,7 +893,7 @@ static int measuring_handler(void *data, event_t evt, int param1, void *param2)
     {
       if(!work_area)
       {
-        lcd_put_line(1, get_text(STR_WAIT_TOUCH), SCR_ALIGN_CENTER);
+        lcd_put_line(1, get_text(STR_PLUNGER_SERVING), SCR_ALIGN_CENTER);
         if((int)plunger_position() >= slow_offset)
         {
           motor_change_rate(SLOW_RATE);

@@ -28,7 +28,9 @@ typedef enum
   Idle,
   WaitSensorOff,
   WaitSensorOn,
-  WaitMotorOff
+  WaitMotorOff,
+  Mileage,
+  EndMileage
 } STATE;
 /*----------------------------------------------------------------------------*/
 static STATE state;
@@ -42,6 +44,9 @@ static unsigned zero_step = 0; //Motor step count when DOWN_SENSEOR OFF
 static int is_init = 0;
 static unsigned plunger_timeout = PLUNGER_TIMEOUT;
 static uint8_t slow_rate = SLOW_RATE;
+static int unknown_position = 1;
+/*----------------------------------------------------------------------------*/
+#define MILEAGE_STEPS 2000
 /*----------------------------------------------------------------------------*/
 static void init()
 {
@@ -88,6 +93,11 @@ unsigned touch_position()
 void set_touch_position()
 {
   m_touch_position = plunger_position();
+}
+/*----------------------------------------------------------------------------*/
+void reset_plunger_position()
+{
+  unknown_position = 1;
 }
 /*----------------------------------------------------------------------------*/
 void plunger_go_down()
@@ -142,10 +152,17 @@ static int plunger_go_handler(void *data, event_t evt, int param1, void *param2)
     sensors = sensors_real_state();
     if(   (direction == PlungerDown && (sensors & DOWN_SENSOR))
        || (direction == PlungerUp && (sensors & UP_SENSOR)) )
-      break;
-
-    state = WaitSensorOn;
-    motor_start(PlungerMotor, direction, 0);
+    {
+      if(!unknown_position)
+        break;
+      state = Mileage;
+      motor_start(PlungerMotor, !direction, 0);
+    }
+    else
+    {
+      state = WaitSensorOn;
+      motor_start(PlungerMotor, direction, 0);
+    }
     timeout_set(&timeout, plunger_timeout, sys_tick_count());
     break;
 
@@ -161,6 +178,12 @@ static int plunger_go_handler(void *data, event_t evt, int param1, void *param2)
     {
       if(motor_rate() > slow_rate && plunger_position() <= SLOW_DOWN_POSITION)
         motor_change_rate(slow_rate);
+    }
+
+    if(state == Mileage && motor_step_count() >= MILEAGE_STEPS)
+    {
+      motor_deceleration();
+      state = EndMileage;
     }
     break;
 
@@ -182,11 +205,20 @@ static int plunger_go_handler(void *data, event_t evt, int param1, void *param2)
     break;
 
   case MOTOR_OFF_EVENT:
+    if(state == EndMileage)
+    {
+      top_position = 0;
+      state = WaitSensorOn;
+      motor_start(PlungerMotor, direction, slow_rate);
+      break;
+    }
+
     if(direction == PlungerUp && !(sensors_real_state() & UP_SENSOR))
       top_position = motor_step_count();
     else
       top_position = 0;
     state = Idle;
+    unknown_position = 0;
     break;
 
   case KEY_PRESS_EVENT:

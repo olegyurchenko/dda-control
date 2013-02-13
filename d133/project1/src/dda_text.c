@@ -1,6 +1,7 @@
 /*
 DO NOT EDIT MANUALLY THIS FILE.
-This file was generated form src/dda_text.c.utf8
+This file was generated from src/dda_text.c.utf8
+by bc160_conv.py
 */
 /*----------------------------------------------------------------------------*/
 /**
@@ -76,6 +77,8 @@ const text_t text_en[] =
 , {STR_CASSETTE_WAIT, "Cassette wait"}
 , {STR_SESSION_RESULTS, "Session results"}
 , {STR_PLUNGER_ERROR, "Plunger error"}
+, {STR_CASSETTE_SERVING, "Cassette serving"}
+, {STR_PLUNGER_SERVING, "Plunger serving"}
 
 };
 /*----------------------------------------------------------------------------*/
@@ -128,6 +131,8 @@ const text_t text_ru[] =
 , {STR_CASSETTE_WAIT, "O\xb6""\xb8""\xe3""a\xbd""\xb8""e \xba""acce\xbf""\xc3"""/*Ожидание кассеты*/}
 , {STR_SESSION_RESULTS, "Pe\xb7""y\xbb""\xc4""\xbf""a\xbf"" \xb7""a\xbc""epo\xb3"""/*Результат замеров*/}
 , {STR_PLUNGER_ERROR, "C\xb2""o\xb9"" \xbe""\xbb""y\xbd""\xb6""epa"/*Сбой плунжера*/}
+, {STR_CASSETTE_SERVING, "\xa8""o\xe3""a\xc0""a \xba""acce\xbf""\xc3"""/*Подача кассеты*/}
+, {STR_PLUNGER_SERVING, "\xa8""o\xe3""\xb3""o\xe3"" \xbe""\xbb""y\xbd""\xb6""epa"/*Подвод плунжера*/}
 
 };
 /*----------------------------------------------------------------------------*/

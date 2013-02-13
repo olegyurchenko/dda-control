@@ -72,6 +72,8 @@ const text_t text_en[] =
 , {STR_CASSETTE_WAIT, "Cassette wait"}
 , {STR_SESSION_RESULTS, "Session results"}
 , {STR_PLUNGER_ERROR, "Plunger error"}
+, {STR_CASSETTE_SERVING, "Cassette serving"}
+, {STR_PLUNGER_SERVING, "Plunger serving"}
 
 };
 /*----------------------------------------------------------------------------*/
@@ -124,6 +126,8 @@ const text_t text_ru[] =
 , {STR_CASSETTE_WAIT, "Ожидание кассеты"}
 , {STR_SESSION_RESULTS, "Результат замеров"}
 , {STR_PLUNGER_ERROR, "Сбой плунжера"}
+, {STR_CASSETTE_SERVING, "Подача кассеты"}
+, {STR_PLUNGER_SERVING, "Подвод плунжера"}
 
 };
 /*----------------------------------------------------------------------------*/

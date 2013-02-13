@@ -33,6 +33,7 @@ void plunger_go_up();
 void plunger_stop();
 unsigned touch_position();
 void set_touch_position();
+void reset_plunger_position();
 
 #ifdef __cplusplus
 } //extern "C"
