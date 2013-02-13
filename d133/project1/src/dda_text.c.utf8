@@ -14,6 +14,8 @@
 */
 /*----------------------------------------------------------------------------*/
 #include "dda_text.h"
+#include <dda_settings.h>
+#include <dda_clib.h>
 /*----------------------------------------------------------------------------*/
 typedef struct
 {
@@ -91,7 +93,7 @@ const text_t text_ru[] =
 , {STR_ADC_TEST, "Проверка АЦП"}
 , {STR_WORK, "Работа"}
 , {STR_AUTO, "Авто"}
-, {STR_MANUAL, "Вручную"}
+, {STR_MANUAL, "Ручной"}
 , {STR_WORK_MODE, "Работа"}
 , {STR_AUTO_MODE, "Авто"}
 , {STR_MANUAL_MODE, "Ручной"}
@@ -125,17 +127,39 @@ const text_t text_ru[] =
 
 };
 /*----------------------------------------------------------------------------*/
+static const text_t *text = 0;
+/*----------------------------------------------------------------------------*/
 const char *get_text(int id)
 {
   const char *txt;
   unsigned i;
 
-  txt = text_en[0].text;
+  if(text == 0)
+  {
+    const char *v;
+    int lang = 0;
+    v = setting_get(S_LANG);
+    if(v != 0 && *v)
+      lang = atoi(v);
+
+    switch(lang)
+    {
+    case 0:
+    default:
+      text = text_en;
+      break;
+    case 1:
+      text = text_ru;
+      break;
+    }
+  }
+
+  txt = text[0].text;
   for(i = 1; i < sizeof(text_en)/sizeof(text_en[0]); i++)
   {
-    if(text_en[i].id == id)
+    if(text[i].id == id)
     {
-      txt = text_en[i].text;
+      txt = text[i].text;
       break;
     }
   }

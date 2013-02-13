@@ -120,10 +120,11 @@ def bc160_encode(src):
 #  for ch in src.decode('utf-8'):
   for ch in src:
     c = table.get(ch, ord(ch))
+    #dst += "\\x{0:02x}".format(c)
     if c >= 0x20 and c < 0x80:
       dst += chr(c)
     else:
-      dst += "\\x{0:02x}".format(c)
+      dst += "\\x{0:02x}\"\"".format(c)
   return dst
 #----------------------------------------------------------------------------------------
 

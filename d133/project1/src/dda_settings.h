@@ -66,6 +66,7 @@ void setting_set_modified(int m);
 #define S_ACCELERATION_STEP2 "accStep2"
 #define S_DECELERATION_STEP2 "decStep2"
 #define S_CHANGE_RATE_STEP2 "chStep2"
+#define S_LANG "lang"
 
 
 /*----------------------------------------------------------------------------*/

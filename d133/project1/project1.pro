@@ -36,7 +36,8 @@ HEADERS += \
     src/sys_flash.h \
     src/dda_settings.h \
     src/crc8.h \
-    src/dda_flash.h
+    src/dda_flash.h \
+    src/dda_text.c.utf8
 
 SOURCES += \
     src/sys_timer.c \
@@ -51,7 +52,6 @@ SOURCES += \
     src/decimal.c \
     src/dda_work_mode.c \
     src/dda_uart.c \
-    src/dda_text.c \
     src/dda_test_mode.c \
     src/dda_sensor.c \
     src/dda_protocol.c \
