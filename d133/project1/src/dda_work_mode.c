@@ -579,7 +579,7 @@ static int calibrarion_handler(void *data, event_t evt, int param1, void *param2
     break;
 
   case CassetteCatch:
-    lcd_put_line(1, get_text(STR_CASSETTE_GO_HOME), SCR_ALIGN_CENTER);
+    lcd_put_line(1, get_text(STR_CASSETTE_SERVING), SCR_ALIGN_CENTER);
     res = handler_call(&cassette_handler, evt, param1, param2);
     if(res == EVENT_HANDLER_DONE)
     {
