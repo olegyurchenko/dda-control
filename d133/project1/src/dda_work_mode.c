@@ -50,6 +50,7 @@ static int work_item_handler(void *data, event_t evt, int param1, void *param2);
 static work_state_t state = Idle;
 static work_mode_t mode = UnknownMode;
 static int particles = 1;
+static int samples_count = 0;
 static int start_flag = 0;
 static decimal32_t force = {0,0};
 static decimal32_t result_force = {0,0};
@@ -91,10 +92,13 @@ void start_work()
     if(state == Idle)
     {
       state = Calibration;
+      /*
       if(mode == AutoMode)
         start_flag = 1;
       else
         start_flag = 0;
+      */
+      start_flag = 0;
      }
      else
       start_flag = 1;
@@ -209,8 +213,10 @@ static int set_size_postion()
 
   umsize(touch_position(), pos, &size);
   min_size = decimal32_init(mesh()->min, 0);
-  k = decimal32_init(1, 0);
-  decimal32_sub(&k, relative_size_deviation(), &k); //k = 1 - 0.25;
+  //k = decimal32_init(1, 0);
+  //decimal32_sub(&k, relative_size_deviation(), &k); //k = 1 - 0.25;
+
+  k = *relative_size_deviation(); //k = 0.25
   decimal32_mul(&min_size, &k, &min_size);
   if(decimal32_cmp(&size, &min_size) <= 0) //size <= min_size
   {
@@ -255,6 +261,7 @@ static void set_destruction_position()
 
   protocol_push_strength(db_measure_count(), measure.cell, &result_force);
   db_add_measure(&measure);
+  samples_count ++;
 #ifdef DEBUG
   {
     char buffer[32];
@@ -330,12 +337,8 @@ static int mode_item_handler(void *data, event_t evt, int param1, void *param2)
     if(mode == AutoMode)
     {
       spin_edit_start(get_text(STR_NUMBER_OF_SAMPLES), &particles, MAX_SAMLES_COUNT, 1, 1);
-      start_flag = 1;
     }
-    else
-    {
-      start_flag = 0;
-    }
+    start_flag = 0;
     return MENU_CONTINUE;
 
   case MENU_GET_POSITION:
@@ -355,7 +358,6 @@ static int mode_item_handler(void *data, event_t evt, int param1, void *param2)
 static int work_handler(void *data, event_t evt, int param1, void *param2)
 {
   int res;
-  static int samples = 0;
   static int wait_cassete_stage;
 
   switch(evt)
@@ -400,7 +402,7 @@ static int work_handler(void *data, event_t evt, int param1, void *param2)
   {
   case Idle:
     start_work_menu();
-    samples = 0;
+    samples_count = 0;
     break;
 
   case Calibration:
@@ -428,8 +430,7 @@ static int work_handler(void *data, event_t evt, int param1, void *param2)
     {
       if(mode == AutoMode)
       {
-        samples ++;
-        if(samples >= particles)
+        if(samples_count >= particles)
         {
           state = Done;
         }

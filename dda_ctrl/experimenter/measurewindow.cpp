@@ -145,7 +145,7 @@ void MeasureWindow::onStatusChanged(int s)
     break;
   case DDAController::Calibrating:
     ui->actionStartSession->setEnabled(false);
-    ui->actionResumeMeasuring->setEnabled(false);
+    ui->actionResumeMeasuring->setEnabled(true);
     //ui->actionSingleStepMode->setEnabled(true);
     ui->actionOptions->setEnabled(false);
     break;

@@ -137,9 +137,10 @@ static void draw_splash_screen()
 {
   char buffer[32];
   lcd_clear();
-  snprintf(buffer, sizeof(buffer), "%-7s %8s", device_model_str(), device_serial_str());
-  lcd_put_line(0, buffer, SCR_ALIGN_LEFT);
-  lcd_add_scroll_text(1, 1, lcd_width(), version_str());
+  snprintf(buffer, sizeof(buffer), "%-11s %4s", device_model_str(), device_serial_str());
+  //lcd_put_line(0, buffer, SCR_ALIGN_LEFT);
+  lcd_add_scroll_text(0, 0, lcd_width(), buffer);
+  lcd_add_scroll_text(1, 0, lcd_width(), version_str());
 }
 /*----------------------------------------------------------------------------*/
 static int splash_handler(void *data, event_t evt, int param1, void *param2)
