@@ -98,6 +98,7 @@ void start_work()
       else
         start_flag = 0;
       */
+      samples_count = 0;
       start_flag = 0;
      }
      else
@@ -339,6 +340,7 @@ static int mode_item_handler(void *data, event_t evt, int param1, void *param2)
       spin_edit_start(get_text(STR_NUMBER_OF_SAMPLES), &particles, MAX_SAMLES_COUNT, 1, 1);
     }
     start_flag = 0;
+    samples_count = 0;
     return MENU_CONTINUE;
 
   case MENU_GET_POSITION:
@@ -402,7 +404,7 @@ static int work_handler(void *data, event_t evt, int param1, void *param2)
   {
   case Idle:
     start_work_menu();
-    samples_count = 0;
+    //samples_count = 0;
     break;
 
   case Calibration:
