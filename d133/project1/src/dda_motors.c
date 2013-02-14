@@ -338,11 +338,15 @@ void TIM6_IRQHandler()
     switch(motor_state)
     {
     case Idle:
-      //Set reset to inactive state
-      set_rs(1);
-      motor_state = Accelerate;
-      table_index = 0;
+      TIM_Cmd(TIM6, DISABLE);
+      NVIC_DisableIRQ(TIM6_IRQn);
+      break;
     case Accelerate:
+      if(!table_index)
+      {
+        //Set reset to inactive state
+        set_rs(1);
+      }
     case Decelerate:
     case Slewing:
     case ChangeRate:
@@ -496,11 +500,13 @@ void motor_start(int mr, int dir, unsigned char rate)
     max_index = 255;
   else
     max_index = rate;
+  motor_state = Accelerate;
   start_timer();
 }
 /*----------------------------------------------------------------------------*/
 void motor_deceleration()
 {
+  NVIC_DisableIRQ(TIM6_IRQn);
   if(motor_state == Accelerate || motor_state == Slewing || motor_state == ChangeRate)
   {
     if(!active_motor)
@@ -513,10 +519,13 @@ void motor_deceleration()
     }
     motor_state = Decelerate;
   }
+  if(motor_state != Idle)
+    NVIC_EnableIRQ(TIM6_IRQn);
 }
 /*----------------------------------------------------------------------------*/
 void motor_change_rate(unsigned char rate)
 {
+  NVIC_DisableIRQ(TIM6_IRQn);
   if(motor_state == Accelerate || motor_state == Slewing || motor_state == ChangeRate)
   {
     if(!rate)
@@ -534,10 +543,13 @@ void motor_change_rate(unsigned char rate)
     }
     motor_state = ChangeRate;
   }
+  if(motor_state != Idle)
+    NVIC_EnableIRQ(TIM6_IRQn);
 }
 /*----------------------------------------------------------------------------*/
 void motor_stop()
 {
+  NVIC_DisableIRQ(TIM6_IRQn);
   switch(motor_state)
   {
   case Idle:
@@ -555,6 +567,8 @@ void motor_stop()
     table_index = table_step;
     break;
   }
+  if(motor_state != Idle)
+    NVIC_EnableIRQ(TIM6_IRQn);
 }
 /*----------------------------------------------------------------------------*/
 unsigned motor_step_count()
