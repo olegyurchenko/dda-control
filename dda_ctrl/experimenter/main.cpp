@@ -102,6 +102,11 @@ int main(int argc, char *argv[])
     config->setProfileIndex(0);
   }
 
+  int defaultProfile = getOptValue("profile", 'p', -1).toInt();
+  if(defaultProfile > 0)
+    config->setProfileIndex(defaultProfile - 1);
+
+
   session = new DDAMeasureSession(&a);
 
   if(getOptSwitch("demo", 'd') || getOptSwitch("demo-mode", 'D'))

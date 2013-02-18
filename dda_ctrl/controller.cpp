@@ -99,7 +99,7 @@ bool DDAController :: open(int serial, int baud)
   if(m_serial > 0)
     close();
   setStatus(Offline);
-  int s = serial_open(serial, 8, baud, 'n', 2);
+  int s = serial_open(serial, 8, baud, 'n', 1);
   if(s <= 0)
   {
     m_log->Exception("Error open port");

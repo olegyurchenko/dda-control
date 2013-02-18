@@ -8,6 +8,7 @@ function displayData(label, data)
   console.log(str)
 }
 //-----------------------------------------------------------------------------------
+var handleSize = true
 var paramTable = null
 var nameCol = 0
 var valueCol = 1
@@ -23,8 +24,11 @@ var devStrengthRow = row ++
 var uniformityRow = row ++
 var maxStrengthRow = row ++
 var minStrengthRow = row ++
-var avgSizeRow = row ++
-var devSizeRow = row ++
+if(handleSize)
+{
+  var avgSizeRow = row ++
+  var devSizeRow = row ++
+}
 //var avgFractStrRow = row ++
 //var devFractStrRow = row ++
 var markRow = row ++
@@ -140,10 +144,13 @@ function modelInit(role)
   paramTable.setData(maxStrengthRow, nameCol, qsTr("Max strength [N]"))
   paramTable.setData(minStrengthRow, nameCol, qsTr("Min strength [N]"))
   paramTable.setData(uniformityRow, nameCol, qsTr("Uniformity of grain"))
-  paramTable.setData(avgSizeRow, nameCol, qsTr("Avg. size [um]"))
-  paramTable.setData(devSizeRow, nameCol, qsTr("St. dev. size [um]"))
-  //paramTable.setData(avgFractStrRow, nameCol, qsTr("Avg. fract str [N/mm^2]"))
-  //paramTable.setData(devFractStrRow, nameCol, qsTr("St. fract str [N/mm^2]"))
+  if(handleSize)
+  {
+    paramTable.setData(avgSizeRow, nameCol, qsTr("Avg. size [um]"))
+    paramTable.setData(devSizeRow, nameCol, qsTr("St. dev. size [um]"))
+    //paramTable.setData(avgFractStrRow, nameCol, qsTr("Avg. fract str [N/mm^2]"))
+    //paramTable.setData(devFractStrRow, nameCol, qsTr("St. fract str [N/mm^2]"))
+  }
   paramTable.setData(markRow, nameCol, qsTr("Set mark"))
   paramTable.update()
 
@@ -182,34 +189,40 @@ function modelInit(role)
   //--------------------------------
   // histSizeTable
   //--------------------------------
-  histSizeTable = model.newTableModel()
-  histSizeTable.columnCount = 4
-  histSizeTable.rowCount = sizeColumns
-  histSizeTable.setHeaderData(0, Qt.Horizontal, qsTr(">="))
-  histSizeTable.setHeaderData(1, Qt.Horizontal, qsTr("<"))
-  histSizeTable.setHeaderData(2, Qt.Horizontal, qsTr("Particles"))
-  histSizeTable.setHeaderData(3, Qt.Horizontal, qsTr("% of grain"))
-  for(var i = 0; i < sizeColumns; i++)
-    histSizeTable.setHeaderData(i, Qt.Vertical, i + 1)
-  histSizeTable.update()
+  if(handleSize)
+  {
+    histSizeTable = model.newTableModel()
+    histSizeTable.columnCount = 4
+    histSizeTable.rowCount = sizeColumns
+    histSizeTable.setHeaderData(0, Qt.Horizontal, qsTr(">="))
+    histSizeTable.setHeaderData(1, Qt.Horizontal, qsTr("<"))
+    histSizeTable.setHeaderData(2, Qt.Horizontal, qsTr("Particles"))
+    histSizeTable.setHeaderData(3, Qt.Horizontal, qsTr("% of grain"))
+    for(var i = 0; i < sizeColumns; i++)
+      histSizeTable.setHeaderData(i, Qt.Vertical, i + 1)
+      histSizeTable.update()
+  }
   //--------------------------------
   // sizeHistogramm
   //--------------------------------
-  sizeHistogramm = model.newHistogrammModel()
-  sizeHistogramm.y.min = 0
-  sizeHistogramm.y.max = 100
-  sizeHistogramm.y.text = "[%]"
-  sizeHistogramm.y.decimals = 0
-  sizeHistogramm.y.steps = 4
-
-  sizeHistogramm.x.text = qsTr("[um]")
-  sizeHistogramm.x.decimals = 0
-  sizeHistogramm.x.steps = sizeColumns
-  sizeHistogramm.title = qsTr("Distribution of the size of grain")
-  if(role === DataModel.ReportRole)
+  if(handleSize)
   {
-    sizeHistogramm.brush = {style : Qt.Dense3Pattern, color : "black"}
-    //sizeHistogramm.pen = {style : Qt.SolidLine, color : "black"}
+    sizeHistogramm = model.newHistogrammModel()
+    sizeHistogramm.y.min = 0
+    sizeHistogramm.y.max = 100
+    sizeHistogramm.y.text = "[%]"
+    sizeHistogramm.y.decimals = 0
+    sizeHistogramm.y.steps = 4
+
+    sizeHistogramm.x.text = qsTr("[um]")
+    sizeHistogramm.x.decimals = 0
+    sizeHistogramm.x.steps = sizeColumns
+    sizeHistogramm.title = qsTr("Distribution of the size of grain")
+    if(role === DataModel.ReportRole)
+    {
+      sizeHistogramm.brush = {style : Qt.Dense3Pattern, color : "black"}
+      //sizeHistogramm.pen = {style : Qt.SolidLine, color : "black"}
+    }
   }
   //--------------------------------
   // densityStrengthCurve
@@ -233,20 +246,22 @@ function modelInit(role)
   //--------------------------------
   // sizeStrengthGraph
   //--------------------------------
-  sizeStrengthGraph = model.newGraphModel()
-  sizeStrengthGraph.y.decimals = 0
-  sizeStrengthGraph.x.decimals = 0
-  sizeStrengthGraph.y.text = qsTr("[N]")
-  sizeStrengthGraph.x.text = qsTr("[um]")
-  sizeStrengthGraph.x.steps = 5
-  sizeStrengthGraph.y.steps = 5
-  sizeStrengthGraph.title = qsTr("Strength VS Size")
-  if(role === DataModel.ReportRole)
+  if(handleSize)
   {
-    sizeStrengthGraph.brush = {style : Qt.Dense3Pattern, color : "black"}
-    //sizeStrengthGraph.pen = {style : Qt.SolidLine, color : "black"}
+    sizeStrengthGraph = model.newGraphModel()
+    sizeStrengthGraph.y.decimals = 0
+    sizeStrengthGraph.x.decimals = 0
+    sizeStrengthGraph.y.text = qsTr("[N]")
+    sizeStrengthGraph.x.text = qsTr("[um]")
+    sizeStrengthGraph.x.steps = 5
+    sizeStrengthGraph.y.steps = 5
+    sizeStrengthGraph.title = qsTr("Strength VS Size")
+    if(role === DataModel.ReportRole)
+    {
+      sizeStrengthGraph.brush = {style : Qt.Dense3Pattern, color : "black"}
+      //sizeStrengthGraph.pen = {style : Qt.SolidLine, color : "black"}
+    }
   }
-
 }
 //-----------------------------------------------------------------------------------
 function modelUpdate(session, role)
@@ -274,15 +289,18 @@ function modelUpdate(session, role)
     paramTable.setData(uniformityRow, valueCol, "")
   paramTable.setData(maxStrengthRow, valueCol, session.maxStrength.toFixed(2))
   paramTable.setData(minStrengthRow, valueCol, session.minStrength.toFixed(2))
-  paramTable.setData(avgSizeRow, valueCol, session.avgSize.toFixed(2))
-  paramTable.setData(devSizeRow, valueCol, session.devSize.toFixed(2))
+  if(handleSize)
+  {
+    paramTable.setData(avgSizeRow, valueCol, session.avgSize.toFixed(2))
+    paramTable.setData(devSizeRow, valueCol, session.devSize.toFixed(2))
+  }
   paramTable.setData(markRow, valueCol, session.mark)
 
 
   //--------------------------------
   // strengthHistogramm
   //--------------------------------
-  var steps = [1000, 500, 100, 50, 40, 30, 20, 10, 5]
+  var steps = [3000, 2000, 1000, 500, 400, 300, 200, 100, 50, 40, 30, 20, 10, 5]
   var minStrength = session.minStrength
   var maxStrength = session.maxStrength
 
@@ -348,9 +366,11 @@ function modelUpdate(session, role)
   sizeMark[4] = sizeTbl[gritIndex].max
   sizeMark[5] = sizeTbl[gritIndex + 1].max
 
-
-  sizeHistogramm.x.min = minSize
-  sizeHistogramm.x.max = maxSize
+  if(handleSize)
+  {
+    sizeHistogramm.x.min = minSize
+    sizeHistogramm.x.max = maxSize
+  }
 
   //--------------------------------
   // densityStrengthCurve
@@ -415,38 +435,40 @@ function modelUpdate(session, role)
   strengthHistogramm.data = hStrength
   densityStrengthCurve.x.steps = strengthColumns
 
-  for(i = 0; i < sizeColumns; i++)
+  if(handleSize)
   {
-    histSizeTable.setData(i, 0, sizeMark[i].toFixed(2))
-    histSizeTable.setData(i, 1, sizeMark[i + 1].toFixed(2))
-    histSizeTable.setData(i, 2, hSize[i])
-    histSizeTable.setData(i, 3, (hSize[i] * 100. / session.particles).toFixed(2))
+    for(i = 0; i < sizeColumns; i++)
+    {
+      histSizeTable.setData(i, 0, sizeMark[i].toFixed(2))
+      histSizeTable.setData(i, 1, sizeMark[i + 1].toFixed(2))
+      histSizeTable.setData(i, 2, hSize[i])
+      histSizeTable.setData(i, 3, (hSize[i] * 100. / session.particles).toFixed(2))
 
-    hSize[i] *= 100. / session.particles
-  }
-  sizeHistogramm.data = hSize
-  sizeHistogramm.x.marks = sizeMark
+      hSize[i] *= 100. / session.particles
+    }
+    sizeHistogramm.data = hSize
+    sizeHistogramm.x.marks = sizeMark
+    //--------------------------------
+    // sizeStrengthGraph
+    //--------------------------------
+    sizeStrengthGraph.y.min = minStrength
+    sizeStrengthGraph.y.max = maxStrength
+    //sizeStrengthGraph.y.steps = strengthColumns
 
-  //--------------------------------
-  // sizeStrengthGraph
-  //--------------------------------
-  sizeStrengthGraph.y.min = minStrength
-  sizeStrengthGraph.y.max = maxStrength
-  //sizeStrengthGraph.y.steps = strengthColumns
-
-  sizeStrengthGraph.x.min = minSize
-  sizeStrengthGraph.x.max = maxSize
-  sizeStrengthGraph.x.marks = sizeMark //!!!!!
-  sizeStrengthGraph.clear()
-  for(i = 0; i < session.measures.length; i++)
-  {
-    m = session.measures[i]
-    if(m.ignored)
-      continue
-    var x = m.size
-    var y = m.strength//fractalStrength(m.strength, m.size)
-    sizeStrengthGraph.add(x, y)
-    //print(i, x, y)
+    sizeStrengthGraph.x.min = minSize
+    sizeStrengthGraph.x.max = maxSize
+    sizeStrengthGraph.x.marks = sizeMark //!!!!!
+    sizeStrengthGraph.clear()
+    for(i = 0; i < session.measures.length; i++)
+    {
+      m = session.measures[i]
+      if(m.ignored)
+        continue
+      var x = m.size
+      var y = m.strength//fractalStrength(m.strength, m.size)
+      sizeStrengthGraph.add(x, y)
+      //print(i, x, y)
+    }
   }
 }
 //-----------------------------------------------------------------------------------
