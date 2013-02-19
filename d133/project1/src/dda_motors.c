@@ -338,6 +338,7 @@ void TIM6_IRQHandler()
     switch(motor_state)
     {
     case Idle:
+      set_enable(1); //Enable to inactive state
       TIM_Cmd(TIM6, DISABLE);
       NVIC_DisableIRQ(TIM6_IRQn);
       break;
@@ -346,6 +347,7 @@ void TIM6_IRQHandler()
       {
         //Set reset to inactive state
         set_rs(1);
+        set_enable(0); //Enable to active state
       }
     case Decelerate:
     case Slewing:
@@ -482,7 +484,7 @@ void motor_start(int mr, int dir, unsigned char rate)
   active_motor = mr;
   set_dir(dir);
   step_counter = 0;
-  set_enable(0); //Enable to active state
+  //set_enable(0); //Enable to active state
   set_rs(0); //Reset to active state
   if(!mr)
   {
