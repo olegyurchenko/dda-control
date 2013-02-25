@@ -165,6 +165,7 @@ Write resiult:2 Elapsed 13 ms
 В фоне выполняются
 1. Прервыание (таймер и СОМ порт) dda_uart.c, dda_motors.c
 2. АЦП преобразование - DMA sys_adc.c
+3. Прервыание от системного таймера, который увеличивает счетчик мсек - sys_timer.h
 
 Шедулер обрабатывает вызовы:
 1. Обновления индикатора dda_lcd.c
@@ -176,6 +177,364 @@ Write resiult:2 Elapsed 13 ms
 3. Меню menu.c
 4. Ввод целого spin_edit.c
 5. Просмотр текста (результаты) view.c
+
+======== 5. Обслуживание событий
+
+Основной код программыы выполняется в обработчике событий. В один конкретный момент, только один обработчик
+событий обслуживается. Учтановить "свой" обработчик событий можно функцией
+  event.h:51:void set_event_handler(event_handler_t handler, void *data);
+ Где параметры:
+  handler - указатель на функцию обработчика событий, имеющую прототип
+event.h:35: typedef int (*event_handler_t)(void*, event_t evt, int param1, void *param2);
+  data - первый параметр вызова обработчика
+  
+======== 6. Обработчик событий
+
+Текущий обработчик событий вызывается в теле ф-ции process_events()
+типичный прототип ф-ции:
+  int event_handler(void *data, event_t evt, int param1, void *param2);
+  
+  Параметры:
+  data - переметр переданный set_event_handler()
+  evt - тип события. Одно из зачений (см. event.h:19):
+  IDLE_EVENT  - нет события
+  MODE_SET_EVENT - установлен новый обработчик. 
+    param1 == 0 - если обработчик != event_handler (Для event_handler означает "выход из режима") 
+    param1 != 0 - если обработчик == event_handler (Для event_handler означает "вход в режим") 
+    
+  KEY_PRESS_EVENT - нажата клаивиша. Код клавиши - param1, значения см. dda_key.h
+  KEY_RELEASE_EVENT - отжата клаивиша. Код клавиши - param1, значения см. dda_key.h
+  SENSOR_ON_EVENT - включился датчик. Код датчика - param1, значения см. dda_sensor.h
+  SENSOR_OFF_EVENT - выключился датчик. Код датчика - param1, значения см. dda_sensor.h
+  MOTOR_ON_EVENT - включился мотор. Номер мотора (0 или 1) - param1. Код мотора - см. dda_motors.h 
+    (PlungerMotor, CasseteMotor)
+  MOTOR_OFF_EVENT - выключился мотор. Номер мотора (0 или 1) - param1. Код мотора - см. dda_motors.h 
+  TIMER_EVENT - не используется (аналог шедулера)
+  MENU_EVENT - вызов пункта меню. param1 - индекс пункта меню. param2 - указатель на MENU_ITEM (см. menu.h)
+  Возвращаемые значения: 
+    MENU_OK - закончить режим меню
+    MENU_CONTINUE - продолжить меню
+  MENU_GET_POSITION - меню запрашивает индекс текущего выбора для подменю. Текущий выбор - указатель
+  в param2
+  
+  USER_EVENT - для нестандартных использований
+  
+Возвращаемое значение для самого process_events() значения не имеет, однако используется, если обработчик
+событий вызывается в качестве "дочернего" обработчика, например обработчик событий в dda_cassette.c,
+вызываемый для позиционирования кассеты может возвращать значения:
+EVENT_HANDLER_DONE
+CASSETTE_TIMEOUT_ERROR
+USER_BREAK
+
+В программе можно заметить частое использование каскадной обработки событий, напр в рабочем режиме:
+
+ - Обработчик рабочего режима
+   - Обработчик калибровки
+    - Обработчик положения кассеты
+    
+======== 7. Стек обработчиков событий
+
+Используется для установки "временных" обработчиков, например для показа сообщения на экране до нажатия 
+клавиши, см. dda_message.c:show_message().
+
+void show_message(const char *caption, const char *message, int time /*=0*/)
+{
+  ........
+  ........
+  push_event_handler(); //Поместить текущий обработчик в стек
+  set_event_handler(msg_handler, 0); //Установить свой обработчик, кот. ждет нажатия клавиши
+  ........
+  ........
+}
+
+static int msg_handler(void *data, event_t evt, int param1, void *param2)
+{
+
+  switch(evt)
+  {
+  case KEY_PRESS_EVENT:
+    pop_event_handler(); //Вернуть прошлый обработчик
+    break;
+  ........
+  ........
+  }
+  return 0;
+}
+
+Соответвенно для обработки стека обработчиков, используются функции, см. event.h
+int push_event_handler();
+int pop_event_handler();
+void clear_event_handler_stack();
+
+
+======== 8. Рабочий режим
+
+Рабочий режим, прописан в файле dda_work_mode.c и .h
+Реализован как несколько машин состояний 
+  - машина состояний рабочего режима
+  - машина состояний калибровки
+  - машина состояний измерения
+  - машина состояний окончания измерений
+  
+Рабочий режим имеет состояния (см dda_work_mode.h:25):
+  Idle - свободен
+  Calibration - калибровка
+  Measuring - измерения
+  NexCasseteWait - ожидание следующей кассеты
+  Done - окончание измерений
+
+ См. dda_work_mode.c:360 - обработчик событий рабочего режима
+ int work_handler(void *data, event_t evt, int param1, void *param2)
+=== Idle: - обработчик вызывает меню рабочего режима
+=== Calibration: - вызов обработчика калибровки: calibrarion_handler
+=== Measuring: - вызов обработчика измерений: measuring_handler
+=== Done: - вызов обработчика done_handler
+Переход состояний, реализован в самом work_handler
+ 
+====== Обработка калибровки dda_work_mode.c:494
+int calibrarion_handler(void *data, event_t evt, int param1, void *param2)
+Режим калибровки имеет состояния (MICRO_STATE):
+  StartState - ожидание (Press START)
+  PlungerCatch - отвод плунжера
+  CassetteCatch - подвод кассеты
+  WaitTouch - ожидание касания
+  CalibrationForce - ожидание наступления условия калибровки - N шагов от точки касания
+  Down - отвод плунжера
+
+=== StartState: 
+== Ждем пока start_flag (dda_work_mode.c:54) перестанет быть 0.
+Установка start_flag может произойти от нажания START и от вызова функции 
+dda_work_mode.c:82:start_work() (интерфейс обмена)
+== Запуск plunger_go_down() - запуск плунжера (если такое требуется) вниз
+
+=== PlungerCatch:
+== Вызов plunger_handler из dda_plunger.c. Если возвратит 
+  PLUNGER_TIMEOUT_ERROR, PLUNGER_END_POS_ERROR, USER_BREAK - показать ошибку, выйти из калибровки с ошибкой
+  EVENT_HANDLER_DONE
+   - вызов cassete_goto_position(CASSETTE_1ST_CELL) из dda_cassette.c. - перевод кассеты (если нужно) на первую ячейку 
+   - переход в следующее состояние
+
+=== CassetteCatch:
+== Вызов cassette_handler из dda_cassette.c. Если возвратит 
+  CASSETTE_TIMEOUT_ERROR, USER_BREAK  - показать ошибку, выйти из калибровки с ошибкой
+  EVENT_HANDLER_DONE 
+  - set_zero() - установка 0 АЦП
+  - plunger_go_up() - запуск двигателя плунжера вверх
+  - переход в следующее состояние
+
+=== WaitTouch:
+== Вызов plunger_handler из dda_plunger.c. Если возвратит 
+  PLUNGER_TIMEOUT_ERROR, PLUNGER_END_POS_ERROR, USER_BREAK - показать ошибку, выйти из калибровки с ошибкой
+== Если растояние пройденное плунгером больше um_SLOW_OFFSET (1.5mm), перевод двигателя на половинную
+  скорость (SLOW_RATE), установить признак рабочей области
+== Если в рабочей области детектор касания србаотет более 3-х раз - переход в следующее состояние
+(детектор касания - ф-ция dda_work_mode.c:175:touch_detect()
+вызывающая ф-цию dda_conv.c:135:is_touch_force())
+
+=== CalibrationForce:
+== Вызов plunger_handler из dda_plunger.c. Если возвратит 
+  PLUNGER_TIMEOUT_ERROR, PLUNGER_END_POS_ERROR, USER_BREAK - показать ошибку, выйти из калибровки с ошибкой
+  EVENT_HANDLER_DONE (мотор остановлен)
+  - calc_calibration_results() - dda_work_mode.c:200 расчет данных калибровки
+  - plunger_go_down() - запуск плунжера вниз
+  - переход в Down
+== Если количество шагов для калибровки больше хаданного (calibration_steps_riched()):
+  plunger_stop() - начать торможение плунжера
+  (ждем пока мотор остановится - plunger_handler вернет EVENT_HANDLER_DONE)
+
+=== Down:
+== Вызов plunger_handler из dda_plunger.c. Если возвратит 
+  PLUNGER_TIMEOUT_ERROR, PLUNGER_END_POS_ERROR, USER_BREAK - показать ошибку, выйти из калибровки с ошибкой
+  EVENT_HANDLER_DONE
+   - возврат EVENT_HANDLER_DONE в рабочий режим, типа все Ok
+   
+
+====== Обработка измерения dda_work_mode.c:744
+int measuring_handler(void *data, event_t evt, int param1, void *param2)
+Режим измерения имеет состояния (MICRO_STATE):
+  StartState - ожидание (Press START)
+  PlungerCatch - отвод плунжера
+  CassetteCatch - подвод кассеты
+  WaitTouch - ожидание касания
+  WaitDestruction - ожидание разрушения зерна
+  Down - отвод плунжера
+  WaitProtocol - ожидание, пока протокол обмена не передаст все данные
+
+=== StartState: 
+== Ждем пока start_flag (dda_work_mode.c:54) перестанет быть 0.
+Установка start_flag может произойти от нажания START и от вызова функции 
+dda_work_mode.c:82:start_work() (интерфейс обмена)
+== Запуск plunger_go_down() - запуск плунжера (если такое требуется) вниз
+
+=== PlungerCatch:
+== Вызов plunger_handler из dda_plunger.c. Если возвратит 
+  PLUNGER_TIMEOUT_ERROR, PLUNGER_END_POS_ERROR, USER_BREAK - показать ошибку, выйти из измерения
+  EVENT_HANDLER_DONE
+   - вызов cassete_goto_position(cassette_position() + 1) из dda_cassette.c. - перевод кассеты на следующую ячейку 
+   - переход в следующее состояние
+
+=== CassetteCatch:
+== Вызов cassette_handler из dda_cassette.c. Если возвратит 
+  CASSETTE_TIMEOUT_ERROR, USER_BREAK  - показать ошибку, выйти из измерения
+  EVENT_HANDLER_DONE 
+  - plunger_go_up() - запуск двигателя плунжера вверх
+  - переход в следующее состояние
+
+=== WaitTouch:
+== Вызов plunger_handler из dda_plunger.c. Если возвратит 
+  PLUNGER_TIMEOUT_ERROR, PLUNGER_END_POS_ERROR, USER_BREAK - показать ошибку, выйти из измерения
+  EVENT_HANDLER_DONE (двигатель остановлен)
+  - plunger_go_down() - запуск двигателя плунжера вниз
+  - переход в Down
+  
+== Если растояние пройденное плунгером больше touch_position() - um2steps(current_mesh->max) - 500
+(вычисляется кол. шагов до макс. размера зерна) - 500
+ - перевод двигателя на половинную скорость (SLOW_RATE)
+ - установить признак рабочей области
+ - set_zero() - установка 0 АЦП
+ 
+== Если в рабочей области детектор касания србаотет более 3-х раз:
+ - если set_size_postion() покажет, что размер больше минимального: 
+   - переход в следующее состояние
+   - иначе установить признак no_particle, plunger_stop()
+
+== Если позиция плунжера больше точки касания при калибровке
+ - установить признак no_particle, plunger_stop()
+ 
+=== WaitDestruction:
+== Вызов plunger_handler из dda_plunger.c. Если возвратит 
+  PLUNGER_TIMEOUT_ERROR, PLUNGER_END_POS_ERROR, USER_BREAK - показать ошибку, выйти из измерения
+  EVENT_HANDLER_DONE (двигатель остановлен)
+  - plunger_go_down() - запуск двигателя плунжера вниз
+  - переход в Down
+
+== Если детектор разрушения сработает более 3-х раз
+  - set_destruction_position() - установка точки разрушения
+  - plunger_stop() - остановка плундера
+
+=== Down:
+== Вызов plunger_handler из dda_plunger.c. Если возвратит 
+  PLUNGER_TIMEOUT_ERROR, PLUNGER_END_POS_ERROR, USER_BREAK - показать ошибку, выйти из измерения
+  EVENT_HANDLER_DONE - переход в WaitProtocol
+  
+=== WaitProtocol:
+== Если все данные переданы, возврат EVENT_HANDLER_DONE
+  
+  
+
+  
+======== 9. Управление шаговыми двигателями
+Управление двигателями реализовано в модуле dda_motors. Интерфейс определен в dda_motors.h:
+
+=== Запуск мотора
+void motor_start(int motor,int dir, unsigned char rate); //0,ff -max, 1 -min
+Параметры
+motor - индекс мотора (0,1) - PlungerMotor, CasseteMotor
+dir - направление (0,1) - PlungerUp, PlungerDown или Clockwise, AntiClockwise
+rate - конечный индекс в таблиые разгона (1..255). Если 0 - ставится 255
+
+=== Старт торможения
+void motor_deceleration();
+
+=== Остановка мотора (почти мгновенная)
+void motor_stop();
+
+=== Изменение скорости
+void motor_change_rate(unsigned char rate);
+Параметры
+rate - конечный индекс в таблиые разгона (1..255). Если 0 - ставится 255
+
+=== Получить индекс в таблице разгона
+unsigned char motor_rate();
+
+=== Получить количество шагов с момента motor_start
+unsigned motor_step_count();
+
+=== Вернуть не 0 если мотор в состоянии останова
+int is_motor_idle();
+
+Управление мотором (в один момент времени управляется только один мотор) реализовано через
+машину состояний, которая обрабатывается в прерывании таймера
+dda_motors.c:331:void TIM6_IRQHandler()
+
+Состояния мотора:dda_motors.c:38:
+  Idle - свободен
+  Accelerate - ускорение
+  Decelerate - замедление
+  Slewing - устоявшаяся скорость
+  ChangeRate - изменение скорости
+  Stoppage - удержание
+ 
+======== 10. Управление приводом кассеты
+Управление кассетой призводится в модуле dda_cassette. Интерфейс описан в dda_cassette.h:
+
+=== Сброс позиции кассеты
+void reset_cassette_position();
+
+=== Вернуть номер установленной ячейки
+int cassette_position();
+Вернет
+CASSETTE_UNKNOWN_POSITION (-1) - не известная позиция
+CASSETTE_NULL_POSITION 0 - на прорези
+CASSETTE_1ST_CELL 1 - на первой ячейке
+2...60 - на соотв. номере ячейки
+
+=== Старт перевода кассеты на ячеку
+void cassete_goto_position(int pos);
+Параметр pos:
+CASSETTE_NULL_POSITION 0 - на прорезь
+1...60 - на соотв. номер ячейки
+Для контроля процесса перевода кассеты вызывать cassette_handler:
+handler_call(&cassette_handler, evt, param1, param2);
+Где возвратом может быть:
+CASSETTE_TIMEOUT_ERROR - таймаут
+USER_BREAK - нажали STOP
+EVENT_HANDLER_DONE - удачно перевелась кассета
+
+
+=== Возвращает количество ячеек в кассете (30, 60)
+int cassete_max_cell();
+
+======== 11. Управление приводом плунжера
+Управление плунжера призводится в модуле dda_plunger. Интерфейс описан в dda_plunger.h:
+=== Вернуть не 0 если плунжер в нижнем положении
+int is_plunger_down();
+
+Вернуть позицию плунжера в шагах двигателя относительно нижнего датчика
+unsigned plunger_position();
+
+=== Запуск перевода плинжера вниз
+void plunger_go_down();
+Для контроля процесса перевода вызывать plunger_handler:
+handler_call(&plunger_handler, evt, param1, param2);
+Где возвратом может быть:
+PLUNGER_TIMEOUT_ERROR - таймаут
+PLUNGER_END_POS_ERROR - врхний датчик сработал
+USER_BREAK - нажали STOP
+EVENT_HANDLER_DONE - удачно перевелся
+
+=== Запуск перевода плинжера вверх
+void plunger_go_up();
+Для контроля процесса перевода вызывать plunger_handler
+
+=== Останов (с замедлением) плунжера
+void plunger_stop();
+Для контроля процесса останова вызывать plunger_handler
+
+=== Получить точку касания при калибровке в шагах относительно нижнего датчика
+unsigned touch_position();
+
+=== Установить точку касания при калибровке в шагах относительно нижнего датчика
+void set_touch_position();
+
+=== Сброс позиции плунжера для перепозиционирования
+void reset_plunger_position();
+
+
+
+
+
+
 
 
     
