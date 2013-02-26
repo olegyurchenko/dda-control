@@ -17,6 +17,7 @@
 #include <dda_clib.h>
 #include <dda_config.h>
 #include <dda_settings.h>
+#include <sys_timer.h>
 
 #ifdef USE_CONSOLE
 #include <console.h>
@@ -25,15 +26,28 @@
 #include <dda_clib.h>
 /*----------------------------------------------------------------------------*/
 #define STP1_EN     GPIO_Pin_10 //PB10
+#define GPIO_STP1_EN  GPIOB
+
 #define STP1_DIR    GPIO_Pin_11 //PB11
+#define GPIO_STP1_DIR  GPIOB
+
 #define STP1_STEP   GPIO_Pin_12 //PB12
+#define GPIO_STP1_STEP   GPIOB
+
 #define STP1_RS     GPIO_Pin_6  //PC6
+#define GPIO_STP1_RS     GPIOC
 
 #define STP2_EN     GPIO_Pin_7  //PC7
-#define STP2_DIR    GPIO_Pin_8  //PC8
-#define STP2_STEP   GPIO_Pin_9  //PC9
-#define STP2_RS     GPIO_Pin_8  //PA8
+#define GPIO_STP2_EN     GPIOC
 
+#define STP2_DIR    GPIO_Pin_8  //PC8
+#define GPIO_STP2_DIR    GPIOC
+
+#define STP2_STEP   GPIO_Pin_9  //PC9
+#define GPIO_STP2_STEP   GPIOC
+
+#define STP2_RS     GPIO_Pin_8  //PA8
+#define GPIO_STP2_RS     GPIOA
 /*----------------------------------------------------------------------------*/
 const unsigned char step_table[256]=
 {
@@ -203,15 +217,15 @@ static void set_enable(int on)
   {
   case 0:
     if(on)
-      GPIO_SetBits(GPIOB, STP1_EN);
+      GPIO_SetBits(GPIO_STP1_EN, STP1_EN);
     else
-      GPIO_ResetBits(GPIOB, STP1_EN);
+      GPIO_ResetBits(GPIO_STP1_EN, STP1_EN);
     break;
   case 1:
     if(on)
-      GPIO_SetBits(GPIOC, STP2_EN);
+      GPIO_SetBits(GPIO_STP2_EN, STP2_EN);
     else
-      GPIO_ResetBits(GPIOC, STP2_EN);
+      GPIO_ResetBits(GPIO_STP2_EN, STP2_EN);
     break;
   }
 }
@@ -222,15 +236,15 @@ static void set_dir(int on)
   {
   case 0:
     if(on)
-      GPIO_SetBits(GPIOB, STP1_DIR);
+      GPIO_SetBits(GPIO_STP1_DIR, STP1_DIR);
     else
-      GPIO_ResetBits(GPIOB, STP1_DIR);
+      GPIO_ResetBits(GPIO_STP1_DIR, STP1_DIR);
     break;
   case 1:
     if(on)
-      GPIO_SetBits(GPIOC, STP2_DIR);
+      GPIO_SetBits(GPIO_STP2_DIR, STP2_DIR);
     else
-      GPIO_ResetBits(GPIOC, STP2_DIR);
+      GPIO_ResetBits(GPIO_STP2_DIR, STP2_DIR);
     break;
   }
 }
@@ -241,15 +255,15 @@ static void set_rs(int on)
   {
   case 0:
     if(on)
-      GPIO_SetBits(GPIOC, STP1_RS);
+      GPIO_SetBits(GPIO_STP1_RS, STP1_RS);
     else
-      GPIO_ResetBits(GPIOC, STP1_RS);
+      GPIO_ResetBits(GPIO_STP1_RS, STP1_RS);
     break;
   case 1:
     if(on)
-      GPIO_SetBits(GPIOA, STP2_RS);
+      GPIO_SetBits(GPIO_STP2_RS, STP2_RS);
     else
-      GPIO_ResetBits(GPIOA, STP2_RS);
+      GPIO_ResetBits(GPIO_STP2_RS, STP2_RS);
     break;
   }
 }
@@ -259,12 +273,27 @@ static void step()
   switch(active_motor)
   {
   case 0:
-    GPIO_Write(GPIOB, GPIO_ReadOutputData(GPIOB) ^ STP1_STEP);
+    GPIO_Write(GPIO_STP1_STEP, GPIO_ReadOutputData(GPIO_STP1_STEP) ^ STP1_STEP);
     break;
   case 1:
-    GPIO_Write(GPIOC, GPIO_ReadOutputData(GPIOC) ^ STP2_STEP);
+    GPIO_Write(GPIO_STP2_STEP, GPIO_ReadOutputData(GPIO_STP2_STEP) ^ STP2_STEP);
     break;
   }
+}
+/*----------------------------------------------------------------------------*/
+static void motors_off()
+{
+  //Set enable to inactive state
+  GPIO_SetBits(GPIO_STP1_EN, STP1_EN);
+  GPIO_SetBits(GPIO_STP2_EN, STP2_EN);
+
+  //Set STEP to 0
+  GPIO_ResetBits(GPIO_STP1_STEP, STP1_STEP);
+  GPIO_ResetBits(GPIO_STP2_STEP, STP2_STEP);
+
+  //Set reset to inactive state
+  GPIO_SetBits(GPIO_STP1_RS, STP1_RS);
+  GPIO_SetBits(GPIO_STP2_RS, STP2_RS);
 }
 /*----------------------------------------------------------------------------*/
 void motors_init()
@@ -292,16 +321,26 @@ void motors_init()
   GPIO_Init(GPIOA, &gpio);
 
   //Set enable to inactive state
-  GPIO_SetBits(GPIOB, STP1_EN);
-  GPIO_SetBits(GPIOC, STP2_EN);
+  GPIO_SetBits(GPIO_STP1_EN, STP1_EN);
+  GPIO_SetBits(GPIO_STP2_EN, STP2_EN);
 
-  //Set reset to inactive state
-  GPIO_SetBits(GPIOC, STP1_RS);
-  GPIO_SetBits(GPIOA, STP2_RS);
+  //Set reset to active state
+  GPIO_ResetBits(GPIO_STP1_RS, STP1_RS);
+  GPIO_ResetBits(GPIO_STP2_RS, STP2_RS);
+
+  //Set STEP to 0
+  GPIO_ResetBits(GPIO_STP1_STEP, STP1_STEP);
+  GPIO_ResetBits(GPIO_STP2_STEP, STP2_STEP);
 
 #ifdef USE_CONSOLE
   console_motors_init();
 #endif
+
+  sys_usleep(500);
+
+  //Set reset to inactive state
+  GPIO_SetBits(GPIO_STP1_RS, STP1_RS);
+  GPIO_SetBits(GPIO_STP2_RS, STP2_RS);
 }
 /*----------------------------------------------------------------------------*/
 static void start_timer()
@@ -338,17 +377,11 @@ void TIM6_IRQHandler()
     switch(motor_state)
     {
     case Idle:
-      set_enable(1); //Enable to inactive state
       TIM_Cmd(TIM6, DISABLE);
       NVIC_DisableIRQ(TIM6_IRQn);
+      motors_off();
       break;
     case Accelerate:
-      if(!table_index)
-      {
-        //Set reset to inactive state
-        set_rs(1);
-        set_enable(0); //Enable to active state
-      }
     case Decelerate:
     case Slewing:
     case ChangeRate:
@@ -415,10 +448,10 @@ void TIM6_IRQHandler()
       TIM_SetAutoreload(TIM6, STOPPAGE_TIME);
       if(stoppage_count >= max_stoppage_count)
       {
-        set_enable(1); //Enable to inactive state
         motor_state = Idle;
         TIM_Cmd(TIM6, DISABLE);
         NVIC_DisableIRQ(TIM6_IRQn);
+        motors_off();
       }
       break;
 
@@ -484,8 +517,6 @@ void motor_start(int mr, int dir, unsigned char rate)
   active_motor = mr;
   set_dir(dir);
   step_counter = 0;
-  //set_enable(0); //Enable to active state
-  set_rs(0); //Reset to active state
   if(!mr)
   {
     min_period = stp_min_period1;
@@ -502,7 +533,9 @@ void motor_start(int mr, int dir, unsigned char rate)
     max_index = 255;
   else
     max_index = rate;
+
   motor_state = Accelerate;
+  set_enable(0); //Enable to active state
   start_timer();
 }
 /*----------------------------------------------------------------------------*/
