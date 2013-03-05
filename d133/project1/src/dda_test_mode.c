@@ -33,6 +33,7 @@
 
 #ifdef USE_CONSOLE
 #include <console.h>
+//#define DEBUG
 #endif //USE_CONSOLE
 typedef enum
 {
@@ -458,6 +459,13 @@ static int adc_handler(void *data, event_t evt, int param1, void *param2)
       display_adc();
       timeout_set(&timeout, ADC_TIME, sys_tick_count());
     }
+#ifdef DEBUG
+  {
+    int value = 0;
+    sys_adc_get_value(&value);
+    console_printf("\r\n%u:%d", motor_step_count(), value);
+  }
+#endif
     break;
   case MODE_SET_EVENT:
     if(!param1) //Mode exit

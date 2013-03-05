@@ -16,6 +16,7 @@
 #include "dda_uart.h"
 #include <loop_buff.h>
 #include "stm32f10x.h"
+#include "dda_config.h"
 /*----------------------------------------------------------------------------*/
 typedef struct
 {
@@ -23,7 +24,12 @@ typedef struct
   LOOP_BUFFER tx;
 } UART_BUFFER;
 /*----------------------------------------------------------------------------*/
+#ifdef USE_CONSOLE
+#define BAUD 115200
+#else
 #define BAUD 9600
+#endif //USE_CONSOLE
+
 #define RX_BUFFER_SIZE 128
 #define TX_BUFFER_SIZE 512
 /*----------------------------------------------------------------------------*/

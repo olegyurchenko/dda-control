@@ -32,12 +32,14 @@
 #include <dda_db.h>
 #include <dda_config.h>
 #include <dda_result_view.h>
+#include <dda_settings.h>
 
 #ifdef USE_CONSOLE
 #include <console.h>
 #define DEBUG
 #endif
 
+//#define NO_SLOW_RATE
 /*----------------------------------------------------------------------------*/
 static MENU_ITEM root_itm, auto_itm, manual_itm;
 static int work_handler(void *data, event_t evt, int param1, void *param2);
@@ -170,19 +172,27 @@ static void set_zero()
   int value = 0;
   sys_adc_get_value(&value);
   set_zero_force(value);
+#ifdef DEBUG
+  console_printf("\r\nzero_force:%d", value);
+#endif
 }
 /*----------------------------------------------------------------------------*/
 static int touch_detect()
 {
   int value = 0;
+  unsigned pos;
+
+  pos = motor_step_count();
   sys_adc_get_value(&value);
   discrets2force(value, &force); //For display force
-  umsize(touch_position(), plunger_position(), &size); //For display size
+  umsize(touch_position(), pos, &size); //For display size
 #ifdef DEBUG
   if(is_touch_force(value))
   {
-    console_printf("tm:%u pos:%u val:%d\r\n", sys_tick_count() % 1000, plunger_position(), value);
+    console_printf("\r\ntm:%04u pos:%u val:%d", sys_tick_count() & 0x3ff, pos, value);
   }
+  else
+    console_printf("\r\n%04u:%u:%d",  sys_tick_count() & 0x3ff, pos, value);
 #endif
   return is_touch_force(value);
 }
@@ -217,7 +227,8 @@ static int set_size_postion()
   //k = decimal32_init(1, 0);
   //decimal32_sub(&k, relative_size_deviation(), &k); //k = 1 - 0.25;
 
-  k = *relative_size_deviation(); //k = 0.25
+  //k = *relative_size_deviation(); //k = 0.25
+  k = decimal32_init(25, 2); //0.25
   decimal32_mul(&min_size, &k, &min_size);
   if(decimal32_cmp(&size, &min_size) <= 0) //size <= min_size
   {
@@ -510,6 +521,7 @@ static int calibrarion_handler(void *data, event_t evt, int param1, void *param2
   static int calibration_finish;
   static int slow_offset;
   static int touch_count = 0;
+  static unsigned char slow_rate = SLOW_RATE;
   int res;
 
   (void) data; //Prevent unused warning
@@ -518,12 +530,19 @@ static int calibrarion_handler(void *data, event_t evt, int param1, void *param2
   case StartState:
     if(start_flag)
     {
+      const char *v;
+      slow_rate = SLOW_RATE;
+      v = setting_get(S_SLOW_RATE);
+      if(v && *v)
+        slow_rate = atoi(v);
+
       plunger_go_down();
       micro_state = PlungerCatch;
       calibration_finish = 0;
       slow_offset = um2steps(um_SLOW_OFFSET);
       touch_count = 0;
       work_area = 0;
+
       if(state == Calibration)
         db_new_session(mesh_index(), particles);
       else
@@ -640,7 +659,9 @@ static int calibrarion_handler(void *data, event_t evt, int param1, void *param2
       {
         if((int)plunger_position() > slow_offset)
         {
-          motor_change_rate(SLOW_RATE);
+#ifndef NO_SLOW_RATE
+          motor_change_rate(slow_rate);
+#endif //NO_SLOW_RATE
           set_zero();
           work_area = 1;
         }
@@ -763,6 +784,7 @@ static int measuring_handler(void *data, event_t evt, int param1, void *param2)
   static int slow_offset;
   static int detect_count = 0;
   static int no_particle;
+  static unsigned char slow_rate;
   int res;
 
   (void) data; //Prevent unused warning
@@ -772,6 +794,12 @@ static int measuring_handler(void *data, event_t evt, int param1, void *param2)
     if(start_flag)
     {
       const mesh_t *current_mesh;
+      const char *v;
+      slow_rate = SLOW_RATE;
+      v = setting_get(S_SLOW_RATE);
+      if(v && *v)
+        slow_rate = atoi(v);
+
       plunger_go_down();
       micro_state = PlungerCatch;
       force = decimal32_init(0,0);
@@ -899,7 +927,9 @@ static int measuring_handler(void *data, event_t evt, int param1, void *param2)
         lcd_put_line(1, get_text(STR_PLUNGER_SERVING), SCR_ALIGN_CENTER);
         if((int)plunger_position() >= slow_offset)
         {
-          motor_change_rate(SLOW_RATE);
+#ifndef NO_SLOW_RATE
+          motor_change_rate(slow_rate);
+#endif //NO_SLOW_RATE
           set_zero();
           work_area = 1;
         }
@@ -913,8 +943,10 @@ static int measuring_handler(void *data, event_t evt, int param1, void *param2)
 
           if(detect_count >= TOUCH_COUNT)
           {
-            if(motor_rate() > SLOW_RATE)
-              motor_change_rate(SLOW_RATE);
+#ifndef NO_SLOW_RATE
+            if(motor_rate() > slow_rate)
+              motor_change_rate(slow_rate);
+#endif //NO_SLOW_RATE
             if(set_size_postion())
             {
               micro_state = WaitDestruction;

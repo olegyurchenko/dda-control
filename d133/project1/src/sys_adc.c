@@ -32,7 +32,8 @@ static int adc_cmd1(int argc, char **argv);
 #endif
 /*----------------------------------------------------------------------------*/
 #define ADC1_DR_Address    ((uint32_t)0x4001244C)
-#define ADC_BUFFER_SIZE 100
+//#define ADC_BUFFER_SIZE 100
+#define ADC_BUFFER_SIZE 20
 static volatile uint16_t adc_buffer[ADC_BUFFER_SIZE];
 /*----------------------------------------------------------------------------*/
 void sys_adc_init()
@@ -91,10 +92,10 @@ void sys_adc_init()
 
   /* ADC1 regular channel12 configuration */
 
-#define SAMPLE_TIME ADC_SampleTime_1Cycles5
+//#define SAMPLE_TIME ADC_SampleTime_1Cycles5
 //#define SAMPLE_TIME ADC_SampleTime_7Cycles5
 //#define SAMPLE_TIME ADC_SampleTime_13Cycles5
-//#define SAMPLE_TIME ADC_SampleTime_28Cycles5
+#define SAMPLE_TIME ADC_SampleTime_28Cycles5
 //#define SAMPLE_TIME ADC_SampleTime_41Cycles5
 //#define SAMPLE_TIME ADC_SampleTime_55Cycles5
 //#define SAMPLE_TIME ADC_SampleTime_71Cycles5
@@ -137,13 +138,18 @@ void sys_adc_start_conversion()
 /*----------------------------------------------------------------------------*/
 int sys_adc_get_value(int *dst)
 {
-  int32_t dirty_avg = 0, avg = 0, deviation, avg_deviation = 0;
-  int i, count = 0;
+#define DIRTY_AVG
+
+  int32_t dirty_avg = 0;
+#ifndef DIRTY_AVG
+  int32_t avg = 0, deviation, avg_deviation = 0, count = 0;
+#endif
+  int i;
 
   for(i = 0; i < ADC_BUFFER_SIZE; i++)
     dirty_avg += adc_buffer[i];
   dirty_avg /= ADC_BUFFER_SIZE;
-
+#ifndef DIRTY_AVG
   for(i = 0; i < ADC_BUFFER_SIZE; i++)
     avg_deviation += ABS((int32_t)adc_buffer[i] - dirty_avg);
   avg_deviation /= ADC_BUFFER_SIZE;
@@ -161,6 +167,7 @@ int sys_adc_get_value(int *dst)
   if(count)
     *dst = avg / count;
   else
+#endif //DIRTY_AVG
     *dst = dirty_avg;
 
   return 1;

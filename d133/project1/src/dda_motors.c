@@ -51,7 +51,7 @@
 /*----------------------------------------------------------------------------*/
 const unsigned char step_table[256]=
 {
-0xFF, 0x69, 0x51, 0x44, 0x3C, 0x36, 0x32, 0x2E,
+/*0xFF, 0x69, 0x51, 0x44, 0x3C, 0x36, 0x32,*/ 0x2E,
 0x2B, 0x29, 0x27, 0x25, 0x24, 0x22, 0x21, 0x20,
 0x1F, 0x1E, 0x1D, 0x1C, 0x1C, 0x1B, 0x1A, 0x1A,
 0x19, 0x19, 0x18, 0x18, 0x17, 0x17, 0x17, 0x16,
@@ -82,7 +82,8 @@ const unsigned char step_table[256]=
 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08,
 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08,
 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08,
-0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x07, 0x07
+0x08, 0x08, 0x08, 0x08, 0x08, 0x08, 0x07, 0x07,
+  0x07,0x07,0x07,0x07,0x07,0x07,0x07
 };
 /*----------------------------------------------------------------------------*/
 static int active_motor = -1;
@@ -273,10 +274,20 @@ static void step()
   switch(active_motor)
   {
   case 0:
-    GPIO_Write(GPIO_STP1_STEP, GPIO_ReadOutputData(GPIO_STP1_STEP) ^ STP1_STEP);
+    if(GPIO_ReadOutputData(GPIO_STP1_STEP) & STP1_STEP)
+      GPIO_ResetBits(GPIO_STP1_STEP, STP1_STEP);
+    else
+      GPIO_SetBits(GPIO_STP1_STEP, STP1_STEP);
+
+    //GPIO_Write(GPIO_STP1_STEP, GPIO_ReadOutputData(GPIO_STP1_STEP) ^ STP1_STEP);
     break;
   case 1:
-    GPIO_Write(GPIO_STP2_STEP, GPIO_ReadOutputData(GPIO_STP2_STEP) ^ STP2_STEP);
+    if(GPIO_ReadOutputData(GPIO_STP2_STEP) & STP2_STEP)
+      GPIO_ResetBits(GPIO_STP2_STEP, STP2_STEP);
+    else
+      GPIO_SetBits(GPIO_STP2_STEP, STP2_STEP);
+
+    //GPIO_Write(GPIO_STP2_STEP, GPIO_ReadOutputData(GPIO_STP2_STEP) ^ STP2_STEP);
     break;
   }
 }
@@ -510,10 +521,15 @@ static void get_const()
 void motor_start(int mr, int dir, unsigned char rate)
 {
   get_const();
+  NVIC_DisableIRQ(TIM6_IRQn);
   if(mr < 0
      || mr > 1
      || motor_state != Idle)
+  {
+    if(motor_state != Idle)
+      NVIC_EnableIRQ(TIM6_IRQn);
     return;
+  }
   active_motor = mr;
   set_dir(dir);
   step_counter = 0;
@@ -536,6 +552,7 @@ void motor_start(int mr, int dir, unsigned char rate)
 
   motor_state = Accelerate;
   set_enable(0); //Enable to active state
+  NVIC_EnableIRQ(TIM6_IRQn);
   start_timer();
 }
 /*----------------------------------------------------------------------------*/
@@ -608,7 +625,13 @@ void motor_stop()
 /*----------------------------------------------------------------------------*/
 unsigned motor_step_count()
 {
-  return step_counter / 2;
+  unsigned s;
+  NVIC_DisableIRQ(TIM6_IRQn);
+  s = step_counter;
+  if(motor_state != Idle)
+    NVIC_EnableIRQ(TIM6_IRQn);
+
+  return s >> 1; // step_counter/2
 }
 /*----------------------------------------------------------------------------*/
 int is_motor_idle()

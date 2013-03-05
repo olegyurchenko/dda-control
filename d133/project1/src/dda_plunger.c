@@ -22,6 +22,9 @@
 #include <dda_motors.h>
 #include <dda_config.h>
 #include <dda_settings.h>
+#ifdef USE_CONSOLE
+#include <console.h>
+#endif //USE_CONSOLE
 /*----------------------------------------------------------------------------*/
 typedef enum
 {
@@ -71,11 +74,9 @@ int is_plunger_down()
 /*----------------------------------------------------------------------------*/
 unsigned plunger_position()
 {
-  unsigned count = motor_step_count();
-/*
-  if(count < zero_step)
-    return 0;
-*/
+  unsigned count;
+  count = motor_step_count();
+
   if(direction == PlungerDown)
   {
     if(count > top_position)
@@ -194,6 +195,9 @@ static int plunger_go_handler(void *data, event_t evt, int param1, void *param2)
       state = WaitMotorOff;
       motor_deceleration(); //!!!!!!!
       //motor_stop();
+#ifdef USE_CONSOLE
+      console_printf("\r\ntop: %u", motor_step_count());
+#endif
     }
     break;
 
@@ -201,6 +205,9 @@ static int plunger_go_handler(void *data, event_t evt, int param1, void *param2)
     if(param1 == DOWN_SENSOR && direction == PlungerUp)
     {
       zero_step = motor_step_count();
+#ifdef USE_CONSOLE
+      console_printf("\r\nzero_step: %u", zero_step);
+#endif
     }
     break;
 
