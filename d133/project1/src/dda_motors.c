@@ -363,6 +363,7 @@ static void start_timer()
   TIM_TimeBaseStructInit(&base_timer);
 
   base_timer.TIM_Prescaler = (HSE_VALUE / 1000000) - 1; //1 MHz
+  //base_timer.TIM_Prescaler = (SystemCoreClock / 1000000) - 1; //1 MHz
   base_timer.TIM_Period = 1000; //1 ms
   TIM_TimeBaseInit(TIM6, &base_timer);
 
@@ -455,6 +456,9 @@ void TIM6_IRQHandler()
       break;
 
     case Stoppage:
+#ifdef USE_CONSOLE
+//      console_printf("\r\nStopage c:%d tm:%u", stoppage_count, sys_tick_count() & 0x3ff);
+#endif
       stoppage_count ++;
       TIM_SetAutoreload(TIM6, STOPPAGE_TIME);
       if(stoppage_count >= max_stoppage_count)

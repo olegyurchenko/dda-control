@@ -38,7 +38,7 @@
 #define STP_MIN_PERIOD1 500//us
 #define STP_MIN_PERIOD2 300 //us
 #define STOPPAGE_TIME 30000 //us
-#define STOPPAGE_COUNT 4
+#define STOPPAGE_COUNT 12
 /*----------------------------------------------------------------------------*/
 #define ACCELERATION_STEP1 1
 #define DECELERATION_STEP1 16
