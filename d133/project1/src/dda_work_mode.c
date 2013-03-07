@@ -784,6 +784,7 @@ static int measuring_handler(void *data, event_t evt, int param1, void *param2)
   static int slow_offset;
   static int detect_count = 0;
   static int no_particle;
+  static unsigned top_position; //Otstup
   static unsigned char slow_rate;
   int res;
 
@@ -816,6 +817,7 @@ static int measuring_handler(void *data, event_t evt, int param1, void *param2)
       }
       detect_count = 0;
       no_particle = 0;
+      top_position = touch_position() - (um2steps(current_mesh->min) * 2) / 10; //toch_pos - fstep * 0.2
     }
     else
     {
@@ -961,8 +963,10 @@ static int measuring_handler(void *data, event_t evt, int param1, void *param2)
         }
         else
         {
+          unsigned pos;
           detect_count = 0;
-          if(plunger_position() > touch_position()) //No tablet
+          pos = plunger_position();
+          if(pos > touch_position() || pos > top_position) //No tablet
           {
             protocol_push_no_particle();
             plunger_stop();
