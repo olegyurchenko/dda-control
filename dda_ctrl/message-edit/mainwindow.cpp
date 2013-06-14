@@ -105,6 +105,8 @@ void MainWindow::onFileOpen()
   }
   m_fileName = fileName;
   updateMessages();
+  if(ui->sourceList->count())
+    ui->sourceList->setCurrentRow(0);
 }
 /*----------------------------------------------------------------------------*/
 void MainWindow::onFileSave()
@@ -205,14 +207,18 @@ void MainWindow::onSearchTextChanged(QString txt)
 /*----------------------------------------------------------------------------*/
 void MainWindow::onSourceListDblClick()
 {
-  if(ui->sourceList->currentRow() < 0)
+  if(ui->sourceList->currentRow() < 0 || ui->langCombo->currentIndex() < 0)
     return;
 
   int row = ui->translateList->currentRow();
   QString source = m_sourceList[ui->sourceList->currentRow()];
   QString lang = m_langList[row];
+  QString txt = m_messageFile->message(source, lang);
   ui->translateEdit->setModified(true);
-  ui->translateEdit->setText(m_messageFile->message(source, lang));
+  ui->translateEdit->setText(txt);
+
+  lang = m_langList[ui->langCombo->currentIndex()];
+  m_messageFile->setMessage(source, txt, lang);
 
 }
 /*----------------------------------------------------------------------------*/

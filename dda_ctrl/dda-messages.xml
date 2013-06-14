@@ -547,7 +547,7 @@
  <message>
   <source>Mark</source>
   <uk_UA>Марка ДСТУ</uk_UA>
-  <ru_RU>Марка ДСТУ</ru_RU>
+  <ru_RU>Марка ГОСТ</ru_RU>
   <en_US>Mark</en_US>
  </message>
  <message>
@@ -1014,7 +1014,7 @@
  <message>
   <source>Mark:</source>
   <uk_UA>Марка ДСТУ:</uk_UA>
-  <ru_RU>Марка ДСТУ:</ru_RU>
+  <ru_RU>Марка ГОСТ:</ru_RU>
   <en_US>Mark:</en_US>
  </message>
  <message>
@@ -1166,7 +1166,7 @@
  <message>
   <source>Set mark</source>
   <uk_UA>ДСТУ марка</uk_UA>
-  <ru_RU>ДСТУ  марка</ru_RU>
+  <ru_RU>Марка ГОСТ</ru_RU>
   <en_US>Set mark</en_US>
  </message>
  <message>
