@@ -33,7 +33,7 @@ protected:
   bool m_verbose;
 protected:
   bool sendComplement(unsigned char);
-  bool waitAck();
+  bool waitAck(unsigned timeout = 0);
 public:
   BootLoaderProtocol();
   virtual ~BootLoaderProtocol();

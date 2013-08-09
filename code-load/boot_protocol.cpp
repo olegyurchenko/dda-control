@@ -87,10 +87,12 @@ bool BootLoaderProtocol :: sendComplement(unsigned char b)
   return true;
 }
 /*----------------------------------------------------------------------------*/
-bool BootLoaderProtocol :: waitAck()
+bool BootLoaderProtocol :: waitAck(unsigned timeout)
 {
   unsigned char b;
-  if(serial_read(m_serial, &b, 1, 1000) <= 0)
+  if(!timeout)
+    timeout = 1000;
+  if(serial_read(m_serial, &b, 1, timeout) <= 0)
   {
     m_errorString ="ACK timeout";
     return false;
@@ -260,7 +262,7 @@ bool BootLoaderProtocol :: eraseFlash(unsigned short pageCount, const unsigned c
     serial_write(m_serial, (void *) &pages[i], 1);
   }
   serial_write(m_serial, &cs, 1);
-  if(!waitAck())
+  if(!waitAck(pageCount * 1000))
     return false;
   if(verbose())
     printf("Erased %u pages\n", pageCount);
